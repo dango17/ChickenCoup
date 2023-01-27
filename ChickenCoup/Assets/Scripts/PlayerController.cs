@@ -22,7 +22,12 @@ namespace DO
             rigidbody.velocity = moveDirection * moveSpeed;
 
             //Handle Rotation
-            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            //lookDir = currentRotation point
+            Vector3 lookDir = moveDirection;
+            if (lookDir == Vector3.zero)
+                lookDir = mTransform.forward; 
+
+            Quaternion lookRotation = Quaternion.LookRotation(lookDir);
             mTransform.rotation = Quaternion.Slerp(mTransform.rotation, lookRotation, delta / rotateSpeed);
         }
     }
