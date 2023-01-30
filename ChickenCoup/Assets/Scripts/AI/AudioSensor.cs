@@ -9,5 +9,7 @@ using UnityEngine;
 /// 
 /// </summary>
 public class AudioSensor : Sensor {
-
+	protected override bool VerifyDetection(GameObject gameobject) {
+		return false;
+	}
 }

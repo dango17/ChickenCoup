@@ -9,16 +9,25 @@ using UnityEngine;
 /// Gathers data about an agents surrounding environment.
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
-	[SerializeField, Tooltip("Add a layer to the list to detect objects on that layer.")]
-	protected LayerMask[] detectionLayers = default;
+	[SerializeField, Tooltip("Data will only be gathered within this range " +
+		"i.e. it's the view distance, hearing range etc.")]
+	protected int detectionRange = 5;
+	[SerializeField, Tooltip("Select additional layers to detect objects on that layer.")]
+	protected LayerMask detectionLayer = default;
 	/// <summary>
 	/// Stores references to the game objects the agent has gathered data about.
 	/// </summary>
 	protected LinkedList<GameObject> data = new LinkedList<GameObject>();
+	[SerializeField, Tooltip("The location where raycasts will originate from, " +
+		"when checking for line of sight on objects.")]
+	protected Transform sensorOrigin = null;
 
-	[SerializeField, Tooltip("Data will only be gathered within this range " +
-		"i.e. it's the view distance, hearing range etc.")]
-	protected int detectionRange = 5;
+	/// <summary>
+	/// Checks if the gathered data is valid and should be saved.
+	/// </summary>
+	/// <param name="gameobject"> Gathered data that needs verifying. </param>
+	/// <returns> True if the data is valid and should be saved. </returns>
+	protected abstract bool VerifyDetection(GameObject gameobject);
 
 	private void Awake() {
 		SphereCollider sphereCollider = GetComponent<SphereCollider>();
@@ -40,9 +49,12 @@ public abstract class Sensor : MonoBehaviour {
 	}
 
 	private void ObjectDetected(Collider colliderDetected) {
-		// Check if object is placed within one of the detection layers.
-		if (!detectionLayers.Contains(1 << colliderDetected.gameObject.layer) ||
-			data.Contains(colliderDetected.gameObject)) {
+		int bitshiftedLayer = 1 << colliderDetected.gameObject.layer;
+
+		// Check if the data should be saved.
+		if (detectionLayer != bitshiftedLayer ||
+			data.Contains(colliderDetected.gameObject) ||
+			!VerifyDetection(colliderDetected.gameObject)) {
 			return;
 		}
 

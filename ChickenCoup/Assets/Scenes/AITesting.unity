@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 447105099}
   - component: {fileID: 447105098}
   - component: {fileID: 447105097}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,7 +233,7 @@ GameObject:
   - component: {fileID: 598825453}
   - component: {fileID: 598825452}
   - component: {fileID: 598825451}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Crate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
