@@ -9,7 +9,8 @@ namespace DO
         new Rigidbody rigidbody;
         public float moveSpeed = 0.4f;
         public float rotateSpeed = 0.2f; 
-        Transform mTransform;
+        [HideInInspector]
+        public Transform mTransform;
         public Animator animator;
 
         private void Start()
@@ -19,15 +20,28 @@ namespace DO
             animator = GetComponentInChildren<Animator>(); 
         }
 
+        public void WallMovement(Vector3 moveDirection, Vector3 normal ,float delta)
+        {
+            Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normal); 
+
+            rigidbody.velocity = projectedVelocity * moveSpeed;
+            HandleMovementAnimations(0, delta);
+
+            HandleRotation(-normal, delta); 
+        }
+
         public void Move(Vector3 moveDirection, float delta)
         {
             rigidbody.velocity = moveDirection * moveSpeed;
+            HandleRotation(moveDirection, delta);
+        }
 
+        void HandleRotation(Vector3 lookDir, float delta)
+        {
             //Handle Rotation
-            //lookDir = currentRotation point
-            Vector3 lookDir = moveDirection;
+            //lookDir = currentRotation point      
             if (lookDir == Vector3.zero)
-                lookDir = mTransform.forward; 
+                lookDir = mTransform.forward;
 
             Quaternion lookRotation = Quaternion.LookRotation(lookDir);
             mTransform.rotation = Quaternion.Slerp(mTransform.rotation, lookRotation, delta / rotateSpeed);
