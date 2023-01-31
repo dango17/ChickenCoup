@@ -35,6 +35,7 @@ namespace DO
 
         public void HandleMovementAnimations(float moveAmount, float delta)
         {
+            //Set moveAmount Values 
             float m = moveAmount;
             if (m > 0.1f && m < 0.51f)
                 m = 0.5f;
