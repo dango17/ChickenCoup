@@ -9,12 +9,14 @@ namespace DO
         new Rigidbody rigidbody;
         public float moveSpeed = 0.4f;
         public float rotateSpeed = 0.2f; 
-        Transform mTransform; 
+        Transform mTransform;
+        public Animator animator;
 
         private void Start()
         {
             mTransform = this.transform;
-            rigidbody = GetComponent<Rigidbody>(); 
+            rigidbody = GetComponent<Rigidbody>();
+            animator = GetComponentInChildren<Animator>(); 
         }
 
         public void Move(Vector3 moveDirection, float delta)
@@ -29,6 +31,21 @@ namespace DO
 
             Quaternion lookRotation = Quaternion.LookRotation(lookDir);
             mTransform.rotation = Quaternion.Slerp(mTransform.rotation, lookRotation, delta / rotateSpeed);
+        }
+
+        public void HandleMovementAnimations(float moveAmount, float delta)
+        {
+            float m = moveAmount;
+            if (m > 0.1f && m < 0.51f)
+                m = 0.5f;
+
+            if (m > 0.51f)
+                m = 1;
+
+            if (m < 0.1f)
+                m = 0f; 
+
+            animator.SetFloat("movement", m, 0.1f, delta);
         }
     }
 }
