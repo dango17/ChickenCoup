@@ -30,15 +30,20 @@ namespace DO
         {
             float horizontal = Input.GetAxis("Horizontal");
             float Vertical = Input.GetAxis("Vertical");
+            float moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(Vertical)); 
 
             moveDirection = camHolder.forward * Vertical;
             moveDirection += camHolder.right * horizontal;
-            moveDirection.Normalize(); 
+            moveDirection.Normalize();
+
+            float delta = Time.deltaTime; 
 
             if(movementOrder == ExecutionOrder.update)
             {
-                controller.Move(moveDirection, Time.deltaTime); 
+                controller.Move(moveDirection, delta); 
             }
+
+            controller.HandleMovementAnimations(moveAmount, delta); 
         }
     }
 }
