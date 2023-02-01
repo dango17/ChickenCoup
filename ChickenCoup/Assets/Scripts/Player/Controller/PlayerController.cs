@@ -13,6 +13,8 @@ namespace DO
         public Transform mTransform;
         public Animator animator;
 
+        public bool isOnCover; 
+
         private void Start()
         {
             mTransform = this.transform;
@@ -22,18 +24,28 @@ namespace DO
 
         public void WallMovement(Vector3 moveDirection, Vector3 normal ,float delta)
         {
-            Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normal); 
-
+            Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normal);
+            Debug.DrawRay(mTransform.position, projectedVelocity, Color.blue); 
             rigidbody.velocity = projectedVelocity * moveSpeed;
-            HandleMovementAnimations(0, delta);
+            HandleRotation(-normal, delta);
 
-            HandleRotation(-normal, delta); 
+            float m = 0;
+            Vector3 relativeDir = mTransform.InverseTransformDirection(projectedVelocity);
+            Debug.Log(relativeDir);
+            //Looking inward therefore 
+            m = relativeDir.x;
+            if(m != 0)
+            {
+                m = (m < 0) ? -1 : 1; 
+            }
+
+            animator.SetFloat("movement", m, 0.1f, delta); 
         }
 
         public void Move(Vector3 moveDirection, float delta)
-        {
+        { 
             rigidbody.velocity = moveDirection * moveSpeed;
-            HandleRotation(moveDirection, delta);
+            HandleRotation(moveDirection, delta);         
         }
 
         void HandleRotation(Vector3 lookDir, float delta)
@@ -47,6 +59,11 @@ namespace DO
             mTransform.rotation = Quaternion.Slerp(mTransform.rotation, lookRotation, delta / rotateSpeed);
         }
 
+        public void HandleAnimatorStates()
+        {
+            animator.SetBool("isOnCover", isOnCover);
+        }
+
         public void HandleMovementAnimations(float moveAmount, float delta)
         {
             //Set moveAmount Values 
@@ -58,7 +75,7 @@ namespace DO
                 m = 1;
 
             if (m < 0.1f)
-                m = 0f; 
+                m = 0f;
 
             animator.SetFloat("movement", m, 0.1f, delta);
         }

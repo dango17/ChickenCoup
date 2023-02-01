@@ -56,7 +56,7 @@ namespace DO
                 HandleMovement(moveDirection, delta);
             }
 
-            controller.HandleMovementAnimations(moveAmount, delta); 
+            controller.HandleAnimatorStates();
         }
 
         void HandleMovement(Vector3 moveDirection, float delta)
@@ -70,13 +70,19 @@ namespace DO
                 cameraManager.wallCameraObject.SetActive(true);
                 cameraManager.mainCameraObject.SetActive(false);
 
+                controller.isOnCover = true; 
+
                 controller.WallMovement(moveDirection,hit.normal, delta); 
             }
             else
             {
+                controller.isOnCover = false; 
+
                 cameraManager.wallCameraObject.SetActive(false);
                 cameraManager.mainCameraObject.SetActive(true);
-                controller.Move(moveDirection, delta); 
+
+                controller.Move(moveDirection, delta);
+                controller.HandleMovementAnimations(moveAmount, delta);
             }
         }
     }
