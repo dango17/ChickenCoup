@@ -6,14 +6,20 @@ namespace DO
 {
     public class PlayerController : MonoBehaviour
     {
-        new Rigidbody rigidbody;
+        [Header("Speeds")]
         public float moveSpeed = 0.4f;
-        public float rotateSpeed = 0.2f; 
+        public float rotateSpeed = 0.2f;
+        [Header("Cover")]
+        public float wallSpeed = 0.2f;
+        public float wallCheckDistance = 0.2f;
+        [Header("Flags")]
+        public bool isOnCover;
         [HideInInspector]
         public Transform mTransform;
+        [HideInInspector]
         public Animator animator;
-
-        public bool isOnCover; 
+        [HideInInspector]
+        new Rigidbody rigidbody;
 
         private void Start()
         {
@@ -24,17 +30,50 @@ namespace DO
 
         public void WallMovement(Vector3 moveDirection, Vector3 normal ,float delta)
         {
+            //Movement 
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normal);
-            Debug.DrawRay(mTransform.position, projectedVelocity, Color.blue); 
-            rigidbody.velocity = projectedVelocity * moveSpeed;
+            Debug.DrawRay(mTransform.position, projectedVelocity, Color.blue);
+            Vector3 relativeDir = mTransform.InverseTransformDirection(projectedVelocity);
+            Vector3 origin = mTransform.position;
+            origin.y += 1;
+
+            if (Mathf.Abs(relativeDir.x) > 0.01f)
+            {
+                if (relativeDir.x > 0)
+                    origin += mTransform.right * wallCheckDistance;
+
+                if (projectedVelocity.x < 0)
+                    origin -= mTransform.right * wallCheckDistance; 
+
+                Debug.DrawRay(origin, -normal, Color.red);
+                if (Physics.Raycast(origin, -normal, out RaycastHit hit, 2f))
+                {
+                    //Do nothing
+                }
+                else
+                {
+                    projectedVelocity = Vector3.zero;
+                    relativeDir.x = 0; 
+                }
+            }
+            else
+            {
+                projectedVelocity = Vector3.zero;
+                relativeDir.x = 0; 
+            }
+
+            rigidbody.velocity = projectedVelocity * wallSpeed;
             HandleRotation(-normal, delta);
 
             float m = 0;
-            Vector3 relativeDir = mTransform.InverseTransformDirection(projectedVelocity);
-            Debug.Log(relativeDir);
+       
             //Looking inward therefore 
             m = relativeDir.x;
-            if(m != 0)
+            if(m < 0.1f && m > -0.1f)
+            {
+                m = 0;
+            }
+            else
             {
                 m = (m < 0) ? -1 : 1; 
             }

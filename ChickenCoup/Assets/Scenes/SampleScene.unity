@@ -1674,7 +1674,7 @@ MonoBehaviour:
   movementOrder: 1
   controller: {fileID: 2018396053}
   cameraManager: {fileID: 1860511021}
-  wallDetectionDistance: 1
+  wallDetectionDistance: 0.05
 --- !u!114 &2018396053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1689,6 +1689,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2.5
   rotateSpeed: 0.05
+  wallSpeed: 2
+  wallCheckDistance: 0.1
   mTransform: {fileID: 0}
   animator: {fileID: 8129405380008812483}
   isOnCover: 0
