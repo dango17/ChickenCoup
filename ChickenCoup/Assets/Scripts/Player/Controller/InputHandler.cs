@@ -1,5 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+//File Name : InputHandler.cs
+//Author : Daniel Oldham/s1903729
+//Collaborator : N/A
+//Created On : 27/01/23
+//Last Modified : 03/02/23
+//Description : Handles and Holds all relevant logic for Inputs  
+
 using UnityEngine;
 
 namespace DO

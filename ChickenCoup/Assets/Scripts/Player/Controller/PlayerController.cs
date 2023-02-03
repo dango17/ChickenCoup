@@ -1,5 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+//File Name : PlayerController.cs
+//Author : Daniel Oldham/s1903729
+//Collaborator : N/A
+//Created On : 27/01/23
+//Last Modified : 03/02/23
+//Description: playerManager that handles movement types and the relevant logic to execute
+
 using UnityEngine;
 
 namespace DO
