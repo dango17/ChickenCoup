@@ -21,6 +21,6 @@ public class VisualSensor : Sensor {
 			out RaycastHit raycastHit,
 			detectionRange);
 
-		return raycastHit.collider.gameObject == gameobject ? true : false;
+		return raycastHit.collider && raycastHit.collider.gameObject == gameobject ? true : false;
 	}
 }
