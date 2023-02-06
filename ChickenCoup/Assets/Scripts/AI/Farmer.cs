@@ -1,8 +1,10 @@
 // Written by Liam Bansal
 // Date Created: 30/01/2023
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UtilityScript;
 
 /// <summary>
 /// Controls the navigation and actions of the farmer AI agent, and maintains 
@@ -23,11 +25,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void Update() {
-		// Initiates the wonder action when starting the scene.
-		if ((!destinationSet && !arrivedAtDestination) ||
-			HasArrivedAtDestination()) {
-			Wonder();
-		}
+		utilityScript.Update();
 	}
 
 	private void FindComponents() {
@@ -38,25 +36,47 @@ public class Farmer : MonoBehaviour {
 
 	private void CreateUtilityInstance() {
 		if (utilityScript == null) {
-			// TODO: Create new utility script instance here.
+			Motive wonderMotive = new Motive("Wonder", 0.0f);
+			Motive[] motives = new Motive[] {
+				wonderMotive
+			};
+			Action wonderAction = new Action(new KeyValuePair<string, bool>[] {
+				new KeyValuePair<string, bool>("Idling", true)
+			},
+			new KeyValuePair<Motive, float>[] {
+				new KeyValuePair<Motive, float>(wonderMotive, 0.0f)
+			},
+			Wonder);
+			Action[] actions = new Action[] {
+				wonderAction
+			};
+			utilityScript = new UtilityScript(motives, actions);
 		}
 	}
 
 	/// <summary>
 	/// Makes the farmer wonder around the environment.
 	/// </summary>
-	private void Wonder() {
-		const int maxRotation = 25;
-		int rotationAroundYAxis = Random.Range(maxRotation, maxRotation);
-		// Gets a new direction to move in.
-		Quaternion newMoveDirection = Quaternion.Euler(transform.rotation.eulerAngles.x,
-			transform.rotation.eulerAngles.y + rotationAroundYAxis,
-			transform.rotation.eulerAngles.z);
-		const int moveDistance = 3;
-		// get distance ahead of agent
-		Vector3 wonderDestination = transform.position + newMoveDirection * Vector3.forward * moveDistance;
-		destinationSet = navMeshAgent.SetDestination(wonderDestination);
-		arrivedAtDestination = false;
+	private bool Wonder() {
+		if (HasArrivedAtDestination()) {
+			return true;
+		}
+
+		if (!destinationSet) {
+			const int maxRotation = 60;
+			int rotationAroundYAxis = Random.Range(maxRotation, maxRotation);
+			// Gets a new direction to move in.
+			Quaternion newMoveDirection = Quaternion.Euler(transform.rotation.eulerAngles.x,
+				transform.rotation.eulerAngles.y + rotationAroundYAxis,
+				transform.rotation.eulerAngles.z);
+			const int moveDistance = 3;
+			// get distance ahead of agent
+			Vector3 wonderDestination = transform.position + newMoveDirection * Vector3.forward * moveDistance;
+			destinationSet = navMeshAgent.SetDestination(wonderDestination);
+			arrivedAtDestination = false;
+		}
+
+		return false;
 	}
 
 	/// <summary>

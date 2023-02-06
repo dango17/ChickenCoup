@@ -14,9 +14,10 @@ public class UtilityScript {
 		public string name;
 
 		public Motive(float insistence,
-			string name) {
-			this.insistence = insistence;
+		public Motive(string name,
+			float insistence) {
 			this.name = name;
+			this.insistence = insistence;
 		}
 	}
 
@@ -28,13 +29,11 @@ public class UtilityScript {
 		public delegate bool ActionToExecute();
 		public ActionToExecute action;
 
-		public Action(bool completed,
-			bool preconditionsMet,
-			KeyValuePair<string, bool>[] preconditions,
+		public Action(KeyValuePair<string, bool>[] preconditions,
 			KeyValuePair<Motive, float>[] satisfiedMotives,
 			ActionToExecute action) {
-			this.completed = completed;
-			this.preconditionsMet = preconditionsMet;
+			completed = false;
+			preconditionsMet = false;
 			this.preconditions = preconditions;
 			this.satisfiedMotives = satisfiedMotives;
 			this.action = action;
@@ -44,6 +43,12 @@ public class UtilityScript {
 	private Action nextAction = default;
 	private Motive[] motives = default;
 	private Action[] actions = default;
+
+	public UtilityScript(Motive[] motives,
+		Action[] actions) {
+		this.motives = motives;
+		this.actions = actions;
+	}
 
 	/// <summary>
 	/// Finds and executes the most optimal action for the AI until its completed.
