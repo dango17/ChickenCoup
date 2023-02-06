@@ -12,12 +12,17 @@ using static UtilityScript;
 /// </summary>
 public class Farmer : MonoBehaviour {
 	private bool destinationSet = false;
-	private bool arrivedAtDestination = false;
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
 	private UtilityScript utilityScript = null;
 	private NavMeshAgent navMeshAgent = null;
+
+	#region Conditions
+	public bool CanWonder() {
+		return true;
+	}
+	#endregion
 
 	private void Awake() {
 		FindComponents();
@@ -36,23 +41,29 @@ public class Farmer : MonoBehaviour {
 
 	private void CreateUtilityInstance() {
 		if (utilityScript == null) {
-			Motive wonderMotive = new Motive("Wonder", 0.0f);
+			const float initialInsistence = 0.0f;
+			Motive wonderMotive = new Motive("Wonder", delegate {
+				return initialInsistence;
+			});
 			Motive[] motives = new Motive[] {
 				wonderMotive
 			};
-			Action wonderAction = new Action(new KeyValuePair<string, bool>[] {
-				new KeyValuePair<string, bool>("Idling", true)
+
+			const float satisfactionAmount = 1.0f;
+			Action wonderAction = new Action(new KeyValuePair<string, Action.Bool>[] {
+				new KeyValuePair<string, Action.Bool>("Idling", CanWonder)
 			},
 			new KeyValuePair<Motive, float>[] {
-				new KeyValuePair<Motive, float>(wonderMotive, 0.0f)
+				new KeyValuePair<Motive, float>(wonderMotive, satisfactionAmount)
 			},
 			Wonder);
 			Action[] actions = new Action[] {
 				wonderAction
 			};
+
 			utilityScript = new UtilityScript(motives, actions);
 		}
-	}
+	}	
 
 	/// <summary>
 	/// Makes the farmer wonder around the environment.
@@ -64,7 +75,7 @@ public class Farmer : MonoBehaviour {
 
 		if (!destinationSet) {
 			const int maxRotation = 60;
-			int rotationAroundYAxis = Random.Range(maxRotation, maxRotation);
+			int rotationAroundYAxis = Random.Range(-maxRotation, maxRotation);
 			// Gets a new direction to move in.
 			Quaternion newMoveDirection = Quaternion.Euler(transform.rotation.eulerAngles.x,
 				transform.rotation.eulerAngles.y + rotationAroundYAxis,
@@ -73,7 +84,6 @@ public class Farmer : MonoBehaviour {
 			// get distance ahead of agent
 			Vector3 wonderDestination = transform.position + newMoveDirection * Vector3.forward * moveDistance;
 			destinationSet = navMeshAgent.SetDestination(wonderDestination);
-			arrivedAtDestination = false;
 		}
 
 		return false;
@@ -108,9 +118,9 @@ public class Farmer : MonoBehaviour {
 		// Once a destination is reached, the path is automatically removed from the nav mesh agent.
 		if (destinationSet && !navMeshAgent.hasPath) {
 			destinationSet = false;
-			return arrivedAtDestination = true;
+			return true;
 		}
 
-		return arrivedAtDestination = false;
+		return false;
 	}
 }

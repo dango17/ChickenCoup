@@ -10,12 +10,12 @@ using System.Collections.Generic;
 /// </summary>
 public class UtilityScript {
 	public struct Motive {
-		public float insistence;
+		public delegate float Float();
+		public Float insistence;
 		public string name;
 
-		public Motive(float insistence,
 		public Motive(string name,
-			float insistence) {
+			Float insistence) {
 			this.name = name;
 			this.insistence = insistence;
 		}
@@ -24,12 +24,13 @@ public class UtilityScript {
 	public struct Action {
 		public bool completed;
 		public bool preconditionsMet;
-		public KeyValuePair<string, bool>[] preconditions;
+		public delegate bool Bool();
+		public KeyValuePair<string, Bool>[] preconditions;
 		public KeyValuePair<Motive, float>[] satisfiedMotives;
 		public delegate bool ActionToExecute();
 		public ActionToExecute action;
 
-		public Action(KeyValuePair<string, bool>[] preconditions,
+		public Action(KeyValuePair<string, Bool>[] preconditions,
 			KeyValuePair<Motive, float>[] satisfiedMotives,
 			ActionToExecute action) {
 			completed = false;
@@ -74,7 +75,7 @@ public class UtilityScript {
 		for (int i = 0; i < actions.Length; ++i) {
 			for (int j = 0; j < actions[i].preconditions.Length; ++j) {
 				// Check if the precondition is met.
-				if (!actions[i].preconditions[j].Value) {
+				if (!actions[i].preconditions[j].Value()) {
 					actions[i].preconditionsMet = false;
 					return;
 				}
@@ -103,7 +104,7 @@ public class UtilityScript {
 			foreach (KeyValuePair<Motive, float> satisfiedMotive in action.satisfiedMotives) {
 				foreach (Motive motive in motives) {
 					if (satisfiedMotive.Key.name == motive.name) {
-						float loweredInsistence = motive.insistence - satisfiedMotive.Value;
+						float loweredInsistence = motive.insistence() - satisfiedMotive.Value;
 						discontent += loweredInsistence * loweredInsistence;
 						break;
 					}
