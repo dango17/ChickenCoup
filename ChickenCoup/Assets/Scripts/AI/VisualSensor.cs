@@ -15,13 +15,12 @@ public class VisualSensor : Sensor {
 		return CheckLineOfSight(gameobject);
 	}
 
-	// TODO: check if object is within farmer's field of view.
 	private bool CheckLineOfSight(GameObject gameobject) {
 		Physics.Raycast(sensorOrigin.position,
 			gameobject.transform.position - sensorOrigin.position,
 			out RaycastHit raycastHit,
 			detectionRange);
 
-		return raycastHit.collider.gameObject == gameobject ? true : false;
+		return raycastHit.collider && raycastHit.collider.gameObject == gameobject ? true : false;
 	}
 }
