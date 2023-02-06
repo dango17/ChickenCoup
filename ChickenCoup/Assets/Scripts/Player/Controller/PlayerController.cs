@@ -1,5 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+//File Name : PlayerController.cs
+//Author : Daniel Oldham/s1903729
+//Collaborator : N/A
+//Created On : 27/01/23
+//Last Modified : 03/02/23
+//Description: playerManager that handles movement types and the relevant logic to execute
+
 using UnityEngine;
 
 namespace DO
@@ -28,12 +33,20 @@ namespace DO
             animator = GetComponentInChildren<Animator>(); 
         }
 
-        public void WallMovement(Vector3 moveDirection, Vector3 normal ,float delta)
+        public void WallMovement(Vector3 moveDirection, Vector3 normal, float delta)
         {
-            //Movement 
+            float dot = Vector3.Dot(moveDirection, Vector3.forward);
+            if (dot < 0)
+            {
+                moveDirection.x *= -1; 
+            }
+            HandleRotation(-normal, delta);
+ 
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normal);
             Debug.DrawRay(mTransform.position, projectedVelocity, Color.blue);
+
             Vector3 relativeDir = mTransform.InverseTransformDirection(projectedVelocity);
+
             Vector3 origin = mTransform.position;
             origin.y += 1;
 
@@ -63,12 +76,12 @@ namespace DO
             }
 
             rigidbody.velocity = projectedVelocity * wallSpeed;
-            HandleRotation(-normal, delta);
 
             float m = 0;
        
             //Looking inward therefore 
             m = relativeDir.x;
+
             if(m < 0.1f && m > -0.1f)
             {
                 m = 0;
