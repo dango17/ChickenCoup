@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
-/// Controls the navigation and actions of the farmer AI agent.
+/// Controls the navigation and actions of the farmer AI agent, and maintains 
+/// an instance of their utility script for decision making purposes.
 /// </summary>
 public class Farmer : MonoBehaviour {
 	private bool destinationSet = false;
@@ -13,21 +14,31 @@ public class Farmer : MonoBehaviour {
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
+	private UtilityScript utilityScript = null;
 	private NavMeshAgent navMeshAgent = null;
 
 	private void Awake() {
+		FindComponents();
+		CreateUtilityInstance();
+	}
+
+	private void Update() {
+		// Initiates the wonder action when starting the scene.
+		if ((!destinationSet && !arrivedAtDestination) ||
+			HasArrivedAtDestination()) {
+			Wonder();
+		}
+	}
+
+	private void FindComponents() {
 		visualSensor = GetComponentInChildren<VisualSensor>();
 		audioSensor = GetComponentInChildren<AudioSensor>();
 		navMeshAgent = GetComponent<NavMeshAgent>();
 	}
 
-	private void Update() {
-		HasArrivedAtDestination();
-
-		// Initiates the wonder action when starting the scene.
-		if ((!destinationSet && !arrivedAtDestination) ||
-			arrivedAtDestination) {
-			Wonder();
+	private void CreateUtilityInstance() {
+		if (utilityScript == null) {
+			// TODO: Create new utility script instance here.
 		}
 	}
 
