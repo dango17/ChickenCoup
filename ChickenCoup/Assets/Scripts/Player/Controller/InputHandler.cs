@@ -22,7 +22,9 @@ namespace DO
 
         float horizontal;
         float vertical;
-        float moveAmount; 
+        float moveAmount;
+
+        bool freeLook;
 
         public enum ExecutionOrder
         {
@@ -41,20 +43,33 @@ namespace DO
         private void Start()
         {
             cameraManager.wallCameraObject.SetActive(false);
-            cameraManager.mainCameraObject.SetActive(true); 
+            cameraManager.mainCameraObject.SetActive(true);
+            cameraManager.fpCameraObject.SetActive(false); 
         }
 
         private void Update()
         {
             horizontal = Input.GetAxis("Horizontal");
             vertical = Input.GetAxis("Vertical");
-            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical)); 
+            //Change this later, for testing purposes
+            freeLook = Input.GetKey(KeyCode.F);
+
+            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
 
             moveDirection = camHolder.forward * vertical;
             moveDirection += camHolder.right * horizontal;
             moveDirection.Normalize();
 
             float delta = Time.deltaTime; 
+
+            if(freeLook)
+            {
+                cameraManager.fpCameraObject.SetActive(true); 
+            }
+            else
+            {
+                cameraManager.fpCameraObject.SetActive(false); 
+            }
 
             if(movementOrder == ExecutionOrder.update)
             {
@@ -66,6 +81,11 @@ namespace DO
 
         void HandleMovement(Vector3 moveDirection, float delta)
         {
+            if(freeLook)
+            {
+                return; 
+            }
+
             Vector3 origin = controller.transform.position;
             origin.y += 1;
 

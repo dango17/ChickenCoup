@@ -2,7 +2,7 @@
 //Author : Daniel Oldham/s1903729
 //Collaborator : N/A
 //Created On : 27/01/23
-//Last Modified : 03/02/23
+//Last Modified : 07/03/23
 //Description: playerManager that handles movement types and the relevant logic to execute
 
 using UnityEngine;
@@ -40,7 +40,7 @@ namespace DO
             {
                 moveDirection.x *= -1; 
             }
-            HandleRotation(-normal, delta);
+            HandleRotation(normal, delta);
  
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normal);
             Debug.DrawRay(mTransform.position, projectedVelocity, Color.blue);
