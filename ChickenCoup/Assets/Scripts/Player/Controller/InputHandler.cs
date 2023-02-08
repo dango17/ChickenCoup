@@ -2,7 +2,7 @@
 //Author : Daniel Oldham/s1903729
 //Collaborator : N/A
 //Created On : 27/01/23
-//Last Modified : 03/02/23
+//Last Modified : 08/02/23
 //Description : Handles and Holds all relevant logic for Inputs  
 
 using UnityEngine;
@@ -22,7 +22,10 @@ namespace DO
 
         float horizontal;
         float vertical;
-        float moveAmount; 
+        float moveAmount;
+
+        bool freeLook;
+        public bool isJumping;
 
         public enum ExecutionOrder
         {
@@ -41,20 +44,46 @@ namespace DO
         private void Start()
         {
             cameraManager.wallCameraObject.SetActive(false);
-            cameraManager.mainCameraObject.SetActive(true); 
+            cameraManager.mainCameraObject.SetActive(true);
+            cameraManager.fpCameraObject.SetActive(false); 
         }
 
         private void Update()
         {
             horizontal = Input.GetAxis("Horizontal");
             vertical = Input.GetAxis("Vertical");
-            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical)); 
+
+            freeLook = Input.GetKey(KeyCode.F);
+            isJumping = Input.GetKeyDown(KeyCode.Space);
+
+            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
 
             moveDirection = camHolder.forward * vertical;
             moveDirection += camHolder.right * horizontal;
             moveDirection.Normalize();
 
             float delta = Time.deltaTime; 
+
+            //Jumping
+            if(isJumping && controller.isGrounded)
+            {
+                controller.HandleJump(); 
+            }
+            else if (controller.isGrounded == false)
+            {
+                controller.handleFalling(); 
+            }
+
+            if(freeLook)
+            {
+                cameraManager.fpCameraObject.SetActive(true);      
+                controller.FPRotation(horizontal, delta);
+
+            }
+            else
+            {
+                cameraManager.fpCameraObject.SetActive(false); 
+            }
 
             if(movementOrder == ExecutionOrder.update)
             {
@@ -66,6 +95,11 @@ namespace DO
 
         void HandleMovement(Vector3 moveDirection, float delta)
         {
+            if(freeLook)
+            {
+                return; 
+            }
+
             Vector3 origin = controller.transform.position;
             origin.y += 1;
 

@@ -2,7 +2,7 @@
 //Author : Daniel Oldham/s1903729
 //Collaborator : N/A
 //Created On : 27/01/23
-//Last Modified : 03/02/23
+//Last Modified : 08/03/23
 //Description: playerManager that handles movement types and the relevant logic to execute
 
 using UnityEngine;
@@ -14,23 +14,50 @@ namespace DO
         [Header("Speeds")]
         public float moveSpeed = 0.4f;
         public float rotateSpeed = 0.2f;
+        public float FPRotationSpeed = 0.2f; 
+        [Header("Jumping")]
+        public float jumpForce = 5f;
+        public float fallForce = 8f; 
         [Header("Cover")]
         public float wallSpeed = 0.2f;
         public float wallCheckDistance = 0.2f;
         [Header("Flags")]
         public bool isOnCover;
+        public bool isGrounded;
+        public bool isInFreeLook; 
+
+        public LayerMask groundLayer;
+        public float raycastDistance = 0.2f; 
+
         [HideInInspector]
         public Transform mTransform;
         [HideInInspector]
         public Animator animator;
         [HideInInspector]
         new Rigidbody rigidbody;
+        [HideInInspector]
+        public SkinnedMeshRenderer meshRenderer; 
 
         private void Start()
         {
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
-            animator = GetComponentInChildren<Animator>(); 
+            animator = GetComponentInChildren<Animator>();
+            meshRenderer = GetComponent<SkinnedMeshRenderer>(); 
+        }
+
+        private void Update()
+        {
+            //Ground Check the player
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
+            {
+                isGrounded = true; 
+            }
+            else
+            {
+                isGrounded = false; 
+            }
         }
 
         public void WallMovement(Vector3 moveDirection, Vector3 normal, float delta)
@@ -40,7 +67,7 @@ namespace DO
             {
                 moveDirection.x *= -1; 
             }
-            HandleRotation(-normal, delta);
+            HandleRotation(normal, delta);
  
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normal);
             Debug.DrawRay(mTransform.position, projectedVelocity, Color.blue);
@@ -111,6 +138,14 @@ namespace DO
             mTransform.rotation = Quaternion.Slerp(mTransform.rotation, lookRotation, delta / rotateSpeed);
         }
 
+        public void FPRotation(float horizontal, float delta)
+        {
+            Vector3 targetEuler = mTransform.eulerAngles;
+            targetEuler.y += horizontal * delta / FPRotationSpeed; 
+
+            mTransform.eulerAngles = targetEuler; 
+        }
+
         public void HandleAnimatorStates()
         {
             animator.SetBool("isOnCover", isOnCover);
@@ -130,6 +165,16 @@ namespace DO
                 m = 0f;
 
             animator.SetFloat("movement", m, 0.1f, delta);
+        }
+
+        public void HandleJump()
+        {
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); 
+        }
+
+        public void handleFalling()
+        {
+            rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse); 
         }
     }
 }
