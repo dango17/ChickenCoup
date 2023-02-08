@@ -25,6 +25,7 @@ namespace DO
         float moveAmount;
 
         bool freeLook;
+        public bool isJumping;
 
         public enum ExecutionOrder
         {
@@ -51,8 +52,11 @@ namespace DO
         {
             horizontal = Input.GetAxis("Horizontal");
             vertical = Input.GetAxis("Vertical");
+
             //Change this later, for testing purposes
             freeLook = Input.GetKey(KeyCode.F);
+
+            isJumping = Input.GetKeyDown(KeyCode.Space);
 
             moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
 
@@ -61,6 +65,15 @@ namespace DO
             moveDirection.Normalize();
 
             float delta = Time.deltaTime; 
+
+            if(isJumping && controller.isGrounded)
+            {
+                controller.HandleJump(); 
+            }
+            else if (controller.isGrounded == false)
+            {
+                controller.handleFalling(); 
+            }
 
             if(freeLook)
             {

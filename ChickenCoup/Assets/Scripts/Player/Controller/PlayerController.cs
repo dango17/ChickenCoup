@@ -14,11 +14,18 @@ namespace DO
         [Header("Speeds")]
         public float moveSpeed = 0.4f;
         public float rotateSpeed = 0.2f;
+        public float jumpForce = 5f;
+        public float fallForce = 8f; 
         [Header("Cover")]
         public float wallSpeed = 0.2f;
         public float wallCheckDistance = 0.2f;
         [Header("Flags")]
         public bool isOnCover;
+        public bool isGrounded;
+
+        public LayerMask groundLayer;
+        public float raycastDistance = 0.2f; 
+
         [HideInInspector]
         public Transform mTransform;
         [HideInInspector]
@@ -31,6 +38,20 @@ namespace DO
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
             animator = GetComponentInChildren<Animator>(); 
+        }
+
+        private void Update()
+        {
+            //Ground Check the player
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
+            {
+                isGrounded = true; 
+            }
+            else
+            {
+                isGrounded = false; 
+            }
         }
 
         public void WallMovement(Vector3 moveDirection, Vector3 normal, float delta)
@@ -130,6 +151,16 @@ namespace DO
                 m = 0f;
 
             animator.SetFloat("movement", m, 0.1f, delta);
+        }
+
+        public void HandleJump()
+        {
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); 
+        }
+
+        public void handleFalling()
+        {
+            rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse); 
         }
     }
 }
