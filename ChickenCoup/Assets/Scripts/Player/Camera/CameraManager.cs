@@ -2,7 +2,7 @@
 //Author : Daniel Oldham/s1903729
 //Collaborator : N/A
 //Created On : 31/01/23
-//Last Modified : 07/02/23
+//Last Modified : 08/02/23
 //Description : Holds all Camera gameObjects for several perspectives
 
 using UnityEngine;
@@ -13,6 +13,7 @@ namespace DO
     {
         public GameObject mainCameraObject;
         public GameObject wallCameraObject;
-        public GameObject fpCameraObject; 
+        public GameObject fpCameraObject;
+        public Transform camTransform; 
     }
 }
