@@ -2,7 +2,7 @@
 //Author : Daniel Oldham/s1903729
 //Collaborator : N/A
 //Created On : 27/01/23
-//Last Modified : 07/03/23
+//Last Modified : 08/03/23
 //Description: playerManager that handles movement types and the relevant logic to execute
 
 using UnityEngine;
@@ -14,6 +14,8 @@ namespace DO
         [Header("Speeds")]
         public float moveSpeed = 0.4f;
         public float rotateSpeed = 0.2f;
+        public float FPRotationSpeed = 0.2f; 
+        [Header("Jumping")]
         public float jumpForce = 5f;
         public float fallForce = 8f; 
         [Header("Cover")]
@@ -22,6 +24,7 @@ namespace DO
         [Header("Flags")]
         public bool isOnCover;
         public bool isGrounded;
+        public bool isInFreeLook; 
 
         public LayerMask groundLayer;
         public float raycastDistance = 0.2f; 
@@ -32,12 +35,15 @@ namespace DO
         public Animator animator;
         [HideInInspector]
         new Rigidbody rigidbody;
+        [HideInInspector]
+        public SkinnedMeshRenderer meshRenderer; 
 
         private void Start()
         {
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
-            animator = GetComponentInChildren<Animator>(); 
+            animator = GetComponentInChildren<Animator>();
+            meshRenderer = GetComponent<SkinnedMeshRenderer>(); 
         }
 
         private void Update()
@@ -130,6 +136,14 @@ namespace DO
 
             Quaternion lookRotation = Quaternion.LookRotation(lookDir);
             mTransform.rotation = Quaternion.Slerp(mTransform.rotation, lookRotation, delta / rotateSpeed);
+        }
+
+        public void FPRotation(float horizontal, float delta)
+        {
+            Vector3 targetEuler = mTransform.eulerAngles;
+            targetEuler.y += horizontal * delta / FPRotationSpeed; 
+
+            mTransform.eulerAngles = targetEuler; 
         }
 
         public void HandleAnimatorStates()

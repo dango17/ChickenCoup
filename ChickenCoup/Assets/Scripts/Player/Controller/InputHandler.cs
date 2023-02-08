@@ -2,7 +2,7 @@
 //Author : Daniel Oldham/s1903729
 //Collaborator : N/A
 //Created On : 27/01/23
-//Last Modified : 03/02/23
+//Last Modified : 08/02/23
 //Description : Handles and Holds all relevant logic for Inputs  
 
 using UnityEngine;
@@ -53,9 +53,7 @@ namespace DO
             horizontal = Input.GetAxis("Horizontal");
             vertical = Input.GetAxis("Vertical");
 
-            //Change this later, for testing purposes
             freeLook = Input.GetKey(KeyCode.F);
-
             isJumping = Input.GetKeyDown(KeyCode.Space);
 
             moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
@@ -66,6 +64,7 @@ namespace DO
 
             float delta = Time.deltaTime; 
 
+            //Jumping
             if(isJumping && controller.isGrounded)
             {
                 controller.HandleJump(); 
@@ -77,7 +76,9 @@ namespace DO
 
             if(freeLook)
             {
-                cameraManager.fpCameraObject.SetActive(true); 
+                cameraManager.fpCameraObject.SetActive(true);      
+                controller.FPRotation(horizontal, delta);
+
             }
             else
             {

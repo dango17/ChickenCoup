@@ -407,8 +407,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 81485277}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.3119, y: 2.662, z: 12.011}
-  m_LocalScale: {x: 3.7960715, y: 1, z: 1}
+  m_LocalPosition: {x: -3.1924, y: 2.662, z: 12.011}
+  m_LocalScale: {x: 4.035224, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1725,7 +1725,7 @@ MonoBehaviour:
       m_LegacyHeadingDefinition: -1
       m_LegacyVelocityFilterStrength: -1
   m_VerticalRecentering:
-    m_enabled: 0
+    m_enabled: 1
     m_WaitTime: 1
     m_RecenteringTime: 2
     m_LegacyHeadingDefinition: -1
@@ -1736,7 +1736,7 @@ MonoBehaviour:
     m_MaxSpeed: 200
     m_AccelTime: 0.1
     m_DecelTime: 0.1
-    m_InputAxisName: Horizontal
+    m_InputAxisName: 
     m_InputAxisValue: 0
     m_InvertInput: 0
     m_MinValue: -180
@@ -1750,7 +1750,7 @@ MonoBehaviour:
       m_LegacyVelocityFilterStrength: -1
   m_HorizontalRecentering:
     m_enabled: 0
-    m_WaitTime: 1
+    m_WaitTime: 0.1
     m_RecenteringTime: 2
     m_LegacyHeadingDefinition: -1
     m_LegacyVelocityFilterStrength: -1
@@ -1791,8 +1791,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 791657533}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.018, y: 0.757, z: 0.133}
+  m_LocalRotation: {x: 0.000000037078276, y: -0.000000059597106, z: 0.0000000073050606, w: 1}
+  m_LocalPosition: {x: 0.018000007, y: 0.7570002, z: 0.1329999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1823,7 +1823,7 @@ MonoBehaviour:
   m_Lens:
     FieldOfView: 60
     OrthographicSize: 5
-    NearClipPlane: 0.3
+    NearClipPlane: 0.1
     FarClipPlane: 100
     Dutch: 0
     ModeOverride: 0
@@ -3451,6 +3451,7 @@ MonoBehaviour:
   mainCameraObject: {fileID: 221961334}
   wallCameraObject: {fileID: 392706850}
   fpCameraObject: {fileID: 791657533}
+  camTransform: {fileID: 963194228}
 --- !u!1 &1887506866
 GameObject:
   m_ObjectHideFlags: 0
@@ -3727,18 +3728,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2.5
   rotateSpeed: 0.05
+  FPRotationSpeed: 0.01
   jumpForce: 500
   fallForce: 2
   wallSpeed: 2
   wallCheckDistance: 0.1
   isOnCover: 0
   isGrounded: 0
+  isInFreeLook: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 255
   raycastDistance: 0.1
   mTransform: {fileID: 0}
   animator: {fileID: 8129405380008812483}
+  meshRenderer: {fileID: 0}
 --- !u!4 &2018396054
 Transform:
   m_ObjectHideFlags: 0
@@ -3751,9 +3755,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 791657534}
   - {fileID: 8129405379999559693}
   - {fileID: 392706851}
-  - {fileID: 791657534}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
