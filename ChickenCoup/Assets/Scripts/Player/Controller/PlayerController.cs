@@ -17,17 +17,18 @@ namespace DO
         public float FPRotationSpeed = 0.2f; 
         [Header("Jumping")]
         public float jumpForce = 5f;
-        public float fallForce = 8f; 
+        public float fallForce = 8f;
+        [Header("Ground-Check")]
+        public LayerMask groundLayer;
+        public float raycastDistance = 0.2f; 
         [Header("Cover")]
         public float wallSpeed = 0.2f;
         public float wallCheckDistance = 0.2f;
+        public LayerMask coverLayer; 
         [Header("Flags")]
         public bool isOnCover;
         public bool isGrounded;
         public bool isInFreeLook; 
-
-        public LayerMask groundLayer;
-        public float raycastDistance = 0.2f; 
 
         [HideInInspector]
         public Transform mTransform;

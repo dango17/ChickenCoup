@@ -104,7 +104,7 @@ namespace DO
             origin.y += 1;
 
             Debug.DrawRay(origin, moveDirection * wallDetectionDistance);
-            if(Physics.SphereCast(origin, 0.25f,moveDirection,out RaycastHit hit, wallDetectionDistance))
+            if(Physics.SphereCast(origin, 0.25f, moveDirection,out RaycastHit hit, wallDetectionDistance, controller.coverLayer))
             {
                 cameraManager.wallCameraObject.SetActive(true);
                 cameraManager.mainCameraObject.SetActive(false);

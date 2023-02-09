@@ -523,7 +523,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221961334}
-  m_LocalRotation: {x: 0.55130094, y: 0.000000020301592, z: -0.000000013415077, w: 0.8343065}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000020301592, z: 0.000000013415077, w: 0.8343065}
   m_LocalPosition: {x: -1.03, y: 10.58, z: -0.7099998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1952,7 +1952,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.55130094, y: 0.000000020301592, z: -0.000000013415077, w: 0.8343065}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000020301592, z: 0.000000013415077, w: 0.8343065}
   m_LocalPosition: {x: -1.03, y: 10.58, z: -0.7099998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2072,7 +2072,7 @@ GameObject:
   - component: {fileID: 995734093}
   - component: {fileID: 995734092}
   - component: {fileID: 995734091}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2169,7 +2169,7 @@ GameObject:
   - component: {fileID: 1105764886}
   - component: {fileID: 1105764885}
   - component: {fileID: 1105764884}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2557,7 +2557,7 @@ GameObject:
   - component: {fileID: 1292289232}
   - component: {fileID: 1292289231}
   - component: {fileID: 1292289230}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3464,7 +3464,7 @@ GameObject:
   - component: {fileID: 1887506870}
   - component: {fileID: 1887506869}
   - component: {fileID: 1887506868}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3712,7 +3712,7 @@ MonoBehaviour:
   movementOrder: 1
   controller: {fileID: 2018396053}
   cameraManager: {fileID: 1860511021}
-  wallDetectionDistance: 0.05
+  wallDetectionDistance: 0.15
   isJumping: 0
 --- !u!114 &2018396053
 MonoBehaviour:
@@ -3731,15 +3731,18 @@ MonoBehaviour:
   FPRotationSpeed: 0.01
   jumpForce: 500
   fallForce: 2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  raycastDistance: 0.1
   wallSpeed: 2
-  wallCheckDistance: 0.1
+  wallCheckDistance: 0.2
+  coverLayer:
+    serializedVersion: 2
+    m_Bits: 512
   isOnCover: 0
   isGrounded: 0
   isInFreeLook: 0
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 255
-  raycastDistance: 0.1
   mTransform: {fileID: 0}
   animator: {fileID: 8129405380008812483}
   meshRenderer: {fileID: 0}
