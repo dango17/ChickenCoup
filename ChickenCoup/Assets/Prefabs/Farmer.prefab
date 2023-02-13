@@ -98,7 +98,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: f67b9f91cb5f0284e91ccdda606168db, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -263,7 +263,7 @@ MonoBehaviour:
   detectionRange: 8
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 320
+    m_Bits: 256
   sensorOrigin: {fileID: 282368683108314715}
 --- !u!1 &8627085775679455011
 GameObject:
@@ -313,7 +313,7 @@ MonoBehaviour:
   detectionRange: 8
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 320
+    m_Bits: 256
   sensorOrigin: {fileID: 7576291519940325098}
 --- !u!1 &8834422219251620262
 GameObject:

@@ -42,7 +42,7 @@ public class UtilityScript {
 		}
 	}
 
-	private Action nextAction = default;
+	private Action currentAction = default;
 	private Motive[] motives = default;
 	private Action[] actions = default;
 
@@ -56,21 +56,24 @@ public class UtilityScript {
 	/// Finds and executes the most optimal action for the AI until its completed.
 	/// </summary>
 	public void Update() {
-		if (nextAction.completed || nextAction.action == null) {
+		if (currentAction.completed || currentAction.action == null) {
 			FindExecutableActions();
 			FindOptimalAction();
 		}
 
 		// A completed action will be the previously executed action.
-		if (nextAction.action == null || nextAction.completed) {
+		if (currentAction.action == null || currentAction.completed) {
 			return;
 		}
 
-		nextAction.completed = nextAction.action();
+		currentAction.completed = currentAction.action();
 	}
 
+	/// <summary>
+	/// Sets the current action to its default value.
+	/// </summary>
 	public void Reset() {
-		nextAction = default;
+		currentAction = default;
 	}
 
 	/// <summary>
@@ -124,7 +127,7 @@ public class UtilityScript {
 
 			if (discontent < lowestDiscontent) {
 				lowestDiscontent = discontent;
-				nextAction = action;
+				currentAction = action;
 			}
 		}
 	}

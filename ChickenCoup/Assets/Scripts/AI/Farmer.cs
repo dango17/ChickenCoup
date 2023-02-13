@@ -12,9 +12,12 @@ using static UtilityScript;
 /// </summary>
 public class Farmer : MonoBehaviour {
 	private bool destinationSet = false;
+	private bool destinationChanged = false;
 	private bool canSeePlayer = false;
 	private float containChickenInsitence = 0.0f;
 	private float maximumContainChickenInsitence = 100.0f;
+
+	private Vector3 lastKnownPlayerPosition = Vector3.zero;
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
@@ -45,8 +48,7 @@ public class Farmer : MonoBehaviour {
 		if (!canSeePlayer && visualSensor.Data.Contains(player)) {
 			containChickenInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
-			// Stop the current action to start chasing player.
-			utilityScript.Reset();
+			StopCurrentAction();
 		}
 
 		utilityScript.Update();
@@ -98,6 +100,14 @@ public class Farmer : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Stops the current action, cancelling its execution.
+	/// </summary>
+	private void StopCurrentAction() {
+		navMeshAgent.autoBraking = true;
+		utilityScript.Reset();
+	}
+
+	/// <summary>
 	/// Makes the farmer wonder around the environment.
 	/// </summary>
 	/// <returns> True if Ai has completed the action. </returns>
@@ -114,7 +124,7 @@ public class Farmer : MonoBehaviour {
 				transform.rotation.eulerAngles.y + rotationAroundYAxis,
 				transform.rotation.eulerAngles.z);
 			const int moveDistance = 3;
-			// get distance ahead of agent
+			// Get a position ahead of the agent.
 			Vector3 wonderDestination = transform.position + newMoveDirection * Vector3.forward * moveDistance;
 			destinationSet = navMeshAgent.SetDestination(wonderDestination);
 		}
@@ -135,13 +145,20 @@ public class Farmer : MonoBehaviour {
 	/// <returns> True if AI has completed the action. </returns>
 	private bool ChaseChicken() {
 		if (HasArrivedAtDestination()) {
+			navMeshAgent.autoBraking = true;
 			return true;
 		}
 
-		if (!destinationSet) {
+		if (player.transform.position != lastKnownPlayerPosition) {
+			destinationChanged = true;
+		}
+
+		if (!destinationSet || destinationChanged) {
 			Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
+			lastKnownPlayerPosition = player.transform.position;
 			const float spaceBetweenAgentAndPlayer = 1.5f;
-			destinationSet = navMeshAgent.SetDestination(player.transform.position - directionToPlayer * spaceBetweenAgentAndPlayer);
+			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
+			navMeshAgent.autoBraking = false;
 		}
 
 		return false;
