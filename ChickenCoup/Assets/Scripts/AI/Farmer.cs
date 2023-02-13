@@ -1,6 +1,7 @@
 // Written by Liam Bansal
 // Date Created: 30/01/2023
 
+using DO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,6 +15,9 @@ public class Farmer : MonoBehaviour {
 	private bool destinationSet = false;
 	private bool destinationChanged = false;
 	private bool canSeePlayer = false;
+	private bool catchColliderTouchingPlayer = false;
+	private bool caughtPlayer = false;
+	private float catchRange = 1.5f;
 	private float containChickenInsitence = 0.0f;
 	private float maximumContainChickenInsitence = 100.0f;
 
@@ -21,9 +25,11 @@ public class Farmer : MonoBehaviour {
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
+	private BoxCollider catchCollider = null;
 	private UtilityScript utilityScript = null;
 	private NavMeshAgent navMeshAgent = null;
 	private GameObject player = null;
+	private Transform carryPosition = null;
 
 	#region Conditions
 	public bool CanWonder() {
@@ -32,6 +38,10 @@ public class Farmer : MonoBehaviour {
 
 	public bool CanSeePlayer() {
 		return canSeePlayer;
+	}
+
+	public bool CanCatchPlayer() {
+		return Vector3.Distance(transform.position, player.transform.position) < catchRange ? true : false;
 	}
 	#endregion
 
@@ -42,39 +52,58 @@ public class Farmer : MonoBehaviour {
 
 	private void Start() {
 		player = GameObject.FindGameObjectWithTag("Player");
+		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 	}
 
 	private void Update() {
 		if (!canSeePlayer && visualSensor.Data.Contains(player)) {
 			containChickenInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
-			StopCurrentAction();
+			StopAction();
 		}
 
 		utilityScript.Update();
 	}
 
+	private void OnTriggerEnter(Collider other) {
+		if (other.CompareTag("Player")) {
+			catchColliderTouchingPlayer = true;
+		}
+	}
+
+	private void OnTriggerExit(Collider other) {
+		if (other.CompareTag("Player")) {
+			catchColliderTouchingPlayer = false;
+		}
+	}
+
 	private void FindComponents() {
 		visualSensor = GetComponentInChildren<VisualSensor>();
 		audioSensor = GetComponentInChildren<AudioSensor>();
+		catchCollider = GetComponentInChildren<BoxCollider>();
 		navMeshAgent = GetComponent<NavMeshAgent>();
 	}
 
 	private void CreateUtilityInstance() {
 		if (utilityScript == null) {
 			const float initialInsistence = 0.0f;
+			#region Wonder Motive
 			Motive wonderMotive = new Motive("Wonder", delegate {
 				return initialInsistence;
 			});
+			#endregion
+			#region Contain Player Motive
 			Motive containPlayerMotive = new Motive("ContainPlayer", delegate {
 				return containChickenInsitence;
 			});
+			#endregion
 			Motive[] motives = new Motive[] {
 				wonderMotive,
 				containPlayerMotive
 			};
 
 			int satisfactionAmount = 1;
+			#region Wonder Action
 			Action wonderAction = new Action(new KeyValuePair<string, Action.Bool>[] {
 				new KeyValuePair<string, Action.Bool>("Idling", CanWonder)
 			},
@@ -82,17 +111,32 @@ public class Farmer : MonoBehaviour {
 				new KeyValuePair<Motive, float>(wonderMotive, satisfactionAmount)
 			},
 			Wonder);
-			satisfactionAmount = 5;
+			#endregion
+			#region Chase Action
+			satisfactionAmount = 25;
 			Action chaseChickenAction = new Action(new KeyValuePair<string, Action.Bool>[] {
 				new KeyValuePair<string, Action.Bool>("Can See Player", CanSeePlayer)
 			},
 			new KeyValuePair<Motive, float>[] {
 				new KeyValuePair<Motive, float>(containPlayerMotive, satisfactionAmount)
 			},
-			ChaseChicken);
+			ChasePlayer);
+			#endregion
+			#region Catch Action
+			satisfactionAmount = 50;
+			Action catchChickenAction = new Action(new KeyValuePair<string, Action.Bool>[] {
+				new KeyValuePair<string, Action.Bool>("Can See Player", CanSeePlayer),
+				new KeyValuePair<string, Action.Bool>("Can Catch Player", CanCatchPlayer)
+			},
+			new KeyValuePair<Motive, float>[] {
+				new KeyValuePair<Motive, float>(containPlayerMotive, satisfactionAmount)
+			},
+			CatchPlayer);
+			#endregion
 			Action[] actions = new Action[] {
 				wonderAction,
-				chaseChickenAction
+				chaseChickenAction,
+				catchChickenAction
 			};
 
 			utilityScript = new UtilityScript(motives, actions);
@@ -100,9 +144,9 @@ public class Farmer : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Stops the current action, cancelling its execution.
+	/// Stops the current action from executing.
 	/// </summary>
-	private void StopCurrentAction() {
+	private void StopAction() {
 		navMeshAgent.autoBraking = true;
 		utilityScript.Reset();
 	}
@@ -143,7 +187,7 @@ public class Farmer : MonoBehaviour {
 	/// Makes the farmer pursue the chicken and get within range to catch them.
 	/// </summary>
 	/// <returns> True if AI has completed the action. </returns>
-	private bool ChaseChicken() {
+	private bool ChasePlayer() {
 		if (HasArrivedAtDestination()) {
 			navMeshAgent.autoBraking = true;
 			return true;
@@ -156,7 +200,8 @@ public class Farmer : MonoBehaviour {
 		if (!destinationSet || destinationChanged) {
 			Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
 			lastKnownPlayerPosition = player.transform.position;
-			const float spaceBetweenAgentAndPlayer = 1.5f;
+			// Must be lower than the catch range.
+			const float spaceBetweenAgentAndPlayer = 1.25f;
 			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
 			navMeshAgent.autoBraking = false;
 		}
@@ -167,8 +212,37 @@ public class Farmer : MonoBehaviour {
 	/// <summary>
 	/// The farmer will try to catch the chicken if it's close enough.
 	/// </summary>
-	private void Catch() {
+	/// <returns> True when the action has completed. </returns>
+	private bool CatchPlayer() {
+		// TODO: remove this once the carry player action is implemented.
+		if (caughtPlayer) {
+			return true;
+		}
 
+		if (!CanCatchPlayer()) {
+			StopAction();
+			return false;
+		}
+
+		catchCollider.enabled = true;
+
+		if (catchColliderTouchingPlayer) {
+			player.GetComponent<PlayerController>().enabled = false;
+			player.GetComponent<InputHandler>().enabled = false;
+			player.GetComponentInChildren<Rigidbody>().useGravity = false;
+			player.transform.position = carryPosition.position;
+			return caughtPlayer = true;
+		}
+		
+		return false;
+	}
+
+	/// <summary>
+	/// Carries the player back to the coop, or latest checkpoint.
+	/// </summary>
+	/// <returns> True when the action has completed. </returns>
+	private bool CarryChicken() {
+		return false;
 	}
 
 	/// <summary>
