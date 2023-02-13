@@ -9,6 +9,15 @@ using UnityEngine;
 /// Gathers data about an agents surrounding environment.
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
+	public LinkedList<GameObject> Data {
+		get {
+			return data;
+		}
+		private set {
+			data = value;
+		}
+	}
+
 	[SerializeField, Tooltip("Data will only be gathered within this range " +
 		"i.e. it's the view distance, hearing range etc.")]
 	protected int detectionRange = 5;

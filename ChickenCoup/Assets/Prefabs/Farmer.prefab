@@ -263,7 +263,7 @@ MonoBehaviour:
   detectionRange: 8
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   sensorOrigin: {fileID: 282368683108314715}
 --- !u!1 &8627085775679455011
 GameObject:
@@ -313,7 +313,7 @@ MonoBehaviour:
   detectionRange: 8
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   sensorOrigin: {fileID: 7576291519940325098}
 --- !u!1 &8834422219251620262
 GameObject:

@@ -12,15 +12,23 @@ using static UtilityScript;
 /// </summary>
 public class Farmer : MonoBehaviour {
 	private bool destinationSet = false;
+	private bool canSeePlayer = false;
+	private float containChickenInsitence = 0.0f;
+	private float maximumContainChickenInsitence = 100.0f;
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
 	private UtilityScript utilityScript = null;
 	private NavMeshAgent navMeshAgent = null;
+	private GameObject player = null;
 
 	#region Conditions
 	public bool CanWonder() {
 		return true;
+	}
+
+	public bool CanSeePlayer() {
+		return canSeePlayer;
 	}
 	#endregion
 
@@ -29,7 +37,18 @@ public class Farmer : MonoBehaviour {
 		CreateUtilityInstance();
 	}
 
+	private void Start() {
+		player = GameObject.FindGameObjectWithTag("Player");
+	}
+
 	private void Update() {
+		if (!canSeePlayer && visualSensor.Data.Contains(player)) {
+			containChickenInsitence = maximumContainChickenInsitence;
+			canSeePlayer = true;
+			// Stop the current action to start chasing player.
+			utilityScript.Reset();
+		}
+
 		utilityScript.Update();
 	}
 
@@ -45,11 +64,15 @@ public class Farmer : MonoBehaviour {
 			Motive wonderMotive = new Motive("Wonder", delegate {
 				return initialInsistence;
 			});
+			Motive containPlayerMotive = new Motive("ContainPlayer", delegate {
+				return containChickenInsitence;
+			});
 			Motive[] motives = new Motive[] {
-				wonderMotive
+				wonderMotive,
+				containPlayerMotive
 			};
 
-			const float satisfactionAmount = 1.0f;
+			int satisfactionAmount = 1;
 			Action wonderAction = new Action(new KeyValuePair<string, Action.Bool>[] {
 				new KeyValuePair<string, Action.Bool>("Idling", CanWonder)
 			},
@@ -57,17 +80,27 @@ public class Farmer : MonoBehaviour {
 				new KeyValuePair<Motive, float>(wonderMotive, satisfactionAmount)
 			},
 			Wonder);
+			satisfactionAmount = 5;
+			Action chaseChickenAction = new Action(new KeyValuePair<string, Action.Bool>[] {
+				new KeyValuePair<string, Action.Bool>("Can See Player", CanSeePlayer)
+			},
+			new KeyValuePair<Motive, float>[] {
+				new KeyValuePair<Motive, float>(containPlayerMotive, satisfactionAmount)
+			},
+			ChaseChicken);
 			Action[] actions = new Action[] {
-				wonderAction
+				wonderAction,
+				chaseChickenAction
 			};
 
 			utilityScript = new UtilityScript(motives, actions);
 		}
-	}	
+	}
 
 	/// <summary>
 	/// Makes the farmer wonder around the environment.
 	/// </summary>
+	/// <returns> True if Ai has completed the action. </returns>
 	private bool Wonder() {
 		if (HasArrivedAtDestination()) {
 			return true;
@@ -99,8 +132,19 @@ public class Farmer : MonoBehaviour {
 	/// <summary>
 	/// Makes the farmer pursue the chicken and get within range to catch them.
 	/// </summary>
-	private void Chase() {
+	/// <returns> True if AI has completed the action. </returns>
+	private bool ChaseChicken() {
+		if (HasArrivedAtDestination()) {
+			return true;
+		}
 
+		if (!destinationSet) {
+			Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
+			const float spaceBetweenAgentAndPlayer = 1.5f;
+			destinationSet = navMeshAgent.SetDestination(player.transform.position - directionToPlayer * spaceBetweenAgentAndPlayer);
+		}
+
+		return false;
 	}
 
 	/// <summary>

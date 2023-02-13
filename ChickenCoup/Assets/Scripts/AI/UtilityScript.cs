@@ -2,6 +2,7 @@
 // Date Created: 6/2/2023
 
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Contains a list of motives and actions, selecting an action to execute 
@@ -68,6 +69,10 @@ public class UtilityScript {
 		nextAction.completed = nextAction.action();
 	}
 
+	public void Reset() {
+		nextAction = default;
+	}
+
 	/// <summary>
 	/// Marks any executable action as such, if all of its preconditions are met.
 	/// </summary>
@@ -91,7 +96,7 @@ public class UtilityScript {
 	/// </summary>
 	private void FindOptimalAction() {
 		// Set to a high value to force at least one selection.
-		float lowestDiscontent = 1000000;
+		float lowestDiscontent = Mathf.Infinity;
 
 		foreach (Action action in actions) {
 			if (action.action == null || !action.preconditionsMet) {
@@ -105,8 +110,14 @@ public class UtilityScript {
 				foreach (Motive motive in motives) {
 					if (satisfiedMotive.Key.name == motive.name) {
 						float loweredInsistence = motive.insistence() - satisfiedMotive.Value;
+						// Clamp value to prevent dicontent increasing when
+						// insistence is already at 0, because subtracting
+						// from it produces a negative number, which turns
+						// positive when multiplied by itself.
+						loweredInsistence = Mathf.Clamp(loweredInsistence, 0.0f, Mathf.Infinity);
 						discontent += loweredInsistence * loweredInsistence;
-						break;
+					} else {
+						discontent += motive.insistence() * motive.insistence();
 					}
 				}
 			}
