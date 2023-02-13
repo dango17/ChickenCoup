@@ -5,6 +5,7 @@ using DO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+// Added to access structs within the class more easily.
 using static UtilityScript;
 
 /// <summary>
@@ -30,6 +31,11 @@ public class Farmer : MonoBehaviour {
 	private NavMeshAgent navMeshAgent = null;
 	private GameObject player = null;
 	private Transform carryPosition = null;
+	/// <summary>
+	/// The position where the farmer will attempt the place the player after 
+	/// they've been caught.
+	/// </summary>
+	private Transform releasePosition = null;
 
 	#region Conditions
 	public bool CanWonder() {
@@ -43,6 +49,10 @@ public class Farmer : MonoBehaviour {
 	public bool CanCatchPlayer() {
 		return Vector3.Distance(transform.position, player.transform.position) < catchRange ? true : false;
 	}
+
+	public bool CanCarryPlayer() {
+		return caughtPlayer;
+	}
 	#endregion
 
 	private void Awake() {
@@ -53,6 +63,7 @@ public class Farmer : MonoBehaviour {
 	private void Start() {
 		player = GameObject.FindGameObjectWithTag("Player");
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
+		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
 	}
 
 	private void Update() {
@@ -114,7 +125,7 @@ public class Farmer : MonoBehaviour {
 			#endregion
 			#region Chase Action
 			satisfactionAmount = 25;
-			Action chaseChickenAction = new Action(new KeyValuePair<string, Action.Bool>[] {
+			Action chasePlayerAction = new Action(new KeyValuePair<string, Action.Bool>[] {
 				new KeyValuePair<string, Action.Bool>("Can See Player", CanSeePlayer)
 			},
 			new KeyValuePair<Motive, float>[] {
@@ -124,7 +135,7 @@ public class Farmer : MonoBehaviour {
 			#endregion
 			#region Catch Action
 			satisfactionAmount = 50;
-			Action catchChickenAction = new Action(new KeyValuePair<string, Action.Bool>[] {
+			Action catchPlayerAction = new Action(new KeyValuePair<string, Action.Bool>[] {
 				new KeyValuePair<string, Action.Bool>("Can See Player", CanSeePlayer),
 				new KeyValuePair<string, Action.Bool>("Can Catch Player", CanCatchPlayer)
 			},
@@ -133,10 +144,22 @@ public class Farmer : MonoBehaviour {
 			},
 			CatchPlayer);
 			#endregion
+			#region Carry Action
+			satisfactionAmount = 75;
+			Action carryPlayerAction = new Action(new KeyValuePair<string, Action.Bool>[] {
+				new KeyValuePair<string, Action.Bool>("Can See Player", CanSeePlayer),
+				new KeyValuePair<string, Action.Bool>("Can Carry Player", CanCarryPlayer)
+			},
+			new KeyValuePair<Motive, float>[] {
+				new KeyValuePair<Motive, float>(containPlayerMotive, satisfactionAmount)
+			},
+			CarryPlayer);
+			#endregion
 			Action[] actions = new Action[] {
 				wonderAction,
-				chaseChickenAction,
-				catchChickenAction
+				chasePlayerAction,
+				catchPlayerAction,
+				carryPlayerAction
 			};
 
 			utilityScript = new UtilityScript(motives, actions);
@@ -145,8 +168,12 @@ public class Farmer : MonoBehaviour {
 
 	/// <summary>
 	/// Stops the current action from executing.
+	/// Resets various variables used throughout the farmer's actions, to 
+	/// prevent the data being misread.
 	/// </summary>
 	private void StopAction() {
+		destinationSet = false;
+		destinationChanged = false;
 		navMeshAgent.autoBraking = true;
 		utilityScript.Reset();
 	}
@@ -214,11 +241,6 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True when the action has completed. </returns>
 	private bool CatchPlayer() {
-		// TODO: remove this once the carry player action is implemented.
-		if (caughtPlayer) {
-			return true;
-		}
-
 		if (!CanCatchPlayer()) {
 			StopAction();
 			return false;
@@ -227,9 +249,8 @@ public class Farmer : MonoBehaviour {
 		catchCollider.enabled = true;
 
 		if (catchColliderTouchingPlayer) {
-			player.GetComponent<PlayerController>().enabled = false;
-			player.GetComponent<InputHandler>().enabled = false;
-			player.GetComponentInChildren<Rigidbody>().useGravity = false;
+			HoldOntoPlayer(false);
+			catchCollider.enabled = false;
 			player.transform.position = carryPosition.position;
 			return caughtPlayer = true;
 		}
@@ -238,10 +259,25 @@ public class Farmer : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Carries the player back to the coop, or latest checkpoint.
+	/// Carries the player back to the most recent checkpoint.
 	/// </summary>
 	/// <returns> True when the action has completed. </returns>
-	private bool CarryChicken() {
+	private bool CarryPlayer() {
+		if (HasArrivedAtDestination()) {
+			HoldOntoPlayer(false);
+			caughtPlayer = false;
+			// Set to zer so the farmer doesn't instantly chase the chicken
+			// after letting them go.
+			containChickenInsitence = 0.0f;
+			return true;
+		}
+
+		player.transform.position = carryPosition.position;
+
+		if (!destinationSet) {
+			destinationSet = navMeshAgent.SetDestination(releasePosition.position);
+		}
+
 		return false;
 	}
 
@@ -257,5 +293,18 @@ public class Farmer : MonoBehaviour {
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// Restricts the players movement and keeps them in place in front of the 
+	/// farmer.
+	/// </summary>
+	/// <param name="holdOntoPlayer"> True if the farmer should hold the player 
+	/// in place. </param>
+	private void HoldOntoPlayer(bool holdOntoPlayer) {
+		holdOntoPlayer = !holdOntoPlayer;
+		player.GetComponent<PlayerController>().enabled = holdOntoPlayer;
+		player.GetComponent<InputHandler>().enabled = holdOntoPlayer;
+		player.GetComponentInChildren<Rigidbody>().useGravity = holdOntoPlayer;
 	}
 }

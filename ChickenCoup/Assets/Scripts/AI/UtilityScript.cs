@@ -5,9 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Contains a list of motives and actions, selecting an action to execute 
+/// Contains a list of motives and actions, and selects an action to execute 
 /// based on the highest priority motive.
-/// This is what controls the AI farmer's decision making process.
 /// </summary>
 public class UtilityScript {
 	public struct Motive {
