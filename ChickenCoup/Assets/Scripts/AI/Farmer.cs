@@ -16,11 +16,16 @@ public class Farmer : MonoBehaviour {
 	private bool destinationSet = false;
 	private bool destinationChanged = false;
 	private bool canSeePlayer = false;
+	private bool seenPlayerRecently = false;
 	private bool catchColliderTouchingPlayer = false;
 	private bool caughtPlayer = false;
 	private float catchRange = 1.5f;
-	private float containChickenInsitence = 0.0f;
+	private float containPlayerInsitence = 0.0f;
 	private float maximumContainChickenInsitence = 100.0f;
+	private float timeToSpendSearchingForPlayer = 0.0f;
+	[SerializeField, Tooltip("The length of time the farmer will spend " +
+		"searching for the player.")]
+	private float maximumTimeToSpendSearchingForPlayer = 30.0f;
 
 	private Vector3 lastKnownPlayerPosition = Vector3.zero;
 
@@ -46,12 +51,20 @@ public class Farmer : MonoBehaviour {
 		return canSeePlayer;
 	}
 
+	public bool CannotSeePlayer() {
+		return canSeePlayer == false ? true : false;
+	}
+
 	public bool CanCatchPlayer() {
 		return Vector3.Distance(transform.position, player.transform.position) < catchRange ? true : false;
 	}
 
 	public bool CanCarryPlayer() {
 		return caughtPlayer;
+	}
+
+	public bool SeenPlayerRecently() {
+		return seenPlayerRecently;
 	}
 	#endregion
 
@@ -67,10 +80,36 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void Update() {
+		// Handles seeing the player.
 		if (!canSeePlayer && visualSensor.Data.Contains(player)) {
-			containChickenInsitence = maximumContainChickenInsitence;
+			containPlayerInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
+			seenPlayerRecently = true;
+			// Stops the current action so the AI can react to seeing the
+			// player for the first time in a while.
 			StopAction();
+		}
+
+		// Handles losing sight of the player.
+		if (canSeePlayer && !visualSensor.Data.Contains(player)) {
+			canSeePlayer = false;
+			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
+		}
+
+		// Handles what happens whilst the player is visible to the farmer.
+		if (canSeePlayer) {
+			lastKnownPlayerPosition = player.transform.position;
+		}
+
+		// Handles what happens if the player isn't visible to the farmer,
+		// but was seen recently.
+		if (!canSeePlayer && seenPlayerRecently) {
+			timeToSpendSearchingForPlayer -= Time.deltaTime;
+
+			if (timeToSpendSearchingForPlayer <= 0.0f) {
+				containPlayerInsitence = 0.0f;
+				seenPlayerRecently = false;
+			}
 		}
 
 		utilityScript.Update();
@@ -88,6 +127,10 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Finds the components that are used by this script, and attached to the 
+	/// scripts game object, or children of.
+	/// </summary>
 	private void FindComponents() {
 		visualSensor = GetComponentInChildren<VisualSensor>();
 		audioSensor = GetComponentInChildren<AudioSensor>();
@@ -95,6 +138,10 @@ public class Farmer : MonoBehaviour {
 		navMeshAgent = GetComponent<NavMeshAgent>();
 	}
 
+	/// <summary>
+	/// Creates an instance of the utility script for the AI to use, and 
+	/// populates it with motives and actions.
+	/// </summary>
 	private void CreateUtilityInstance() {
 		if (utilityScript == null) {
 			const float initialInsistence = 0.0f;
@@ -105,7 +152,7 @@ public class Farmer : MonoBehaviour {
 			#endregion
 			#region Contain Player Motive
 			Motive containPlayerMotive = new Motive("ContainPlayer", delegate {
-				return containChickenInsitence;
+				return containPlayerInsitence;
 			});
 			#endregion
 			Motive[] motives = new Motive[] {
@@ -155,17 +202,30 @@ public class Farmer : MonoBehaviour {
 			},
 			CarryPlayer);
 			#endregion
+			#region Search Action
+			satisfactionAmount = 15;
+			Action searchAction = new Action(new KeyValuePair<string, Action.Bool>[] {
+				new KeyValuePair<string, Action.Bool>("Cannot See Player", CannotSeePlayer),
+				new KeyValuePair<string, Action.Bool>("Seen Player Recently", SeenPlayerRecently)
+			},
+			new KeyValuePair<Motive, float>[] {
+				new KeyValuePair<Motive, float>(containPlayerMotive, satisfactionAmount)
+			},
+			Search);
+			#endregion
 			Action[] actions = new Action[] {
 				wonderAction,
 				chasePlayerAction,
 				catchPlayerAction,
-				carryPlayerAction
+				carryPlayerAction,
+				searchAction
 			};
 
 			utilityScript = new UtilityScript(motives, actions);
 		}
 	}
 
+	#region Farmer's Actions
 	/// <summary>
 	/// Stops the current action from executing.
 	/// Resets various variables used throughout the farmer's actions, to 
@@ -206,8 +266,10 @@ public class Farmer : MonoBehaviour {
 	/// <summary>
 	/// Makes the farmer search for the chicken, if their whereabouts are unknown.
 	/// </summary>
-	private void Search() {
-
+	/// <returns> True when the action has completed. </returns>
+	private bool Search() {
+		Debug.Log("Searching");
+		return false;
 	}
 
 	/// <summary>
@@ -226,7 +288,6 @@ public class Farmer : MonoBehaviour {
 
 		if (!destinationSet || destinationChanged) {
 			Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
-			lastKnownPlayerPosition = player.transform.position;
 			// Must be lower than the catch range.
 			const float spaceBetweenAgentAndPlayer = 1.25f;
 			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
@@ -243,7 +304,7 @@ public class Farmer : MonoBehaviour {
 	private bool CatchPlayer() {
 		if (!CanCatchPlayer()) {
 			StopAction();
-			return false;
+			return true;
 		}
 
 		catchCollider.enabled = true;
@@ -268,7 +329,7 @@ public class Farmer : MonoBehaviour {
 			caughtPlayer = false;
 			// Set to zer so the farmer doesn't instantly chase the chicken
 			// after letting them go.
-			containChickenInsitence = 0.0f;
+			containPlayerInsitence = 0.0f;
 			return true;
 		}
 
@@ -280,6 +341,7 @@ public class Farmer : MonoBehaviour {
 
 		return false;
 	}
+	#endregion
 
 	/// <summary>
 	/// Checks if the agent has arrived at their destination.
