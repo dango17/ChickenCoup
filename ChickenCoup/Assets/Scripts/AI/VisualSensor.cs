@@ -4,7 +4,8 @@
 using UnityEngine;
 
 /// <summary>
-/// 
+/// Makes the generic sensor behave as a visual sensor by checking for a clear 
+/// line of sight to game objects after detecting them.
 /// </summary>
 public class VisualSensor : Sensor {
 	/// <summary>
@@ -15,13 +16,12 @@ public class VisualSensor : Sensor {
 		return CheckLineOfSight(gameobject);
 	}
 
-	// TODO: check if object is within farmer's field of view.
 	private bool CheckLineOfSight(GameObject gameobject) {
 		Physics.Raycast(sensorOrigin.position,
 			gameobject.transform.position - sensorOrigin.position,
 			out RaycastHit raycastHit,
 			detectionRange);
 
-		return raycastHit.collider.gameObject == gameobject ? true : false;
+		return raycastHit.collider && raycastHit.collider.gameObject == gameobject ? true : false;
 	}
 }
