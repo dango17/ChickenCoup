@@ -235,6 +235,7 @@ public class Farmer : MonoBehaviour {
 		destinationSet = false;
 		destinationChanged = false;
 		navMeshAgent.autoBraking = true;
+		navMeshAgent.ResetPath();
 		utilityScript.Reset();
 	}
 
@@ -264,11 +265,26 @@ public class Farmer : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Makes the farmer search for the chicken, if their whereabouts are unknown.
+	/// Makes the farmer search for the player if their whereabouts are unknown,
+	/// by moving to the players last known position and wondering around.
 	/// </summary>
 	/// <returns> True when the action has completed. </returns>
 	private bool Search() {
-		Debug.Log("Searching");
+		if (canSeePlayer || !seenPlayerRecently) {
+			StopAction();
+			return true;
+		}
+
+		// Check if the farmer has reached the player's last known position.
+		if (HasArrivedAtDestination()) {
+			Wonder();
+		}
+
+		if (!destinationSet) {
+			// Move to the player's last known position.
+			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition);
+		}
+		
 		return false;
 	}
 
@@ -282,7 +298,7 @@ public class Farmer : MonoBehaviour {
 			return true;
 		}
 
-		if (player.transform.position != lastKnownPlayerPosition) {
+		if (navMeshAgent.destination != lastKnownPlayerPosition) {
 			destinationChanged = true;
 		}
 
@@ -292,6 +308,7 @@ public class Farmer : MonoBehaviour {
 			const float spaceBetweenAgentAndPlayer = 1.25f;
 			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
 			navMeshAgent.autoBraking = false;
+			destinationChanged = false;
 		}
 
 		return false;
