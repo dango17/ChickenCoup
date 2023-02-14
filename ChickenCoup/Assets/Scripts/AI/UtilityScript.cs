@@ -80,15 +80,17 @@ public class UtilityScript {
 	/// </summary>
 	private void FindExecutableActions() {
 		for (int i = 0; i < actions.Length; ++i) {
+			bool preconditionsMet = true;
+
 			for (int j = 0; j < actions[i].preconditions.Length; ++j) {
 				// Check if the precondition is met.
 				if (!actions[i].preconditions[j].Value()) {
-					actions[i].preconditionsMet = false;
-					return;
+					preconditionsMet = false;
+					break;
 				}
 			}
 
-			actions[i].preconditionsMet = true;
+			actions[i].preconditionsMet = preconditionsMet;
 		}
 	}
 
