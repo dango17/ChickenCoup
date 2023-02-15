@@ -26,6 +26,9 @@ namespace DO
         float moveAmount;
 
         bool freeLook;
+        public float runningTimer = 5f;
+        public float staminaTimer = 4f; 
+
         public bool isJumping;
         public bool isSprinting;
         public bool isTired; 
@@ -89,7 +92,7 @@ namespace DO
             }
             IEnumerator RunTimer()
             {
-                yield return new WaitForSeconds(5);
+                yield return new WaitForSeconds(runningTimer);
                 isSprinting = false;
 
                 controller.moveSpeed = 2f;
@@ -104,7 +107,7 @@ namespace DO
             } 
             IEnumerator RunCoolDown()
             {
-                yield return new WaitForSeconds(3);
+                yield return new WaitForSeconds(staminaTimer);
                 isTired = false;
 
             }
