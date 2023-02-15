@@ -26,6 +26,7 @@ namespace DO
 
         bool freeLook;
         public bool isJumping;
+        public bool isSprinting; 
 
         public enum ExecutionOrder
         {
@@ -54,6 +55,8 @@ namespace DO
             vertical = Input.GetAxis("Vertical");
 
             freeLook = Input.GetKey(KeyCode.F);
+
+            isSprinting = Input.GetKey(KeyCode.LeftShift);
             isJumping = Input.GetKeyDown(KeyCode.Space);
 
             moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
@@ -74,6 +77,17 @@ namespace DO
                 controller.handleFalling(); 
             }
 
+            //Sprinting 
+            if(isSprinting)
+            {
+                controller.HandleRun(); 
+            }
+            else
+            {
+                controller.HandleRunCoolDown(); 
+            }
+
+            //First Person
             if(freeLook)
             {
                 cameraManager.fpCameraObject.SetActive(true);      
@@ -85,6 +99,7 @@ namespace DO
                 cameraManager.fpCameraObject.SetActive(false); 
             }
 
+            //Execution Order
             if(movementOrder == ExecutionOrder.update)
             {
                 HandleMovement(moveDirection, delta);
@@ -104,7 +119,7 @@ namespace DO
             origin.y += 1;
 
             Debug.DrawRay(origin, moveDirection * wallDetectionDistance);
-            if(Physics.SphereCast(origin, 0.25f,moveDirection,out RaycastHit hit, wallDetectionDistance))
+            if(Physics.SphereCast(origin, 0.25f, moveDirection,out RaycastHit hit, wallDetectionDistance, controller.coverLayer))
             {
                 cameraManager.wallCameraObject.SetActive(true);
                 cameraManager.mainCameraObject.SetActive(false);
