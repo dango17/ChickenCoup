@@ -1730,6 +1730,14 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.000000013415077
       objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154569, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: m_Interpolate
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: coverLayer.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
     - target: {fileID: 1752816793553067403, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -1941,7 +1949,7 @@ GameObject:
   - component: {fileID: 1105764885}
   - component: {fileID: 1105764884}
   - component: {fileID: 1105764887}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2363,7 +2371,7 @@ GameObject:
   - component: {fileID: 1292289231}
   - component: {fileID: 1292289230}
   - component: {fileID: 1292289233}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2752,7 +2760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204361, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

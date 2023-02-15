@@ -6,6 +6,7 @@
 //Description: playerManager that handles movement types and the relevant logic to execute
 
 using UnityEngine;
+using System.Collections;
 
 namespace DO
 {
@@ -38,14 +39,17 @@ namespace DO
         [HideInInspector]
         new Rigidbody rigidbody;
         [HideInInspector]
-        public SkinnedMeshRenderer meshRenderer; 
+        public SkinnedMeshRenderer meshRenderer;
+        [HideInInspector]
+        public InputHandler inputHandler;
 
         private void Start()
         {
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
             animator = GetComponentInChildren<Animator>();
-            meshRenderer = GetComponent<SkinnedMeshRenderer>(); 
+            meshRenderer = GetComponent<SkinnedMeshRenderer>();
+            inputHandler = GetComponent<InputHandler>(); 
         }
 
         private void Update()
@@ -171,12 +175,12 @@ namespace DO
 
         public void HandleRun()
         {
-            moveSpeed = 4f;
+                     
         }
-
+      
         public void HandleRunCoolDown()
         {
-            moveSpeed = 2.5f; 
+         
         }
 
         public void HandleJump()

@@ -6,6 +6,7 @@
 //Description : Handles and Holds all relevant logic for Inputs  
 
 using UnityEngine;
+using System.Collections; 
 
 namespace DO
 {
@@ -26,7 +27,8 @@ namespace DO
 
         bool freeLook;
         public bool isJumping;
-        public bool isSprinting; 
+        public bool isSprinting;
+        public bool isTired; 
 
         public enum ExecutionOrder
         {
@@ -56,7 +58,7 @@ namespace DO
 
             freeLook = Input.GetKey(KeyCode.F);
 
-            isSprinting = Input.GetKey(KeyCode.LeftShift);
+            //isSprinting = Input.GetKeyDown(KeyCode.LeftShift);
             isJumping = Input.GetKeyDown(KeyCode.Space);
 
             moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
@@ -78,21 +80,41 @@ namespace DO
             }
 
             //Sprinting 
-            if(isSprinting)
+            if(isTired == false && Input.GetKeyDown(KeyCode.LeftShift))
             {
-                controller.HandleRun(); 
+                controller.moveSpeed = 4.5f;
+                isSprinting = true;
+                isTired = false; 
+                StartCoroutine(RunTimer()); 
             }
-            else
+            IEnumerator RunTimer()
             {
-                controller.HandleRunCoolDown(); 
+                yield return new WaitForSeconds(5);
+                isSprinting = false;
+
+                controller.moveSpeed = 2f;
+                isTired = true; 
+
+                if(isTired == true && (Input.GetKeyDown(KeyCode.LeftShift)))
+                {
+                    isSprinting = false; 
+                }
+
+                StartCoroutine(RunCoolDown());
+            } 
+            IEnumerator RunCoolDown()
+            {
+                yield return new WaitForSeconds(3);
+                isTired = false;
+
             }
 
             //First Person
-            if(freeLook)
+            if (freeLook)
             {
                 cameraManager.fpCameraObject.SetActive(true);      
                 controller.FPRotation(horizontal, delta);
-                 controller.isInFreeLook = true;
+                controller.isInFreeLook = true;
 
             }
             else
