@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\ChickenCoup",
+    "\\ChickenCoup\\Assets",
+    "\\ChickenCoup\\Assets\\Scripts",
+    "\\ChickenCoup\\Assets\\Scripts\\AI",
+    "\\ChickenCoup\\Assets\\Scripts\\Environment",
+    "\\ChickenCoup\\Assets\\Scripts\\Player",
+    "\\ChickenCoup\\Assets\\Scripts\\Player\\Camera",
+    "\\ChickenCoup\\Assets\\Scripts\\Player\\Controller"
+  ],
+  "SelectedNode": "\\ChickenCoup\\Assets\\Scripts\\Player\\Controller\\PlayerController.cs",
+  "PreviewInSolutionExplorer": false
+}
