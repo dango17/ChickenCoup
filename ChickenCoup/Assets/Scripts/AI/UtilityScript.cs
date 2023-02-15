@@ -2,11 +2,11 @@
 // Date Created: 6/2/2023
 
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
-/// Contains a list of motives and actions, selecting an action to execute 
+/// Contains a list of motives and actions, and selects an action to execute 
 /// based on the highest priority motive.
-/// This is what controls the AI farmer's decision making process.
 /// </summary>
 public class UtilityScript {
 	public struct Motive {
@@ -41,7 +41,7 @@ public class UtilityScript {
 		}
 	}
 
-	private Action nextAction = default;
+	private Action currentAction = default;
 	private Motive[] motives = default;
 	private Action[] actions = default;
 
@@ -55,17 +55,24 @@ public class UtilityScript {
 	/// Finds and executes the most optimal action for the AI until its completed.
 	/// </summary>
 	public void Update() {
-		if (nextAction.completed || nextAction.action == null) {
+		if (currentAction.completed || currentAction.action == null) {
 			FindExecutableActions();
 			FindOptimalAction();
 		}
 
 		// A completed action will be the previously executed action.
-		if (nextAction.action == null || nextAction.completed) {
+		if (currentAction.action == null || currentAction.completed) {
 			return;
 		}
 
-		nextAction.completed = nextAction.action();
+		currentAction.completed = currentAction.action();
+	}
+
+	/// <summary>
+	/// Sets the current action to its default value.
+	/// </summary>
+	public void Reset() {
+		currentAction = default;
 	}
 
 	/// <summary>
@@ -73,15 +80,17 @@ public class UtilityScript {
 	/// </summary>
 	private void FindExecutableActions() {
 		for (int i = 0; i < actions.Length; ++i) {
+			bool preconditionsMet = true;
+
 			for (int j = 0; j < actions[i].preconditions.Length; ++j) {
 				// Check if the precondition is met.
 				if (!actions[i].preconditions[j].Value()) {
-					actions[i].preconditionsMet = false;
-					return;
+					preconditionsMet = false;
+					break;
 				}
 			}
 
-			actions[i].preconditionsMet = true;
+			actions[i].preconditionsMet = preconditionsMet;
 		}
 	}
 
@@ -91,7 +100,7 @@ public class UtilityScript {
 	/// </summary>
 	private void FindOptimalAction() {
 		// Set to a high value to force at least one selection.
-		float lowestDiscontent = 1000000;
+		float lowestDiscontent = Mathf.Infinity;
 
 		foreach (Action action in actions) {
 			if (action.action == null || !action.preconditionsMet) {
@@ -105,15 +114,21 @@ public class UtilityScript {
 				foreach (Motive motive in motives) {
 					if (satisfiedMotive.Key.name == motive.name) {
 						float loweredInsistence = motive.insistence() - satisfiedMotive.Value;
+						// Clamp value to prevent dicontent increasing when
+						// insistence is already at 0, because subtracting
+						// from it produces a negative number, which turns
+						// positive when multiplied by itself.
+						loweredInsistence = Mathf.Clamp(loweredInsistence, 0.0f, Mathf.Infinity);
 						discontent += loweredInsistence * loweredInsistence;
-						break;
+					} else {
+						discontent += motive.insistence() * motive.insistence();
 					}
 				}
 			}
 
 			if (discontent < lowestDiscontent) {
 				lowestDiscontent = discontent;
-				nextAction = action;
+				currentAction = action;
 			}
 		}
 	}

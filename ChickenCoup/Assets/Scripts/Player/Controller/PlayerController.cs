@@ -13,21 +13,23 @@ namespace DO
     {
         [Header("Speeds")]
         public float moveSpeed = 0.4f;
+        public float sprintSpeed = 0.8f; 
         public float rotateSpeed = 0.2f;
         public float FPRotationSpeed = 0.2f; 
         [Header("Jumping")]
         public float jumpForce = 5f;
-        public float fallForce = 8f; 
+        public float fallForce = 8f;
+        [Header("Ground-Check")]
+        public LayerMask groundLayer;
+        public float raycastDistance = 0.2f; 
         [Header("Cover")]
         public float wallSpeed = 0.2f;
         public float wallCheckDistance = 0.2f;
+        public LayerMask coverLayer; 
         [Header("Flags")]
         public bool isOnCover;
         public bool isGrounded;
         public bool isInFreeLook; 
-
-        public LayerMask groundLayer;
-        public float raycastDistance = 0.2f; 
 
         [HideInInspector]
         public Transform mTransform;
@@ -165,6 +167,16 @@ namespace DO
                 m = 0f;
 
             animator.SetFloat("movement", m, 0.1f, delta);
+        }
+
+        public void HandleRun()
+        {
+            moveSpeed = 4f;
+        }
+
+        public void HandleRunCoolDown()
+        {
+            moveSpeed = 2.5f; 
         }
 
         public void HandleJump()
