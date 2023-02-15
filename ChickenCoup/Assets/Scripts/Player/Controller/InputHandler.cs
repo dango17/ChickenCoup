@@ -92,11 +92,13 @@ namespace DO
             {
                 cameraManager.fpCameraObject.SetActive(true);      
                 controller.FPRotation(horizontal, delta);
+                 controller.isInFreeLook = true;
 
             }
             else
             {
-                cameraManager.fpCameraObject.SetActive(false); 
+                cameraManager.fpCameraObject.SetActive(false);
+                controller.isInFreeLook = false;
             }
 
             //Execution Order
