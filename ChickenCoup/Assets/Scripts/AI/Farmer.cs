@@ -43,7 +43,14 @@ public class Farmer : MonoBehaviour {
 	private Transform releasePosition = null;
 
 	public static float PathLength(NavMeshPath path) {
-		return 0.0f;
+		float pathLength = 0.0f;
+
+		for (int i = 0; i < path.corners.Length - 1; ++i) {
+			int nextElementsIndex = i + 1;
+			pathLength += Vector3.Distance(path.corners[i], path.corners[nextElementsIndex]);
+		}
+
+		return pathLength;
 	}
 
 	#region Conditions

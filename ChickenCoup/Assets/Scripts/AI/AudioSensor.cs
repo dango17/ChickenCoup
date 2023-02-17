@@ -11,29 +11,24 @@ public class AudioSensor : Sensor {
 	private NavMeshAgent navMeshAgent = null;
 
 	protected override bool VerifyDetection(GameObject gameobject) {
-		return TracePathToSound(gameobject.transform.position) ? true : false;
+		AudioSource soundSource = gameobject.GetComponent<AudioSource>();
+		return soundSource && TracePathToSound(gameobject.transform.position, soundSource.maxDistance) ? true : false;
 	}
 
 	private void Start() {
 		navMeshAgent = GameObject.FindGameObjectWithTag("Farmer").GetComponent<NavMeshAgent>();
 	}
 
-	private bool TracePathToSound(Vector3 soundsPosition) {
-		// create max length for a path using the sounds volume
-		float maximumPathLength = 0.0f;
-		
-		// is agent too far away
-		if (Vector3.Distance(transform.position, soundsPosition) > maximumPathLength) {
+	private bool TracePathToSound(Vector3 soundsPosition, float maximumPathLength) {
+		if (Vector3.Distance(navMeshAgent.gameObject.transform.position, soundsPosition) > maximumPathLength) {
 			return false;
 		}
 
 		NavMeshPath pathToSound = null;
-		// create path to sound
+		// Calculates a path from the agent to the sound.
 		navMeshAgent.CalculatePath(soundsPosition, pathToSound);
 
-		// if path is too long...
 		if (Farmer.PathLength(pathToSound) > maximumPathLength ||
-			// ...or invalid.
 			pathToSound.status != NavMeshPathStatus.PathComplete) {
 			return false;
 		}

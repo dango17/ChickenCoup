@@ -43,11 +43,11 @@ public abstract class Sensor : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		ObjectDetected(other);
+		ObjectDetected(other.gameObject);
 	}
 
 	private void OnTriggerStay(Collider other) {
-		ObjectDetected(other);
+		ObjectDetected(other.gameObject);
 	}
 
 	private void OnTriggerExit(Collider other) {
@@ -56,16 +56,20 @@ public abstract class Sensor : MonoBehaviour {
 		}
 	}
 
-	private void ObjectDetected(Collider colliderDetected) {
-		int bitshiftedLayer = 1 << colliderDetected.gameObject.layer;
+	/// <summary>
+	/// Notifies the sensor that a game-object was detected.
+	/// </summary>
+	/// <param name="detectedGameObject"> The detected game-object. </param>
+	private void ObjectDetected(GameObject detectedGameObject) {
+		int bitshiftedLayer = 1 << detectedGameObject.gameObject.layer;
 
 		// Check if the data should be saved.
 		if (detectionLayer != bitshiftedLayer ||
-			data.Contains(colliderDetected.gameObject) ||
-			!VerifyDetection(colliderDetected.gameObject)) {
+			data.Contains(detectedGameObject.gameObject) ||
+			!VerifyDetection(detectedGameObject.gameObject)) {
 			return;
 		}
 
-		data.AddLast(colliderDetected.gameObject);
+		data.AddLast(detectedGameObject.gameObject);
 	}
 }
