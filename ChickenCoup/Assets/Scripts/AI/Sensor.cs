@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Gathers data about an agents surrounding environment.
+/// Uses a trigger collider to detect game-objects of a certain type.
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
 	public LinkedList<GameObject> Data {
@@ -31,6 +31,23 @@ public abstract class Sensor : MonoBehaviour {
 	protected Transform sensorOrigin = null;
 
 	/// <summary>
+	/// Notifies the sensor that a game-object was detected.
+	/// </summary>
+	/// <param name="detectedGameObject"> The detected game-object. </param>
+	public void ObjectDetected(GameObject detectedGameObject) {
+		int detectedGameObjectsLayer = 1 << detectedGameObject.gameObject.layer;
+
+		// Check if the data should be saved.
+		if (detectionLayer != detectedGameObjectsLayer ||
+			data.Contains(detectedGameObject.gameObject) ||
+			!VerifyDetection(detectedGameObject.gameObject)) {
+			return;
+		}
+
+		data.AddLast(detectedGameObject.gameObject);
+	}
+
+	/// <summary>
 	/// Checks if the gathered data is valid and should be saved.
 	/// </summary>
 	/// <param name="gameobject"> Gathered data that needs verifying. </param>
@@ -54,22 +71,5 @@ public abstract class Sensor : MonoBehaviour {
 		if (data.Contains(other.gameObject)) {
 			data.Remove(other.gameObject);
 		}
-	}
-
-	/// <summary>
-	/// Notifies the sensor that a game-object was detected.
-	/// </summary>
-	/// <param name="detectedGameObject"> The detected game-object. </param>
-	private void ObjectDetected(GameObject detectedGameObject) {
-		int bitshiftedLayer = 1 << detectedGameObject.gameObject.layer;
-
-		// Check if the data should be saved.
-		if (detectionLayer != bitshiftedLayer ||
-			data.Contains(detectedGameObject.gameObject) ||
-			!VerifyDetection(detectedGameObject.gameObject)) {
-			return;
-		}
-
-		data.AddLast(detectedGameObject.gameObject);
 	}
 }

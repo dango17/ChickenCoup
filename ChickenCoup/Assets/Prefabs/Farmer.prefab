@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 3941516469279204358}
   m_Layer: 3
   m_Name: Farmer
-  m_TagString: Untagged
+  m_TagString: Farmer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -186,6 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 586fc29810d609747ad952bc59f03e37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maximumTimeToSpendSearchingForPlayer: 30
 --- !u!1 &5616910244120247207
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,7 +294,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &2038685077952965652
 MonoBehaviour:
@@ -352,6 +353,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8312545775162478312}
+  - component: {fileID: 5951971135837913659}
+  - component: {fileID: 4502418138851574328}
   - component: {fileID: 4015286397373163671}
   m_Layer: 3
   m_Name: Audio Sensor
@@ -359,7 +362,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8312545775162478312
 Transform:
   m_ObjectHideFlags: 0
@@ -376,6 +379,35 @@ Transform:
   m_Father: {fileID: 3941516469279204357}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &5951971135837913659
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8627085775679455011}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 8
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &4502418138851574328
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8627085775679455011}
+  serializedVersion: 2
+  m_Mass: 0.0000001
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &4015286397373163671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,7 +423,7 @@ MonoBehaviour:
   detectionRange: 8
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 64
   sensorOrigin: {fileID: 7576291519940325098}
 --- !u!1 &8834422219251620262
 GameObject:

@@ -4,7 +4,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Makes the generic sensor behave as a visual sensor by checking for a clear 
+/// Utilizes the sensor class to create a visual sensor that checks for a clear 
 /// line of sight to game objects after detecting them.
 /// </summary>
 public class VisualSensor : Sensor {

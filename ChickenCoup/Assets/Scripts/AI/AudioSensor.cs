@@ -5,10 +5,40 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
-/// 
+/// Utilizes the sensor class to create an audio sensor that can only detect 
+/// nearby objects that play sounds.
+/// Executes prior to SoundCue so components are found prior to script being 
+/// used.
 /// </summary>
 public class AudioSensor : Sensor {
 	private NavMeshAgent navMeshAgent = null;
+	private NavMeshPath pathToSound = null;
+
+	/// <summary>
+	/// Notifies all nearby audio sensors that a sound was played.
+	/// Always call anytime a sound is played!
+	/// </summary>
+	public static void NotifyNearbyAudioSensors(AudioSource audioSource, Vector3 soundPosition) {
+		if (!audioSource) {
+			return;
+		}
+
+		const float half = 0.5f;
+		float sphereRadius = audioSource.maxDistance * half;
+		int farmerLayer = 1 << LayerMask.NameToLayer("Farmer");
+		Collider[] intersectingColliders = Physics.OverlapSphere(soundPosition,
+			sphereRadius,
+			farmerLayer,
+			QueryTriggerInteraction.Collide);
+
+		foreach (Collider collider in intersectingColliders) {
+			AudioSensor audioSensor = collider.GetComponent<AudioSensor>();
+
+			if (audioSensor) {
+				audioSensor.ObjectDetected(audioSource.gameObject);
+			}
+		}
+	}
 
 	protected override bool VerifyDetection(GameObject gameobject) {
 		AudioSource soundSource = gameobject.GetComponent<AudioSource>();
@@ -16,12 +46,17 @@ public class AudioSensor : Sensor {
 			soundSource.maxDistance) ? true : false;
 	}
 
+	private void Awake() {
+		pathToSound = new NavMeshPath();
+	}
+
 	private void Start() {
-		navMeshAgent = GameObject.FindGameObjectWithTag("Farmer").GetComponent<NavMeshAgent>();
+		navMeshAgent = transform.parent.GetComponent<NavMeshAgent>();
 	}
 
 	private bool TracePathToSound(Vector3 soundsPosition, float maximumPathLength) {
-		if (Vector3.Distance(navMeshAgent.gameObject.transform.position, soundsPosition) > maximumPathLength) {
+		if (!navMeshAgent ||
+			Vector3.Distance(navMeshAgent.gameObject.transform.position, soundsPosition) > maximumPathLength) {
 			return false;
 		}
 
@@ -36,8 +71,10 @@ public class AudioSensor : Sensor {
 			return false;
 		}
 
-		NavMeshPath pathToSound = null;
-		// Calculates a path from the agent to the sound.
+		// Clear any previous paths prior to every calculation.
+		pathToSound.ClearCorners();
+		// Calculates a path from the agent to the sounds closest nav mesh
+		// position.
 		navMeshAgent.CalculatePath(navMeshHit.position, pathToSound);
 
 		if (Farmer.PathLength(pathToSound) > maximumPathLength ||
