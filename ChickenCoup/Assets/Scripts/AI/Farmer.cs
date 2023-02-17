@@ -42,6 +42,10 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private Transform releasePosition = null;
 
+	public static float PathLength(NavMeshPath path) {
+		return 0.0f;
+	}
+
 	#region Conditions
 	public bool CanWonder() {
 		return true;
