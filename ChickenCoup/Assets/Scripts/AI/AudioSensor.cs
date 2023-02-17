@@ -12,7 +12,8 @@ public class AudioSensor : Sensor {
 
 	protected override bool VerifyDetection(GameObject gameobject) {
 		AudioSource soundSource = gameobject.GetComponent<AudioSource>();
-		return soundSource && TracePathToSound(gameobject.transform.position, soundSource.maxDistance) ? true : false;
+		return soundSource && TracePathToSound(gameobject.transform.position,
+			soundSource.maxDistance) ? true : false;
 	}
 
 	private void Start() {
@@ -24,9 +25,20 @@ public class AudioSensor : Sensor {
 			return false;
 		}
 
+		float doubleAgentsHeight = navMeshAgent.height * 2;
+		
+		if (!NavMesh.SamplePosition(soundsPosition,
+			out NavMeshHit navMeshHit,
+			doubleAgentsHeight,
+			NavMesh.AllAreas) &&
+			navMeshHit.hit) {
+			// Return false because no nearby position on the nav mesh was found.
+			return false;
+		}
+
 		NavMeshPath pathToSound = null;
 		// Calculates a path from the agent to the sound.
-		navMeshAgent.CalculatePath(soundsPosition, pathToSound);
+		navMeshAgent.CalculatePath(navMeshHit.position, pathToSound);
 
 		if (Farmer.PathLength(pathToSound) > maximumPathLength ||
 			pathToSound.status != NavMeshPathStatus.PathComplete) {
