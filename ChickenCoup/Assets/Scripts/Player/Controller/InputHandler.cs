@@ -2,7 +2,7 @@
 //Author : Daniel Oldham/s1903729
 //Collaborator : N/A
 //Created On : 27/01/23
-//Last Modified : 08/02/23
+//Last Modified : 20/02/23
 //Description : Handles and Holds all relevant logic for Inputs  
 
 using UnityEngine;
@@ -19,7 +19,8 @@ namespace DO
         public CameraManager cameraManager; 
 
         Vector3 moveDirection;
-        public float wallDetectionDistance;
+        public float wallDetectionDistance = 0.2f;
+        public float wallDetectionDistanceOnWall = 1.2f;
 
         float horizontal;
         float vertical;
@@ -85,7 +86,7 @@ namespace DO
             //Sprinting 
             if(isTired == false && Input.GetKeyDown(KeyCode.LeftShift))
             {
-                controller.moveSpeed = 4.5f;
+                controller.moveSpeed = 3.5f;
                 isSprinting = true;
                 isTired = false; 
                 StartCoroutine(RunTimer()); 
@@ -145,15 +146,30 @@ namespace DO
             Vector3 origin = controller.transform.position;
             origin.y += 1;
 
-            Debug.DrawRay(origin, moveDirection * wallDetectionDistance);
-            if(Physics.SphereCast(origin, 0.25f, moveDirection,out RaycastHit hit, wallDetectionDistance, controller.coverLayer))
+            bool willStickToWall = false;
+            Vector3 wallNormal = Vector3.zero;
+
+            float detectDistance = wallDetectionDistance; 
+            if(controller.isOnCover)
             {
+                detectDistance = wallDetectionDistanceOnWall; 
+            }
+
+            Debug.DrawRay(origin, moveDirection * detectDistance);
+
+            if (Physics.SphereCast(origin, 0.25f, moveDirection, out RaycastHit hit, detectDistance, controller.coverLayer))
+            {
+                willStickToWall = true;
+                wallNormal = hit.normal; 
+            }
+
+            if (willStickToWall)
+            {
+                controller.isOnCover = true; 
+                controller.WallMovement(moveDirection,hit.normal, delta);
+
                 cameraManager.wallCameraObject.SetActive(true);
                 cameraManager.mainCameraObject.SetActive(false);
-
-                controller.isOnCover = true; 
-
-                controller.WallMovement(moveDirection,hit.normal, delta); 
             }
             else
             {

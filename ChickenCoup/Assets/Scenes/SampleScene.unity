@@ -1739,9 +1739,25 @@ PrefabInstance:
       propertyPath: m_Interpolate
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154574, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: wallAngleThreshold
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154574, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: wallDetectionDistance
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154574, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: wallDetectionDistanceOnWall
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: coverLayer.m_Bits
       value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: wallCheckDistance
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 1752816793553067403, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_RootOrder

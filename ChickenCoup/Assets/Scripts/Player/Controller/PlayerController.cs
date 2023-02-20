@@ -173,15 +173,6 @@ namespace DO
             animator.SetFloat("movement", m, 0.1f, delta);
         }
 
-        public void HandleRun()
-        {
-                     
-        }
-      
-        public void HandleRunCoolDown()
-        {
-         
-        }
 
         public void HandleJump()
         {
