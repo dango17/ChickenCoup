@@ -1,14 +1,14 @@
-//File Name : CameraManager.cs
-//Author : Daniel Oldham/s1903729
-//Collaborator : N/A
-//Created On : 31/01/23
-//Last Modified : 08/02/23
-//Description : Holds all Camera gameObjects for several perspectives
+// Author: Daniel Oldham/s1903729
+// Collaborator: N/A
+// Created On: 31/01/2023
 
 using UnityEngine;
 
 namespace DO
 {
+    /// <summary>
+    /// Holds all Camera gameObjects for several perspectives.
+    /// </summary>
     public class CameraManager : MonoBehaviour
     {
         public GameObject mainCameraObject;

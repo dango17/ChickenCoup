@@ -1,15 +1,15 @@
-//File Name : InputHandler.cs
-//Author : Daniel Oldham/s1903729
-//Collaborator : N/A
-//Created On : 27/01/23
-//Last Modified : 20/02/23
-//Description : Handles and Holds all relevant logic for Inputs  
+// Author: Daniel Oldham/s1903729
+// Collaborator: N/A
+// Created On: 27/01/2023
 
 using UnityEngine;
 using System.Collections; 
 
 namespace DO
 {
+    /// <summary>
+    /// Handles and Holds all relevant logic for Inputs.
+    /// </summary>
     public class InputHandler : MonoBehaviour
     {
         public Transform camHolder;

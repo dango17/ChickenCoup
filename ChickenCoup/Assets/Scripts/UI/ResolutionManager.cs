@@ -1,8 +1,15 @@
+// Author: Harry Oldham
+// Collaborator: N/A
+// Created On: 
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 
+/// </summary>
 public class ResolutionManager : MonoBehaviour
 {
     private const string RESOLUTION_PREF_KEY = "resolution";

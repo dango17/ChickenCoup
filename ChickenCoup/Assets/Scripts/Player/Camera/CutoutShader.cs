@@ -1,7 +1,14 @@
+// Author: Harry Oldham
+// Collaborator: N/A
+// Created On: 
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// </summary>
 public class CutoutShader : MonoBehaviour
 {
     [SerializeField]

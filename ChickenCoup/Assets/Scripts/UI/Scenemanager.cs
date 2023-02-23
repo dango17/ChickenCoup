@@ -1,8 +1,15 @@
+// Author: Harry Oldham
+// Collaborator: N/A
+// Created On: 
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// 
+/// </summary>
 public class Scenemanager : MonoBehaviour
 {
     public GameObject playBtn;

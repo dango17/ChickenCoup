@@ -1,5 +1,6 @@
-// Written by Liam Bansal
-// Date Created: 6/2/2023
+// Author: Liam Bansal
+// Collaborator: N/A
+// Created On: 6/2/2023
 
 using System.Collections.Generic;
 using UnityEngine;

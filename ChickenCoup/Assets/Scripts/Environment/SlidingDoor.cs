@@ -1,12 +1,12 @@
-//File Name : SlidingDoor.cs
-//Author : Daniel Oldham/s1903729d
-//Collaborator : N/A
-//Created On : 14/02/23
-//Last Modified : 14/02/23
-//Description : Slides open specified GameObjects to resemble a sliding door.
+// Author: Daniel Oldham/s1903729d
+// Collaborator: N/A
+// Created On: 14/02/2023
 
 using UnityEngine;
 
+/// <summary>
+/// Slides open specified GameObjects to resemble a sliding door.
+/// </summary>
 public class SlidingDoor : MonoBehaviour
 {
     //Sliding door animation

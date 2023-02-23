@@ -1,15 +1,15 @@
-//File Name : PlayerController.cs
-//Author : Daniel Oldham/s1903729
-//Collaborator : N/A
-//Created On : 27/01/23
-//Last Modified : 08/03/23
-//Description: playerManager that handles movement types and the relevant logic to execute
+// Author: Daniel Oldham/s1903729
+// Collaborator: N/A
+// Created On: 27/01/2023
 
 using UnityEngine;
 using System.Collections;
 
 namespace DO
 {
+    /// <summary>
+    /// playerManager that handles movement types and the relevant logic to execute.
+    /// </summary>
     public class PlayerController : MonoBehaviour
     {
         [Header("Speeds")]

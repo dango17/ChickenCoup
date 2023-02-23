@@ -1,5 +1,6 @@
-// Written by Liam Bansal
-// Date Created: 30/01/2023
+// Author: Liam Bansal
+// Collaborator: N/A
+// Created On: 30/01/2023
 
 using UnityEngine;
 
