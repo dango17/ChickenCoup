@@ -12,6 +12,11 @@ public class VisualSensor : Sensor {
 	[SerializeField, Range(0, maxFieldOfView), Tooltip("The viewing angle for the agent.")]
 	private float fieldOfView = 200.0f;
 	private const float maxFieldOfView = 360.0f;
+	/// <summary>
+	/// The percentage of detection points on an object that need to be 
+	/// visible for it to be detected.
+	/// </summary>
+	private int detectionPercentage = 70;
 
 	/// <summary>
 	/// Checks if the object is visible to the detector.
@@ -21,13 +26,50 @@ public class VisualSensor : Sensor {
 		return IsWithinFieldOfView(detectedGameObject) && IsWithinLineOfSight(detectedGameObject);
 	}
 
-	private bool IsWithinLineOfSight(GameObject gameobject) {
-		Physics.Raycast(sensorOrigin.position,
-			gameobject.transform.position - sensorOrigin.position,
+	private bool IsWithinLineOfSight(GameObject detectedGameObject) {
+		DetectionPoint[] detectionPoints = detectedGameObject.GetComponentsInChildren<DetectionPoint>();
+
+		if (detectionPoints.Length > 0) {
+			float pointsDetected = 0;
+
+			// Check how many of the object's detection points are visible.
+			foreach (DetectionPoint detectionPoint in detectionPoints) {
+				// TODO: Exclude the target object from any subsuquent raycasts after detecting it.
+				if (RaycastHit(sensorOrigin.position, detectionLayer, detectionPoint.gameObject)) {
+					++pointsDetected;
+				}
+			}
+
+			const int oneHundred = 100;
+			float percentOfPointsDetected = pointsDetected / detectionPoints.Length * oneHundred;
+			return percentOfPointsDetected >= detectionPercentage ? true : false;
+		} else if (RaycastHit(sensorOrigin.position, detectionLayer, detectedGameObject)) {
+			return true;
+		}
+
+		return false;
+
+		bool RaycastHit(Vector3 raycastOrigin, LayerMask raycastLayer, GameObject targetObject) {
+			Physics.Raycast(raycastOrigin,
+			targetObject.transform.position - sensorOrigin.position,
 			out RaycastHit raycastHit,
 			detectionRange);
 
-		return raycastHit.collider && raycastHit.collider.gameObject == gameobject ? true : false;
+			if (raycastHit.collider) {
+				if (raycastHit.collider.gameObject == targetObject) {
+					return true;
+				} else if (raycastHit.collider.gameObject.GetComponent<DetectionPoint>()) {
+					// Continue raycasting for the target game object from the
+					// intersected detection point's position because a targeted
+					// detection point could be obscured by others.
+					return RaycastHit(raycastHit.collider.transform.position,
+						raycastLayer,
+						targetObject);
+				}
+			}
+
+			return false;
+		}
 	}
 
 	private bool IsWithinFieldOfView(GameObject detectedGameObject) {
