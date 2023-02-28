@@ -12,27 +12,33 @@ namespace DO
     /// </summary>
     public class InputHandler : MonoBehaviour
     {
-        public Transform camHolder;
+        [Header("Camera-Holder")]
+        [SerializeField] public Transform camHolder;
 
-        public ExecutionOrder movementOrder;
-        public PlayerController controller;
-        public CameraManager cameraManager; 
+        [Header("Components")]
+        [SerializeField] public ExecutionOrder movementOrder;
+        [SerializeField] public PlayerController controller;
+        [SerializeField] public CameraManager cameraManager;
 
-        Vector3 moveDirection;
-        public float wallDetectionDistance = 0.2f;
-        public float wallDetectionDistanceOnWall = 1.2f;
+        [Header("Components")]
+        [SerializeField] Vector3 moveDirection;
+        [SerializeField] public float wallDetectionDistance = 0.2f;
+        [SerializeField] public float wallDetectionDistanceOnWall = 1.2f;
 
-        float horizontal;
-        float vertical;
-        float moveAmount;
+        [Header("Movement")]
+        [SerializeField] float horizontal;
+        [SerializeField] float vertical;
+        [SerializeField] float moveAmount;
 
-        bool freeLook;
-        public float runningTimer = 5f;
-        public float staminaTimer = 4f; 
+        [Header("Sprint")]
+        [SerializeField] public float runningTimer = 5f;
+        [SerializeField] public float staminaTimer = 4f;
 
+        [Header("Flags")]
+        public bool freeLook;
         public bool isJumping;
         public bool isSprinting;
-        public bool isTired; 
+        public bool isTired;
 
         public enum ExecutionOrder
         {
@@ -59,11 +65,8 @@ namespace DO
         {
             horizontal = Input.GetAxis("Horizontal");
             vertical = Input.GetAxis("Vertical");
-
             freeLook = Input.GetKey(KeyCode.F);
-
-            //isSprinting = Input.GetKeyDown(KeyCode.LeftShift);
-            isJumping = Input.GetKeyDown(KeyCode.Space);
+            isJumping = Input.GetKeyDown(KeyCode.Space); 
 
             moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
 
@@ -71,11 +74,12 @@ namespace DO
             moveDirection += camHolder.right * horizontal;
             moveDirection.Normalize();
 
-            float delta = Time.deltaTime; 
+            float delta = Time.deltaTime;
 
+            #region Jumping & Running
             //Jumping
-            if(isJumping && controller.isGrounded)
-            {
+            if (isJumping && controller.isGrounded)
+            {          
                 controller.HandleJump(); 
             }
             else if (controller.isGrounded == false)
@@ -112,7 +116,10 @@ namespace DO
                 isTired = false;
 
             }
+            #endregion
 
+            
+            #region First Person Camera
             //First Person
             if (freeLook)
             {
@@ -126,9 +133,10 @@ namespace DO
                 cameraManager.fpCameraObject.SetActive(false);
                 controller.isInFreeLook = false;
             }
+            #endregion
 
             //Execution Order
-            if(movementOrder == ExecutionOrder.update)
+            if (movementOrder == ExecutionOrder.update)
             {
                 HandleMovement(moveDirection, delta);
             }

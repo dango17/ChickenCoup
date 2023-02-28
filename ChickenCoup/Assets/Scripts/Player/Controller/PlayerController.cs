@@ -176,11 +176,13 @@ namespace DO
 
         public void HandleJump()
         {
+            inputHandler.isJumping = true;
             rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); 
         }
 
         public void handleFalling()
         {
+            inputHandler.isJumping = false; 
             rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse); 
         }
     }

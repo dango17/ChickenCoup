@@ -785,6 +785,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1615524503599042468}
+  - {fileID: 978821680860963286}
   - {fileID: 7402244214934700951}
   - {fileID: 1615524504534141113}
   m_Father: {fileID: 1752816793553067403}
@@ -840,10 +841,15 @@ MonoBehaviour:
   movementOrder: 1
   controller: {fileID: 1615524504985154575}
   cameraManager: {fileID: 1182320384819585364}
+  moveDirection: {x: 0, y: 0, z: 0}
   wallDetectionDistance: 0.05
   wallDetectionDistanceOnWall: 1.2
+  horizontal: 0
+  vertical: 0
+  moveAmount: 0
   runningTimer: 5
   staminaTimer: 4
+  freeLook: 0
   isJumping: 0
   isSprinting: 0
   isTired: 0
@@ -877,6 +883,37 @@ CapsuleCollider:
   m_Height: 1.0353365
   m_Direction: 1
   m_Center: {x: 0, y: 0.49233174, z: 0}
+--- !u!1 &3628450726842465776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 978821680860963286}
+  m_Layer: 8
+  m_Name: PickupPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &978821680860963286
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3628450726842465776}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.67, z: 0.392}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1615524504985154572}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5757015683692064340
 GameObject:
   m_ObjectHideFlags: 0
