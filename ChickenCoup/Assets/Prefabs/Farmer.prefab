@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 282368683108314715}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Sensor Origin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -186,7 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 586fc29810d609747ad952bc59f03e37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maximumTimeToSpendSearchingForPlayer: 30
+  maximumTimeToSpendSearchingForPlayer: 15
 --- !u!1 &5616910244120247207
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,7 +244,7 @@ GameObject:
   - component: {fileID: 6519099572255495326}
   - component: {fileID: 2785105781733974663}
   - component: {fileID: 2038685077952965652}
-  m_Layer: 3
+  m_Layer: 11
   m_Name: Visual Sensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,6 +313,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   sensorOrigin: {fileID: 282368683108314715}
+  fieldOfView: 200
 --- !u!1 &8495047505226632907
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,7 +357,7 @@ GameObject:
   - component: {fileID: 5951971135837913659}
   - component: {fileID: 4502418138851574328}
   - component: {fileID: 4015286397373163671}
-  m_Layer: 3
+  m_Layer: 12
   m_Name: Audio Sensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -434,7 +435,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7576291519940325098}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Sensor Origin
   m_TagString: Untagged
   m_Icon: {fileID: 0}

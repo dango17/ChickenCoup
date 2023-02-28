@@ -25,8 +25,8 @@ public class Farmer : MonoBehaviour {
 	private float maximumContainChickenInsitence = 100.0f;
 	private float timeToSpendSearchingForPlayer = 0.0f;
 	[SerializeField, Tooltip("The length of time the farmer will spend " +
-		"searching for the player.")]
-	private float maximumTimeToSpendSearchingForPlayer = 30.0f;
+		"searching for the player. Measured in seconds.")]
+	private float maximumTimeToSpendSearchingForPlayer = 15.0f;
 
 	private Vector3 lastKnownPlayerPosition = Vector3.zero;
 

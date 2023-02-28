@@ -68,3 +68,6 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Add new files/folders to ignore here. Unles they fit into the categories above.
+ChickenCoup/ProjectSettings/Packages/com.unity.probuilder/Settings.json
