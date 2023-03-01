@@ -43,13 +43,14 @@ namespace DO
         public SkinnedMeshRenderer meshRenderer;
         [HideInInspector]
         public InputHandler inputHandler;
+        public float wallCamXPosition = 1; 
+        public Transform wallCameraParent; 
 
         private void Start()
         {
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
             animator = GetComponentInChildren<Animator>();
-            meshRenderer = GetComponent<SkinnedMeshRenderer>();
             inputHandler = GetComponent<InputHandler>(); 
         }
 
@@ -70,6 +71,7 @@ namespace DO
         public void WallMovement(Vector3 moveDirection, Vector3 normal, float delta)
         {
             float dot = Vector3.Dot(moveDirection, Vector3.forward);
+            Vector3 wallCameraTargetPosition = Vector3.zero; 
             if (dot < 0)
             {
                 moveDirection.x *= -1; 
@@ -100,6 +102,7 @@ namespace DO
                 else
                 {
                     projectedVelocity = Vector3.zero;
+                    wallCameraTargetPosition.x = wallCamXPosition * ((relativeDir.x < 0) ? -1:1) ; 
                     relativeDir.x = 0; 
                 }
             }
@@ -125,7 +128,8 @@ namespace DO
                 m = (m < 0) ? -1 : 1; 
             }
 
-            animator.SetFloat("movement", m, 0.1f, delta); 
+            animator.SetFloat("movement", m, 0.1f, delta);
+            wallCameraParent.localPosition = Vector3.Lerp(wallCameraParent.localPosition, wallCameraTargetPosition, delta / 0.2f); 
         }
 
         public void Move(Vector3 moveDirection, float delta)

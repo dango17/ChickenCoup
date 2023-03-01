@@ -170,7 +170,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385291458575}
-  m_LocalRotation: {x: 0.55130094, y: -0.000000020301592, z: 0.000000013415077, w: 0.8343065}
+  m_LocalRotation: {x: 0.55130094, y: 0.000000020301592, z: -0.000000013415077, w: 0.8343065}
   m_LocalPosition: {x: 0, y: 10.58, z: -4.5099998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -400,6 +400,38 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1608579596211861374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 875339384750867808}
+  m_Layer: 8
+  m_Name: WallCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &875339384750867808
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608579596211861374}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1615524504534141113}
+  m_Father: {fileID: 1615524504985154572}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1615524503572410189
 GameObject:
   m_ObjectHideFlags: 0
@@ -662,7 +694,7 @@ GameObject:
   - component: {fileID: 1615524504534141119}
   - component: {fileID: 1615524504534141118}
   m_Layer: 0
-  m_Name: WallCamera
+  m_Name: WallCameraPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -681,7 +713,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1615524503665906575}
-  m_Father: {fileID: 1615524504985154572}
+  m_Father: {fileID: 875339384750867808}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 12.095, y: 0.27, z: 0}
 --- !u!114 &1615524504534141119
@@ -787,7 +819,7 @@ Transform:
   - {fileID: 1615524503599042468}
   - {fileID: 978821680860963286}
   - {fileID: 7402244214934700951}
-  - {fileID: 1615524504534141113}
+  - {fileID: 875339384750867808}
   m_Father: {fileID: 1752816793553067403}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -809,6 +841,7 @@ MonoBehaviour:
   FPRotationSpeed: 0.01
   jumpForce: 500
   fallForce: 2
+  jump: {x: 0, y: 0, z: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 255
@@ -825,6 +858,8 @@ MonoBehaviour:
   animator: {fileID: 7402244214924864601}
   meshRenderer: {fileID: 0}
   inputHandler: {fileID: 0}
+  wallCamXPosition: 1
+  wallCameraParent: {fileID: 875339384750867808}
 --- !u!114 &1615524504985154574
 MonoBehaviour:
   m_ObjectHideFlags: 0
