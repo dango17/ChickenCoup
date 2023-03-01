@@ -20,6 +20,7 @@ namespace DO
         [Header("Jumping")]
         public float jumpForce = 5f;
         public float fallForce = 8f;
+        public Vector3 jump; 
         [Header("Ground-Check")]
         public LayerMask groundLayer;
         public float raycastDistance = 0.2f; 
@@ -177,7 +178,7 @@ namespace DO
         public void HandleJump()
         {
             inputHandler.isJumping = true;
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); 
+            rigidbody.AddForce(jump * jumpForce, ForceMode.Force); 
         }
 
         public void handleFalling()
