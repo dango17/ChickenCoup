@@ -38,6 +38,7 @@ namespace DO
         public bool freeLook;
         public bool isJumping;
         public bool isSprinting;
+        public bool isInteracting; 
         public bool isTired;
         public bool isHolding;
         public bool isThrowing; 
@@ -68,6 +69,7 @@ namespace DO
             horizontal = Input.GetAxis("Horizontal");
             vertical = Input.GetAxis("Vertical");
             freeLook = Input.GetKey(KeyCode.F);
+            isInteracting = Input.GetKey(KeyCode.E);
             isJumping = Input.GetKeyDown(KeyCode.Space);
             isHolding = Input.GetKey(KeyCode.Mouse1);
             isThrowing = Input.GetKey(KeyCode.Mouse0); 
@@ -122,7 +124,6 @@ namespace DO
             }
             #endregion
 
-            
             #region First Person Camera
             //First Person
             if (freeLook)
@@ -130,7 +131,6 @@ namespace DO
                 cameraManager.fpCameraObject.SetActive(true);      
                 controller.FPRotation(horizontal, delta);
                 controller.isInFreeLook = true;
-
             }
             else
             {

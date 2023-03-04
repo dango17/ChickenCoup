@@ -1,4 +1,4 @@
-// Author: Daniel Oldham/s1903729d
+// Author: Daniel Oldham/s1903729
 // Collaborator: N/A
 // Created On: 28/02/2023
 
@@ -28,7 +28,7 @@ namespace DO
         private void Update()
         {
             distance = Vector3.Distance(item.transform.position, pickupPoint.transform.position); 
-            if(distance >= 1)
+            if(distance >= 0.7f)
             {
                 inputHandler.isHolding = false;
                 LetGo();
@@ -58,7 +58,7 @@ namespace DO
 
         public void PickUp()
         {
-            if(distance <= 1f)
+            if(distance <= 0.7f)
             {
                 inputHandler.isHolding = true;
                 item.GetComponent<Rigidbody>().useGravity = false;
