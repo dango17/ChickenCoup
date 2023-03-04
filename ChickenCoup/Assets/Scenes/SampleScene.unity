@@ -1583,7 +1583,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canHold: 1
-  throwForce: 60
   item: {fileID: 764656116}
   pickupPoint: {fileID: 532492142}
   inputHandler: {fileID: 2063130244}
