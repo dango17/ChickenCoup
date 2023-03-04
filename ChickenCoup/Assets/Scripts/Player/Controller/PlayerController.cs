@@ -18,9 +18,9 @@ namespace DO
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
         [Header("Jumping")]
-        [SerializeField] public float jumpForce = 5f;
-        [SerializeField] public float fallForce = 8f;
-        [SerializeField] public Vector3 jump; 
+        [SerializeField] public float jumpForce = 7f;
+        [SerializeField] public float fallForce = 2f;
+        //[SerializeField] public Vector3 jump; 
         [Header("Ground-Check")]
         [SerializeField] public LayerMask groundLayer;
         [SerializeField] public float raycastDistance = 0.2f; 
@@ -38,7 +38,7 @@ namespace DO
 
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
-        [HideInInspector] new Rigidbody rigidbody;
+        [HideInInspector] new Rigidbody rigidbody = null;
         [HideInInspector] public SkinnedMeshRenderer meshRenderer;
         [HideInInspector] public InputHandler inputHandler;
 
@@ -178,13 +178,13 @@ namespace DO
         public void HandleJump()
         {
             inputHandler.isJumping = true;
-            rigidbody.AddForce(jump * jumpForce, ForceMode.Force); 
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange); 
         }
 
         public void handleFalling()
         {
-            inputHandler.isJumping = false; 
-            rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse); 
+            inputHandler.isJumping = false;
+            rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse);
         }
     }
 }
