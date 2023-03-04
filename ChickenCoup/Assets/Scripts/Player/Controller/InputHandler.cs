@@ -39,6 +39,7 @@ namespace DO
         public bool isJumping;
         public bool isSprinting;
         public bool isTired;
+        public bool isHolding = false; 
 
         public enum ExecutionOrder
         {
@@ -66,7 +67,8 @@ namespace DO
             horizontal = Input.GetAxis("Horizontal");
             vertical = Input.GetAxis("Vertical");
             freeLook = Input.GetKey(KeyCode.F);
-            isJumping = Input.GetKeyDown(KeyCode.Space); 
+            isJumping = Input.GetKeyDown(KeyCode.Space);
+            isHolding = Input.GetKey(KeyCode.Mouse1); 
 
             moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
 

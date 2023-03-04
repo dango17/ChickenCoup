@@ -13,38 +13,34 @@ namespace DO
     public class PlayerController : MonoBehaviour
     {
         [Header("Speeds")]
-        public float moveSpeed = 0.4f;
-        public float sprintSpeed = 0.8f; 
-        public float rotateSpeed = 0.2f;
-        public float FPRotationSpeed = 0.2f; 
+        [SerializeField] public float moveSpeed = 0.4f;
+        [SerializeField] public float sprintSpeed = 0.8f;
+        [SerializeField] public float rotateSpeed = 0.2f;
+        [SerializeField] public float FPRotationSpeed = 0.2f; 
         [Header("Jumping")]
-        public float jumpForce = 5f;
-        public float fallForce = 8f;
-        public Vector3 jump; 
+        [SerializeField] public float jumpForce = 5f;
+        [SerializeField] public float fallForce = 8f;
+        [SerializeField] public Vector3 jump; 
         [Header("Ground-Check")]
-        public LayerMask groundLayer;
-        public float raycastDistance = 0.2f; 
+        [SerializeField] public LayerMask groundLayer;
+        [SerializeField] public float raycastDistance = 0.2f; 
         [Header("Cover")]
-        public float wallSpeed = 0.2f;
-        public float wallCheckDistance = 0.2f;
-        public LayerMask coverLayer; 
+        [SerializeField] public float wallSpeed = 0.2f;
+        [SerializeField] public float wallCheckDistance = 0.2f;
+        [SerializeField] public LayerMask coverLayer;
+        [Header("Peeking")]
+        public float wallCamXPosition = 1;
+        public Transform wallCameraParent;
         [Header("Flags")]
-        public bool isOnCover;
-        public bool isGrounded;
-        public bool isInFreeLook; 
+        [SerializeField] public bool isOnCover;
+        [SerializeField] public bool isGrounded;
+        [SerializeField] public bool isInFreeLook; 
 
-        [HideInInspector]
-        public Transform mTransform;
-        [HideInInspector]
-        public Animator animator;
-        [HideInInspector]
-        new Rigidbody rigidbody;
-        [HideInInspector]
-        public SkinnedMeshRenderer meshRenderer;
-        [HideInInspector]
-        public InputHandler inputHandler;
-        public float wallCamXPosition = 1; 
-        public Transform wallCameraParent; 
+        [HideInInspector] public Transform mTransform;
+        [HideInInspector] public Animator animator;
+        [HideInInspector] new Rigidbody rigidbody;
+        [HideInInspector] public SkinnedMeshRenderer meshRenderer;
+        [HideInInspector] public InputHandler inputHandler;
 
         private void Start()
         {
