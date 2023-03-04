@@ -5,26 +5,25 @@
 using UnityEngine;
 
 /// <summary>
-/// Slides open specified GameObjects to resemble a sliding door.
+/// Allows the player to pick up, drop, throw and manipulate gameObjects with said script attacted.
 /// </summary>
 namespace DO
 {
     public class Pickupable : MonoBehaviour
     {
-        float throwForce;
-        Vector3 objectPosition;
-        float distance;
-
+        [Header("Can you Hold this?")]
         public bool canHold = true;
+        [Header("Throw-Force")]
+        public float throwForce = 30f;
+        [Header("Item to Hold")]
         public GameObject item;
+        [Header("Players Transform Point")]
         public GameObject pickupPoint;
-
+        [Header("InputHandler Here")]
         public InputHandler inputHandler;
 
-        private void Start()
-        {
-            //inputHandler = GetComponent<InputHandler>();
-        }
+        [HideInInspector] Vector3 objectPosition;
+        [HideInInspector] float distance;
 
         private void Update()
         {
@@ -42,9 +41,10 @@ namespace DO
                 item.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
                 item.transform.SetParent(pickupPoint.transform);
 
-                if (Input.GetMouseButtonDown(1))
+                if (inputHandler.isHolding == true && inputHandler.isThrowing == true)
                 {
                     //Throw
+                    item.GetComponent<Rigidbody>().AddForce(pickupPoint.transform.forward * throwForce);
                 }
             }
             else
