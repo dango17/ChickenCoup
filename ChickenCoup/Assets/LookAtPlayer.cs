@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LookAtPlayer : MonoBehaviour
+namespace DO
 {
-    [SerializeField]
-    private Transform target;
-
-    // Update is called once per frame
-    void Update()
+    public class LookAtPlayer : MonoBehaviour
     {
-        transform.LookAt(target);
+        [SerializeField] private Transform target;
+
+        void Update()
+        {
+            transform.LookAt(target);
+        }
     }
 }
