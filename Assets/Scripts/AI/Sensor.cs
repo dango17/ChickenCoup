@@ -9,6 +9,12 @@ using UnityEngine;
 /// Uses a trigger collider to detect game-objects of a certain type.
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
+	public enum Visibility {
+		Visible,
+		PartiallyVisible,
+		NotVisible
+	}
+
 	public LinkedList<GameObject> Data {
 		get {
 			return data;
@@ -27,6 +33,7 @@ public abstract class Sensor : MonoBehaviour {
 	/// Stores references to the game objects the agent has gathered data about.
 	/// </summary>
 	protected LinkedList<GameObject> data = new LinkedList<GameObject>();
+	protected LinkedList<GameObject> partiallyDiscoveredData = new LinkedList<GameObject>();
 	[SerializeField, Tooltip("The location where raycasts will originate from, " +
 		"when checking for line of sight on objects.")]
 	protected Transform sensorOrigin = null;
@@ -39,13 +46,41 @@ public abstract class Sensor : MonoBehaviour {
 		int detectedGameObjectsLayer = 1 << detectedGameObject.gameObject.layer;
 
 		// Check if the data should be saved.
-		if (detectionLayer != detectedGameObjectsLayer ||
-			data.Contains(detectedGameObject.gameObject) ||
-			!VerifyDetection(detectedGameObject.gameObject)) {
-			return;
-		}
+		if ((detectionLayer & detectedGameObjectsLayer) != 0) {
+			bool discovered = data.Contains(detectedGameObject.transform.root.gameObject);
+			bool partiallyDiscovered = partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject);
 
-		data.AddLast(detectedGameObject.gameObject);
+			// Only verify detection if the data is not already discovered or
+			// is only partilly discovered.
+			if (!discovered || (!discovered && !partiallyDiscovered)) {
+				switch (VerifyDetection(detectedGameObject.gameObject)) {
+					case Visibility.Visible: {
+						if (!discovered) {
+							data.AddLast(detectedGameObject.transform.root.gameObject);
+						}
+
+						if (partiallyDiscovered) {
+							partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
+						}
+
+						break;
+					}
+					case Visibility.PartiallyVisible: {
+						if (!partiallyDiscovered) {
+							partiallyDiscoveredData.AddLast(detectedGameObject.transform.root.gameObject);
+						}
+
+						break;
+					}
+					case Visibility.NotVisible: {
+						return;
+					}
+					default: {
+						return;
+					}
+				}
+			}
+		}
 	}
 
 	/// <summary>
@@ -53,7 +88,7 @@ public abstract class Sensor : MonoBehaviour {
 	/// </summary>
 	/// <param name="gameobject"> Gathered data that needs verifying. </param>
 	/// <returns> True if the data is valid and should be saved. </returns>
-	protected abstract bool VerifyDetection(GameObject gameobject);
+	protected abstract Visibility VerifyDetection(GameObject gameobject);
 
 	private void Awake() {
 		SphereCollider sphereCollider = GetComponent<SphereCollider>();
