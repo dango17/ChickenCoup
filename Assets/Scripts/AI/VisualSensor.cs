@@ -10,6 +10,11 @@ using System.Linq;
 /// object is within an agent's field of view and there's a clear line of sight.
 /// </summary>
 public class VisualSensor : Sensor {
+	public float FieldOfView {
+		get { return fieldOfView; }
+		private set { fieldOfView = value; }
+	}
+
 	[SerializeField, Range(0, maxFieldOfView), Tooltip("The viewing angle for the agent.")]
 	private float fieldOfView = 200.0f;
 	private const float maxFieldOfView = 360.0f;
