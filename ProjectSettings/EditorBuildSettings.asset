@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Main Levels/Barn.unity
+    guid: 6ba9d01efc9a7c04fa8e59b36ee0ad65
   m_configObjects: {}
