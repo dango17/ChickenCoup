@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.3731193, g: 0.38073996, b: 0.35872698, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -262,10 +262,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa6c47c90f4cc7648a3f6373e42ebb66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetObject: {fileID: 915809878}
-  roofMask:
-    serializedVersion: 2
-    m_Bits: 1024
+--- !u!20 &409411769 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 1182320385632495882, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+  m_PrefabInstance: {fileID: 775074618}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &653214226
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,15 +679,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1752816793553067403, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.07
+      value: -7.222
       objectReference: {fileID: 0}
     - target: {fileID: 1752816793553067403, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1752816793553067403, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 22.7
+      value: 21.9
       objectReference: {fileID: 0}
     - target: {fileID: 1752816793553067403, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.w
@@ -786,17 +787,12 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6856166906887441581, guid: 8a8178c6a8687c4498d7334b0bd82b42, type: 3}
---- !u!4 &915809878 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1615524504985154572, guid: 4261717fa5641f048b3294da2755b359, type: 3}
-  m_PrefabInstance: {fileID: 775074618}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &915809881 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1615524504985154574, guid: 4261717fa5641f048b3294da2755b359, type: 3}
   m_PrefabInstance: {fileID: 775074618}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1133610563}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5da02dd9dd0d07e409b1f02f52b8ed07, type: 3}
@@ -1009,7 +1005,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204361, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -1041,6 +1037,28 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.2122571, y: 1.066422, z: 0.6333198}
   m_Center: {x: 0, y: 0.0000019073486, z: 0.3166599}
+--- !u!1 &1133610563 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1615524504985154571, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+  m_PrefabInstance: {fileID: 775074618}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1133610567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1133610563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad568cc60a05a7a41818c40b41d8447a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RoofMaterial: {fileID: 2100000, guid: 3469796d7597bf94b969a4693bb24102, type: 2}
+  Camera: {fileID: 409411769}
+  Mask:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1 &1272193918
 GameObject:
   m_ObjectHideFlags: 0
@@ -4082,7 +4100,7 @@ GameObject:
   - component: {fileID: 7517364837489646654}
   - component: {fileID: 3366968958348961622}
   - component: {fileID: 7766612980591581533}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Box300
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4504,7 +4522,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 576c5f3666d5ba745aac1b47cbe310fc, type: 2}
+  - {fileID: 2100000, guid: 3469796d7597bf94b969a4693bb24102, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6058,7 +6076,7 @@ GameObject:
   - component: {fileID: 6871755150295936583}
   - component: {fileID: 2020907717883796934}
   - component: {fileID: 7070350626302062279}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Box008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6169,7 +6187,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 576c5f3666d5ba745aac1b47cbe310fc, type: 2}
+  - {fileID: 2100000, guid: 3469796d7597bf94b969a4693bb24102, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
