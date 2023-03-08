@@ -3,6 +3,7 @@
 // Created On: 30/01/2023
 
 using UnityEngine;
+using System.Linq;
 
 /// <summary>
 /// Utilizes the sensor class to create a visual sensor that checks if an game
@@ -34,8 +35,10 @@ public class VisualSensor : Sensor {
 
 			// Check how many of the object's detection points are visible.
 			foreach (DetectionPoint detectionPoint in detectionPoints) {
-				// TODO: Exclude the target object from any subsuquent raycasts after detecting it.
-				if (RaycastHit(sensorOrigin.position, detectionLayer, detectionPoint.gameObject)) {
+				if (RaycastHit(sensorOrigin.position,
+					detectionLayer,
+					detectionPoint.gameObject,
+					detectedGameObject)) {
 					++pointsDetected;
 				}
 			}
@@ -43,28 +46,57 @@ public class VisualSensor : Sensor {
 			const int oneHundred = 100;
 			float percentOfPointsDetected = pointsDetected / detectionPoints.Length * oneHundred;
 			return percentOfPointsDetected >= detectionPercentage ? true : false;
-		} else if (RaycastHit(sensorOrigin.position, detectionLayer, detectedGameObject)) {
+		} else if (RaycastHit(sensorOrigin.position,
+			detectionLayer,
+			detectedGameObject,
+			null)) {
 			return true;
 		}
 
 		return false;
 
-		bool RaycastHit(Vector3 raycastOrigin, LayerMask raycastLayer, GameObject targetObject) {
-			Physics.Raycast(raycastOrigin,
+		/// <summary>
+		/// Sends a ray along a desired direction to check for a clear line of 
+		/// sight to a specific game object.
+		/// </summary>
+		/// <param name="raycastOrigin"> Position where the raycast spawns from. </param>
+		/// <param name="raycastLayer"> Only objects on this layer will trigger a raycast hit. </param>
+		/// <param name="targetObject"> The raycast checks for a clear line of sight to this game object. </param>
+		/// <param name="gameObjectToIgnore"> A singular game object that should be ignored by the raycast. </param>
+		/// <returns> True if there's a clear line of sight to the target game object. </returns>
+		bool RaycastHit(Vector3 raycastOrigin,
+			LayerMask raycastLayer,
+			GameObject targetObject,
+			GameObject gameObjectToIgnore) {
+			RaycastHit[] raycastHit = new RaycastHit[2];
+			Physics.RaycastNonAlloc(raycastOrigin,
 			targetObject.transform.position - sensorOrigin.position,
-			out RaycastHit raycastHit,
+			raycastHit,
 			detectionRange);
+			raycastHit.OrderBy(hit => hit.distance);
 
-			if (raycastHit.collider) {
-				if (raycastHit.collider.gameObject == targetObject) {
-					return true;
-				} else if (raycastHit.collider.gameObject.GetComponent<DetectionPoint>()) {
-					// Continue raycasting for the target game object from the
-					// intersected detection point's position because a targeted
-					// detection point could be obscured by others.
-					return RaycastHit(raycastHit.collider.transform.position,
-						raycastLayer,
-						targetObject);
+			for (int i = 0; i < raycastHit.Length; ++i) {
+				if (raycastHit[i].collider) {
+					if (targetObject && raycastHit[i].collider.gameObject == targetObject) {
+						return true;
+					} else if (gameObjectToIgnore && raycastHit[i].collider.gameObject == gameObjectToIgnore) {
+						// Continue searching for the target game object
+						// because the current raycast hit's game object is
+						// set to be ignored.
+						continue;
+					} else if (raycastHit[i].collider.gameObject.GetComponent<DetectionPoint>()) {
+						// Continue raycasting for the target game object from the
+						// intersected detection point's position because
+						// detection points shouldn't prevent raycasts from
+						// passing through.
+						return RaycastHit(raycastHit[i].collider.transform.position,
+							raycastLayer,
+							targetObject,
+							gameObjectToIgnore);
+					} else {
+						// Return false because an object that is not see through was hit.
+						return false;
+					}
 				}
 			}
 
