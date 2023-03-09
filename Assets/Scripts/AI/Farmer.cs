@@ -274,6 +274,21 @@ public class Farmer : MonoBehaviour {
 			const int moveDistance = 3;
 			// Get a position ahead of the agent.
 			Vector3 wonderDestination = transform.position + newMoveDirection * Vector3.forward * moveDistance;
+			NavMesh.SamplePosition(wonderDestination, out NavMeshHit navMeshHit, moveDistance, NavMesh.AllAreas);
+			const float turnAroundThreshold = 2.8f;
+
+			if (navMeshHit.hit) {
+				Debug.DrawLine(navMeshHit.position, navMeshHit.position + Vector3.up, Color.green, 5);
+			}
+
+			// Check if the farmer is at the edge of the nav mesh.
+			if (navMeshHit.hit && Vector3.Distance(wonderDestination, navMeshHit.position) >= turnAroundThreshold) {
+				Debug.DrawLine(wonderDestination, wonderDestination + Vector3.up, Color.red, 5);
+				// Set the farmer's destination behind them.
+				wonderDestination = transform.position + newMoveDirection * Vector3.back * moveDistance;
+				Debug.Log("Turned Around.");
+			}
+
 			destinationSet = navMeshAgent.SetDestination(wonderDestination);
 		}
 
