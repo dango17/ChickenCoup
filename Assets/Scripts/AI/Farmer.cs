@@ -42,6 +42,7 @@ public class Farmer : MonoBehaviour {
 	/// they've been caught.
 	/// </summary>
 	private Transform releasePosition = null;
+	private Flashlight flashlight = null;
 
 	public static float PathLength(NavMeshPath path) {
 		float pathLength = 0.0f;
@@ -96,6 +97,7 @@ public class Farmer : MonoBehaviour {
 		if (!canSeePlayer && visualSensor.Data.Contains(player)) {
 			containPlayerInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
+			flashlight.ChangeColour(canSeePlayer);
 			seenPlayerRecently = true;
 			// Stops the current action so the AI can react to seeing the
 			// player for the first time in a while.
@@ -105,6 +107,7 @@ public class Farmer : MonoBehaviour {
 		// Handles losing sight of the player.
 		if (canSeePlayer && !visualSensor.Data.Contains(player)) {
 			canSeePlayer = false;
+			flashlight.ChangeColour(canSeePlayer);
 			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
 		}
 
@@ -148,6 +151,7 @@ public class Farmer : MonoBehaviour {
 		audioSensor = GetComponentInChildren<AudioSensor>();
 		catchCollider = GetComponentInChildren<BoxCollider>();
 		navMeshAgent = GetComponent<NavMeshAgent>();
+		flashlight = GetComponentInChildren<Flashlight>();
 	}
 
 	/// <summary>

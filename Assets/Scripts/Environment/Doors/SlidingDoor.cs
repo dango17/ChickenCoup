@@ -67,7 +67,7 @@ namespace DO
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Crates") || other.CompareTag("Player"))
+            if (other.CompareTag("Crates") || other.CompareTag("Farmer"))
             {
                 open = true;
                 currentDoorPosition = doorBody.localPosition;
@@ -77,7 +77,7 @@ namespace DO
 
         private void OnTriggerStay(Collider other)
         {
-            if (other.CompareTag("Crates") || other.CompareTag("Player"))
+            if (other.CompareTag("Crates") || other.CompareTag("Farmer"))
             {
                 open = true;
                 currentDoorPosition = doorBody.localPosition;
@@ -87,7 +87,7 @@ namespace DO
 
         void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("Crates") || other.CompareTag("Player"))
+            if (other.CompareTag("Crates") || other.CompareTag("Farmer"))
             {
                 open = false;
                 currentDoorPosition = doorBody.localPosition;
