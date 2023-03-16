@@ -84,7 +84,7 @@ namespace DO
 
             #region Jumping & Running
             //Jumping
-            if (isJumping && controller.isGrounded)
+            if (isJumping && controller.isGrounded && controller.isInFreeLook == false)
             {          
                 controller.HandleJump(); 
             }
