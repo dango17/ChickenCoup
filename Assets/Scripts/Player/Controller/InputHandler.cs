@@ -19,6 +19,7 @@ namespace DO
         [SerializeField] public ExecutionOrder movementOrder;
         [SerializeField] public PlayerController controller;
         [SerializeField] public CameraManager cameraManager;
+        PlayerControls inputActions; 
 
         [Header("Components")]
         [SerializeField] Vector3 moveDirection;
@@ -26,8 +27,7 @@ namespace DO
         [SerializeField] public float wallDetectionDistanceOnWall = 1.2f;
 
         [Header("Movement")]
-        [SerializeField] float horizontal;
-        [SerializeField] float vertical;
+        Vector2 moveInputDirection;
         [SerializeField] float moveAmount;
 
         [Header("Sprint")]
@@ -59,25 +59,35 @@ namespace DO
 
         private void Start()
         {
+            inputActions = new PlayerControls();
+
+            //Delegates that runs the method anytime the inputs are pressed
+            inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>(); 
+
+            inputActions.Enable(); 
+
             cameraManager.wallCameraObject.SetActive(false);
             cameraManager.mainCameraObject.SetActive(true);
             cameraManager.fpCameraObject.SetActive(false); 
         }
 
+        private void OnDisable()
+        {
+            inputActions.Disable();
+        }
+
         private void Update()
         {
-            horizontal = Input.GetAxis("Horizontal");
-            vertical = Input.GetAxis("Vertical");
             freeLook = Input.GetKey(KeyCode.F);
             isInteracting = Input.GetKey(KeyCode.E);
             isJumping = Input.GetKeyDown(KeyCode.Space);
             isHolding = Input.GetKey(KeyCode.Mouse1);
             isThrowing = Input.GetKey(KeyCode.Mouse0); 
 
-            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
+            moveAmount = moveInputDirection.magnitude;
 
-            moveDirection = camHolder.forward * vertical;
-            moveDirection += camHolder.right * horizontal;
+            moveDirection = camHolder.forward * moveInputDirection.y;
+            moveDirection += camHolder.right * moveInputDirection.x;
             moveDirection.Normalize();
 
             float delta = Time.deltaTime;
@@ -129,7 +139,7 @@ namespace DO
             if (freeLook)
             {
                 cameraManager.fpCameraObject.SetActive(true);      
-                controller.FPRotation(horizontal, delta);
+                controller.FPRotation(moveInputDirection.x, delta);
                 controller.isInFreeLook = true;
             }
             else
