@@ -62,7 +62,18 @@ namespace DO
             inputActions = new PlayerControls();
 
             //Delegates that runs the method anytime the inputs are pressed
-            inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>(); 
+            //Movement Inputs
+            inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>();
+
+            //First Person Inputs
+            inputActions.Player.FirstPerson.started += i => freeLook = true;
+            inputActions.Player.FirstPerson.canceled += i => freeLook = false;
+
+            //Jump Input (New weird behaviour, jump seems to occasionally multiply)
+            inputActions.Player.Jump.performed += i => isJumping = true;
+
+            //Sprint Input 
+            inputActions.Player.Sprint.performed += i => isSprinting = true; 
 
             inputActions.Enable(); 
 
@@ -76,11 +87,18 @@ namespace DO
             inputActions.Disable();
         }
 
+        bool isPressed(UnityEngine.InputSystem.InputActionPhase phase)
+        {
+            return phase == UnityEngine.InputSystem.InputActionPhase.Started; 
+        }
+
         private void Update()
         {
-            freeLook = Input.GetKey(KeyCode.F);
+            float delta = Time.deltaTime;
+
+            //freeLook = isPressed(inputActions.Player.FirstPerson.phase);
             isInteracting = Input.GetKey(KeyCode.E);
-            isJumping = Input.GetKeyDown(KeyCode.Space);
+            //isJumping = Input.GetKeyDown(KeyCode.Space);
             isHolding = Input.GetKey(KeyCode.Mouse1);
             isThrowing = Input.GetKey(KeyCode.Mouse0); 
 
@@ -90,23 +108,21 @@ namespace DO
             moveDirection += camHolder.right * moveInputDirection.x;
             moveDirection.Normalize();
 
-            float delta = Time.deltaTime;
-
             #region Jumping & Running
             //Jumping
-            if (isJumping && controller.isGrounded && controller.isInFreeLook == false)
-            {          
-                controller.HandleJump(); 
+            if (isJumping && controller.isInFreeLook == false)
+            {
+                controller.HandleJump();
             }
             else if (controller.isGrounded == false)
             {
-                controller.handleFalling(); 
+                controller.handleFalling();
             }
 
             //Sprinting 
-            if(isTired == false && Input.GetKeyDown(KeyCode.LeftShift))
+            if (isTired == false && isSprinting == true)
             {
-                controller.moveSpeed = 3.5f;
+                controller.moveSpeed = 4f;
                 isSprinting = true;
                 isTired = false; 
                 StartCoroutine(RunTimer()); 
@@ -116,7 +132,7 @@ namespace DO
                 yield return new WaitForSeconds(runningTimer);
                 isSprinting = false;
 
-                controller.moveSpeed = 2f;
+                controller.moveSpeed = 3f;
                 isTired = true; 
 
                 if(isTired == true && (Input.GetKeyDown(KeyCode.LeftShift)))

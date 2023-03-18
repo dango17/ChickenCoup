@@ -170,8 +170,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385291458575}
-  m_LocalRotation: {x: 0.55130094, y: 0.000000020301592, z: -0.000000013415077, w: 0.8343065}
-  m_LocalPosition: {x: 0, y: 10.58, z: -4.5099998}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000035888494, z: 0.000000023714733, w: 0.83430654}
+  m_LocalPosition: {x: 0, y: 10.611, z: -4.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -274,8 +274,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385632495880}
-  m_LocalRotation: {x: 0.55130094, y: 0.000000020301592, z: -0.000000013415077, w: 0.8343065}
-  m_LocalPosition: {x: 0, y: 10.58, z: -4.5099998}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000035888494, z: 0.000000023714733, w: 0.83430654}
+  m_LocalPosition: {x: -0.07000017, y: 10.611, z: -4.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -812,7 +812,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1615524504985154571}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.031, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -839,27 +839,27 @@ MonoBehaviour:
   sprintSpeed: 0.8
   rotateSpeed: 0.05
   FPRotationSpeed: 0.01
-  jumpForce: 500
+  jumpForce: 5
   fallForce: 2
-  jump: {x: 0, y: 0, z: 0}
+  gravityStrength: -35
   groundLayer:
     serializedVersion: 2
-    m_Bits: 255
-  raycastDistance: 0.1
+    m_Bits: 767
+  raycastDistance: 0.05
   wallSpeed: 2
   wallCheckDistance: 0.1
   coverLayer:
     serializedVersion: 2
     m_Bits: 0
+  wallCamXPosition: 1
+  wallCameraParent: {fileID: 875339384750867808}
   isOnCover: 0
-  isGrounded: 0
+  isGrounded: 1
   isInFreeLook: 0
   mTransform: {fileID: 0}
   animator: {fileID: 7402244214924864601}
   meshRenderer: {fileID: 0}
   inputHandler: {fileID: 0}
-  wallCamXPosition: 1
-  wallCameraParent: {fileID: 875339384750867808}
 --- !u!114 &1615524504985154574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -879,15 +879,16 @@ MonoBehaviour:
   moveDirection: {x: 0, y: 0, z: 0}
   wallDetectionDistance: 0.05
   wallDetectionDistanceOnWall: 1.2
-  horizontal: 0
-  vertical: 0
   moveAmount: 0
   runningTimer: 5
   staminaTimer: 4
   freeLook: 0
   isJumping: 0
   isSprinting: 0
+  isInteracting: 0
   isTired: 0
+  isHolding: 0
+  isThrowing: 0
 --- !u!54 &1615524504985154569
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -896,14 +897,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1615524504985154571}
   serializedVersion: 2
-  m_Mass: 6
-  m_Drag: 1
-  m_AngularDrag: 1
-  m_UseGravity: 1
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.2
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
-  m_CollisionDetection: 0
+  m_Constraints: 0
+  m_CollisionDetection: 2
 --- !u!136 &1615524504985154568
 CapsuleCollider:
   m_ObjectHideFlags: 0

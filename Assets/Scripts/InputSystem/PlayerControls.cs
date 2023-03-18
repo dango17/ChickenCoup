@@ -71,6 +71,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sprint"",
+                    ""type"": ""Button"",
+                    ""id"": ""826d835c-903d-4206-bc76-05ff04481f36"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -216,6 +225,39 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""FirstPerson"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""70f758cc-9814-4487-b0d4-252c1edb8b27"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FirstPerson"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""14ebb56f-fd88-4516-95ea-e2bae7dc84d9"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""668bf02f-18c4-41ef-9a03-6d3e37e0ec70"",
+                    ""path"": ""<Gamepad>/leftStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -229,6 +271,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
         m_Player_ProgressDialouge = m_Player.FindAction("ProgressDialouge", throwIfNotFound: true);
         m_Player_FirstPerson = m_Player.FindAction("FirstPerson", throwIfNotFound: true);
+        m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -293,6 +336,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Grab;
     private readonly InputAction m_Player_ProgressDialouge;
     private readonly InputAction m_Player_FirstPerson;
+    private readonly InputAction m_Player_Sprint;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -302,6 +346,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Grab => m_Wrapper.m_Player_Grab;
         public InputAction @ProgressDialouge => m_Wrapper.m_Player_ProgressDialouge;
         public InputAction @FirstPerson => m_Wrapper.m_Player_FirstPerson;
+        public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -326,6 +371,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @FirstPerson.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFirstPerson;
                 @FirstPerson.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFirstPerson;
                 @FirstPerson.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFirstPerson;
+                @Sprint.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSprint;
+                @Sprint.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSprint;
+                @Sprint.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSprint;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -345,6 +393,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @FirstPerson.started += instance.OnFirstPerson;
                 @FirstPerson.performed += instance.OnFirstPerson;
                 @FirstPerson.canceled += instance.OnFirstPerson;
+                @Sprint.started += instance.OnSprint;
+                @Sprint.performed += instance.OnSprint;
+                @Sprint.canceled += instance.OnSprint;
             }
         }
     }
@@ -356,5 +407,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnGrab(InputAction.CallbackContext context);
         void OnProgressDialouge(InputAction.CallbackContext context);
         void OnFirstPerson(InputAction.CallbackContext context);
+        void OnSprint(InputAction.CallbackContext context);
     }
 }

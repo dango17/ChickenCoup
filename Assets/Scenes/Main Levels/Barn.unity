@@ -503,7 +503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385291458561, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10.58
+      value: 10.611
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385291458561, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalPosition.z
@@ -519,11 +519,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385291458561, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385291458561, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495882, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_BackGroundColor.b
@@ -543,7 +543,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495885, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10.58
+      value: 10.611
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495885, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalPosition.z
@@ -559,11 +559,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495885, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495885, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504534141112, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_IsActive
@@ -607,6 +607,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154569, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_Mass
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154569, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: m_UseGravity
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154569, guid: 4261717fa5641f048b3294da2755b359, type: 3}
@@ -614,8 +618,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154569, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154569, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_Interpolate
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154569, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154569, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_CollisionDetection
@@ -655,7 +667,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: fallForce
-      value: 0.25
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: jumpForce
@@ -6604,7 +6616,7 @@ GameObject:
   - component: {fileID: 7331152187857264780}
   - component: {fileID: 2935593899288612062}
   - component: {fileID: 851373943}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Barn Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
