@@ -7,9 +7,7 @@ using System.Collections;
 
 namespace DO
 {
-    /// <summary>
-    /// Handles and Holds all relevant logic for Inputs.
-    /// </summary>
+    //Handles and Holds all relevant logic for Inputs.
     public class InputHandler : MonoBehaviour
     {
         [Header("Camera-Holder")]
@@ -19,6 +17,7 @@ namespace DO
         [SerializeField] public ExecutionOrder movementOrder;
         [SerializeField] public PlayerController controller;
         [SerializeField] public CameraManager cameraManager;
+        PlayerControls inputActions; 
 
         [Header("Components")]
         [SerializeField] Vector3 moveDirection;
@@ -26,8 +25,7 @@ namespace DO
         [SerializeField] public float wallDetectionDistanceOnWall = 1.2f;
 
         [Header("Movement")]
-        [SerializeField] float horizontal;
-        [SerializeField] float vertical;
+        Vector2 moveInputDirection;
         [SerializeField] float moveAmount;
 
         [Header("Sprint")]
@@ -38,9 +36,10 @@ namespace DO
         public bool freeLook;
         public bool isJumping;
         public bool isSprinting;
-        public bool isInteracting; 
+        public bool isInteracting;
+        public bool isClucking; 
         public bool isTired;
-        public bool isHolding;
+        public bool isGrabbing;
         public bool isThrowing; 
 
         public enum ExecutionOrder
@@ -59,44 +58,65 @@ namespace DO
 
         private void Start()
         {
+            inputActions = new PlayerControls();
+
+            //Delegates that runs the method anytime the inputs are pressed
+            //Movement Inputs
+            inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>();
+            //First Person Inputs
+            inputActions.Player.FirstPerson.started += i => freeLook = true;
+            inputActions.Player.FirstPerson.canceled += i => freeLook = false;
+            //Jump Input (New weird behaviour, jump seems to occasionally multiply)
+            inputActions.Player.Jump.performed += i => isJumping = true;
+            //Sprint Input 
+            inputActions.Player.Sprint.performed += i => isSprinting = true;
+            //Grabbing Input 
+            inputActions.Player.Grab.started += i => isGrabbing = true;
+            inputActions.Player.Grab.canceled += i => isGrabbing = false;
+            //Clucking Input 
+            inputActions.Player.Cluck.performed += i => isClucking = true;
+            //inputActions.Player.Cluck.canceled += i => isClucking = false; 
+
+            inputActions.Enable(); 
+
             cameraManager.wallCameraObject.SetActive(false);
             cameraManager.mainCameraObject.SetActive(true);
             cameraManager.fpCameraObject.SetActive(false); 
         }
 
+        private void OnDisable()
+        {
+            inputActions.Disable();
+        }
+
         private void Update()
         {
-            horizontal = Input.GetAxis("Horizontal");
-            vertical = Input.GetAxis("Vertical");
-            freeLook = Input.GetKey(KeyCode.F);
+            float delta = Time.deltaTime;
+
             isInteracting = Input.GetKey(KeyCode.E);
-            isJumping = Input.GetKeyDown(KeyCode.Space);
-            isHolding = Input.GetKey(KeyCode.Mouse1);
             isThrowing = Input.GetKey(KeyCode.Mouse0); 
 
-            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
+            moveAmount = moveInputDirection.magnitude;
 
-            moveDirection = camHolder.forward * vertical;
-            moveDirection += camHolder.right * horizontal;
+            moveDirection = camHolder.forward * moveInputDirection.y;
+            moveDirection += camHolder.right * moveInputDirection.x;
             moveDirection.Normalize();
-
-            float delta = Time.deltaTime;
 
             #region Jumping & Running
             //Jumping
-            if (isJumping && controller.isGrounded && controller.isInFreeLook == false)
-            {          
-                controller.HandleJump(); 
+            if (isJumping && controller.isInFreeLook == false)
+            {
+                controller.HandleJump();
             }
             else if (controller.isGrounded == false)
             {
-                controller.handleFalling(); 
+                controller.handleFalling();
             }
 
             //Sprinting 
-            if(isTired == false && Input.GetKeyDown(KeyCode.LeftShift))
+            if (isTired == false && isSprinting == true)
             {
-                controller.moveSpeed = 3.5f;
+                controller.moveSpeed = 4f;
                 isSprinting = true;
                 isTired = false; 
                 StartCoroutine(RunTimer()); 
@@ -106,7 +126,7 @@ namespace DO
                 yield return new WaitForSeconds(runningTimer);
                 isSprinting = false;
 
-                controller.moveSpeed = 2f;
+                controller.moveSpeed = 3f;
                 isTired = true; 
 
                 if(isTired == true && (Input.GetKeyDown(KeyCode.LeftShift)))
@@ -129,7 +149,7 @@ namespace DO
             if (freeLook)
             {
                 cameraManager.fpCameraObject.SetActive(true);      
-                controller.FPRotation(horizontal, delta);
+                controller.FPRotation(moveInputDirection.x, delta);
                 controller.isInFreeLook = true;
             }
             else

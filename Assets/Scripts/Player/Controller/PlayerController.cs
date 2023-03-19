@@ -7,9 +7,7 @@ using System.Collections;
 
 namespace DO
 {
-    /// <summary>
-    /// playerManager that handles movement types and the relevant logic to execute.
-    /// </summary>
+    //playerManager that handles movement types and the relevant logic to execute.
     public class PlayerController : MonoBehaviour
     {
         [Header("Speeds")]
@@ -18,9 +16,9 @@ namespace DO
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
         [Header("Jumping")]
-        [SerializeField] public float jumpForce = 7f;
+        [SerializeField] public float jumpForce = 5f;
         [SerializeField] public float fallForce = 2f;
-        //[SerializeField] public Vector3 jump; 
+        [SerializeField] public float gravityStrength; 
         [Header("Ground-Check")]
         [SerializeField] public LayerMask groundLayer;
         [SerializeField] public float raycastDistance = 0.2f; 
@@ -177,13 +175,12 @@ namespace DO
 
         public void HandleJump()
         {
-            inputHandler.isJumping = true;
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange); 
+            inputHandler.isJumping = false;
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }
 
         public void handleFalling()
         {
-            inputHandler.isJumping = false;
             rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse);
         }
     }

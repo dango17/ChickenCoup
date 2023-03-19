@@ -12,6 +12,8 @@ namespace DO
 
         private int index;
 
+        public InputHandler inputHandler;
+
         private void Start()
         {
             dialougeText.text = string.Empty;
@@ -21,11 +23,12 @@ namespace DO
         public void Update()
         { 
             //Keycode.Return == Enter Key
-            if (Input.GetKeyDown(KeyCode.Return))
+            if(inputHandler.isClucking == true)
             {
                if(dialougeText.text == lines[index])
                {
-                    NextLine(); 
+                    NextLine();
+                    inputHandler.isClucking = false; 
                }
                else
                {
