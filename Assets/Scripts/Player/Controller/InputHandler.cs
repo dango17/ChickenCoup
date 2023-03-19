@@ -7,9 +7,7 @@ using System.Collections;
 
 namespace DO
 {
-    /// <summary>
-    /// Handles and Holds all relevant logic for Inputs.
-    /// </summary>
+    //Handles and Holds all relevant logic for Inputs.
     public class InputHandler : MonoBehaviour
     {
         [Header("Camera-Holder")]
@@ -40,7 +38,7 @@ namespace DO
         public bool isSprinting;
         public bool isInteracting; 
         public bool isTired;
-        public bool isHolding;
+        public bool isGrabbing;
         public bool isThrowing; 
 
         public enum ExecutionOrder
@@ -64,16 +62,16 @@ namespace DO
             //Delegates that runs the method anytime the inputs are pressed
             //Movement Inputs
             inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>();
-
             //First Person Inputs
             inputActions.Player.FirstPerson.started += i => freeLook = true;
             inputActions.Player.FirstPerson.canceled += i => freeLook = false;
-
             //Jump Input (New weird behaviour, jump seems to occasionally multiply)
             inputActions.Player.Jump.performed += i => isJumping = true;
-
             //Sprint Input 
-            inputActions.Player.Sprint.performed += i => isSprinting = true; 
+            inputActions.Player.Sprint.performed += i => isSprinting = true;
+            //Pickup Input 
+            inputActions.Player.Grab.started += i => isGrabbing = true;
+            inputActions.Player.Grab.canceled += i => isGrabbing = false;
 
             inputActions.Enable(); 
 
@@ -87,19 +85,11 @@ namespace DO
             inputActions.Disable();
         }
 
-        bool isPressed(UnityEngine.InputSystem.InputActionPhase phase)
-        {
-            return phase == UnityEngine.InputSystem.InputActionPhase.Started; 
-        }
-
         private void Update()
         {
             float delta = Time.deltaTime;
 
-            //freeLook = isPressed(inputActions.Player.FirstPerson.phase);
             isInteracting = Input.GetKey(KeyCode.E);
-            //isJumping = Input.GetKeyDown(KeyCode.Space);
-            isHolding = Input.GetKey(KeyCode.Mouse1);
             isThrowing = Input.GetKey(KeyCode.Mouse0); 
 
             moveAmount = moveInputDirection.magnitude;

@@ -6,6 +6,9 @@ using UnityEngine;
 
 /// <summary>
 /// Allows the player to pick up, drop, throw and manipulate gameObjects with said script attacted.
+/// Based off the first playtesting session, this system didnt work very well with the intended platforming 
+/// of the level design. As a result I've removed this script from any obejcts within the scenes and rewrote a new
+/// pick up system under the "PickUpUtem.cs" Script. Replaces this for a more user friendly version 
 /// </summary>
 namespace DO
 {
@@ -30,18 +33,19 @@ namespace DO
             distance = Vector3.Distance(item.transform.position, pickupPoint.transform.position); 
             if(distance >= 0.7f)
             {
-                inputHandler.isHolding = false;
+                inputHandler.isGrabbing = false;
                 LetGo();
             }
 
-            if (inputHandler.isHolding == true)
+            if (inputHandler.isGrabbing == true)
             {
+                inputHandler.isGrabbing = true; 
                 PickUp(); 
                 item.GetComponent<Rigidbody>().velocity = Vector3.zero;
                 item.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
                 item.transform.SetParent(pickupPoint.transform);
 
-                if (inputHandler.isHolding == true && inputHandler.isThrowing == true)
+                if (inputHandler.isGrabbing == true && inputHandler.isThrowing == true)
                 {
                     //Throw
                     item.GetComponent<Rigidbody>().AddForce(pickupPoint.transform.forward * throwForce);
@@ -52,7 +56,7 @@ namespace DO
                 objectPosition = item.transform.position;
                 item.transform.SetParent(null);
                 item.GetComponent<Rigidbody>().useGravity = true;
-                item.transform.position = objectPosition; 
+                item.transform.position = objectPosition;
             }
         }
 
@@ -60,7 +64,7 @@ namespace DO
         {
             if(distance <= 0.7f)
             {
-                inputHandler.isHolding = true;
+                inputHandler.isGrabbing = true;
                 item.GetComponent<Rigidbody>().useGravity = false;
                 item.GetComponent<Rigidbody>().detectCollisions = true;
             }    
@@ -68,7 +72,7 @@ namespace DO
 
         public void LetGo()
         {
-            inputHandler.isHolding = false;
+            inputHandler.isGrabbing = false;
         }
     }
 }

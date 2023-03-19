@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1182320384819585364}
   m_Layer: 0
   m_Name: Player Camera Manager
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -170,7 +170,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385291458575}
-  m_LocalRotation: {x: 0.55130094, y: -0.000000035888494, z: 0.000000023714733, w: 0.83430654}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000035888483, z: 0.000000023714733, w: 0.83430654}
   m_LocalPosition: {x: 0, y: 10.611, z: -4.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -274,7 +274,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385632495880}
-  m_LocalRotation: {x: 0.55130094, y: -0.000000035888494, z: 0.000000023714733, w: 0.83430654}
+  m_LocalRotation: {x: 0.55130094, y: 0.000000035888483, z: -0.000000023714733, w: 0.83430654}
   m_LocalPosition: {x: -0.07000017, y: 10.611, z: -4.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -887,7 +887,7 @@ MonoBehaviour:
   isSprinting: 0
   isInteracting: 0
   isTired: 0
-  isHolding: 0
+  isGrabbing: 0
   isThrowing: 0
 --- !u!54 &1615524504985154569
 Rigidbody:
@@ -961,7 +961,7 @@ GameObject:
   - component: {fileID: 1752816793553067403}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1679,7 +1679,7 @@ GameObject:
   - component: {fileID: 7402244214924864601}
   m_Layer: 0
   m_Name: ChickenModel
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

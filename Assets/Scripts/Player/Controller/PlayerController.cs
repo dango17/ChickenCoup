@@ -7,9 +7,7 @@ using System.Collections;
 
 namespace DO
 {
-    /// <summary>
-    /// playerManager that handles movement types and the relevant logic to execute.
-    /// </summary>
+    //playerManager that handles movement types and the relevant logic to execute.
     public class PlayerController : MonoBehaviour
     {
         [Header("Speeds")]
@@ -183,7 +181,6 @@ namespace DO
 
         public void handleFalling()
         {
-            //inputHandler.isJumping = false; 
             rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse);
         }
     }
