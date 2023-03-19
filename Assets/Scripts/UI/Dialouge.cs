@@ -12,7 +12,7 @@ namespace DO
 
         private int index;
 
-       public InputHandler inputHandler;
+        public InputHandler inputHandler;
 
         private void Start()
         {

@@ -1,9 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+// Author: Daniel Oldham/s1903729
+// Collaborator: N/A
+// Created On: 19/03/2023
+
 using UnityEngine;
 
 namespace DO
 {
+    //Allows for the player to pick up items into their pickUpPoint.
+    //More user firendly than the last 'pickupable.cs' script
     public class PickupItem : MonoBehaviour
     {
         [SerializeField] public GameObject currentObject;
