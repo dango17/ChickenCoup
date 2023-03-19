@@ -55,7 +55,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ProgressDialouge"",
+                    ""name"": ""Cluck"",
                     ""type"": ""Button"",
                     ""id"": ""9ed9faff-dded-4c82-835b-371fd13c68f3"",
                     ""expectedControlType"": ""Button"",
@@ -200,7 +200,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ProgressDialouge"",
+                    ""action"": ""Cluck"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -211,7 +211,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ProgressDialouge"",
+                    ""action"": ""Cluck"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -269,7 +269,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
-        m_Player_ProgressDialouge = m_Player.FindAction("ProgressDialouge", throwIfNotFound: true);
+        m_Player_Cluck = m_Player.FindAction("Cluck", throwIfNotFound: true);
         m_Player_FirstPerson = m_Player.FindAction("FirstPerson", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
     }
@@ -334,7 +334,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Movement;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Grab;
-    private readonly InputAction m_Player_ProgressDialouge;
+    private readonly InputAction m_Player_Cluck;
     private readonly InputAction m_Player_FirstPerson;
     private readonly InputAction m_Player_Sprint;
     public struct PlayerActions
@@ -344,7 +344,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Grab => m_Wrapper.m_Player_Grab;
-        public InputAction @ProgressDialouge => m_Wrapper.m_Player_ProgressDialouge;
+        public InputAction @Cluck => m_Wrapper.m_Player_Cluck;
         public InputAction @FirstPerson => m_Wrapper.m_Player_FirstPerson;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -365,9 +365,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Grab.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrab;
                 @Grab.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrab;
                 @Grab.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrab;
-                @ProgressDialouge.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnProgressDialouge;
-                @ProgressDialouge.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnProgressDialouge;
-                @ProgressDialouge.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnProgressDialouge;
+                @Cluck.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCluck;
+                @Cluck.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCluck;
+                @Cluck.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCluck;
                 @FirstPerson.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFirstPerson;
                 @FirstPerson.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFirstPerson;
                 @FirstPerson.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFirstPerson;
@@ -387,9 +387,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Grab.started += instance.OnGrab;
                 @Grab.performed += instance.OnGrab;
                 @Grab.canceled += instance.OnGrab;
-                @ProgressDialouge.started += instance.OnProgressDialouge;
-                @ProgressDialouge.performed += instance.OnProgressDialouge;
-                @ProgressDialouge.canceled += instance.OnProgressDialouge;
+                @Cluck.started += instance.OnCluck;
+                @Cluck.performed += instance.OnCluck;
+                @Cluck.canceled += instance.OnCluck;
                 @FirstPerson.started += instance.OnFirstPerson;
                 @FirstPerson.performed += instance.OnFirstPerson;
                 @FirstPerson.canceled += instance.OnFirstPerson;
@@ -405,7 +405,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnGrab(InputAction.CallbackContext context);
-        void OnProgressDialouge(InputAction.CallbackContext context);
+        void OnCluck(InputAction.CallbackContext context);
         void OnFirstPerson(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
     }

@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ProgressDialouge",
+                    "name": "Cluck",
                     "type": "Button",
                     "id": "9ed9faff-dded-4c82-835b-371fd13c68f3",
                     "expectedControlType": "Button",
@@ -178,7 +178,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ProgressDialouge",
+                    "action": "Cluck",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -189,7 +189,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ProgressDialouge",
+                    "action": "Cluck",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

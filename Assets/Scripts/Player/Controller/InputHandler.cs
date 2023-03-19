@@ -36,7 +36,8 @@ namespace DO
         public bool freeLook;
         public bool isJumping;
         public bool isSprinting;
-        public bool isInteracting; 
+        public bool isInteracting;
+        public bool isClucking; 
         public bool isTired;
         public bool isGrabbing;
         public bool isThrowing; 
@@ -69,9 +70,12 @@ namespace DO
             inputActions.Player.Jump.performed += i => isJumping = true;
             //Sprint Input 
             inputActions.Player.Sprint.performed += i => isSprinting = true;
-            //Pickup Input 
+            //Grabbing Input 
             inputActions.Player.Grab.started += i => isGrabbing = true;
             inputActions.Player.Grab.canceled += i => isGrabbing = false;
+            //Clucking Input 
+            inputActions.Player.Cluck.performed += i => isClucking = true;
+            //inputActions.Player.Cluck.canceled += i => isClucking = false; 
 
             inputActions.Enable(); 
 

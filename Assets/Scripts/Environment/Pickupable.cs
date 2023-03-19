@@ -5,9 +5,10 @@
 using UnityEngine;
 
 /// <summary>
-/// Allows the player to pick up, drop, throw and manipulate gameObjects with said script attacted.
+/// Allows the player to pick up, drop, throw and manipulate gameObjects with said script attacted. //
+
 /// Based off the first playtesting session, this system didnt work very well with the intended platforming 
-/// of the level design. As a result I've removed this script from any obejcts within the scenes and rewrote a new
+/// in the level design. As a result I've removed this script from any obejcts within the scenes and rewrote a new
 /// pick up system under the "PickUpUtem.cs" Script. Replaces this for a more user friendly version 
 /// </summary>
 namespace DO

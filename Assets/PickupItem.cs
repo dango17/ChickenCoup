@@ -8,11 +8,10 @@ namespace DO
     {
         [SerializeField] public GameObject currentObject;
         [SerializeField] public Transform pickupPoint;
-        public Transform tempTransform; 
         [SerializeField] public InputHandler inputHandler;
 
-
-        //OTE && OTS Functions are virtually identically to eachother 
+        #region Pickup Items
+        //OTE && OTS Functions are identically to eachother 
         public void OnTriggerEnter(Collider other)
         {
             if (other.tag == "Player" && inputHandler.isGrabbing == true)
@@ -42,6 +41,7 @@ namespace DO
                 DropItem(); 
             }
         }
+        #endregion
 
         public void DropItem()
         {

@@ -532,7 +532,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentObject: {fileID: 766415207}
   pickupPoint: {fileID: 179180621}
-  tempTransform: {fileID: 766415208}
   inputHandler: {fileID: 915809881}
 --- !u!135 &766415210
 SphereCollider:
@@ -1602,7 +1601,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentObject: {fileID: 1649647528}
   pickupPoint: {fileID: 179180621}
-  tempTransform: {fileID: 1649647529}
   inputHandler: {fileID: 915809881}
 --- !u!135 &1649647531
 SphereCollider:
@@ -1814,7 +1812,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentObject: {fileID: 1857902868}
   pickupPoint: {fileID: 179180621}
-  tempTransform: {fileID: 1857902869}
   inputHandler: {fileID: 915809881}
 --- !u!135 &1857902871
 SphereCollider:
@@ -2110,6 +2107,7 @@ MonoBehaviour:
   - Behind The Box In The Upper Left Corner Is A Hole!
   - 'Pick Up And Move The Box And Get Outta Here! '
   textSpeed: 0.05
+  inputHandler: {fileID: 915809881}
 --- !u!1 &2040085844
 GameObject:
   m_ObjectHideFlags: 0
