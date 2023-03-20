@@ -21,6 +21,7 @@ namespace DO
 
         [Header("Components")]
         [SerializeField] Vector3 moveDirection;
+        [SerializeField] Vector3 lookInputDirection;
         [SerializeField] public float wallDetectionDistance = 0.2f;
         [SerializeField] public float wallDetectionDistanceOnWall = 1.2f;
 
@@ -33,14 +34,15 @@ namespace DO
         [SerializeField] public float staminaTimer = 4f;
 
         [Header("Flags")]
-        public bool freeLook;
+        public bool isFP;
         public bool isJumping;
         public bool isSprinting;
         public bool isInteracting;
         public bool isClucking; 
         public bool isTired;
         public bool isGrabbing;
-        public bool isThrowing; 
+        public bool isThrowing;
+        public bool FPSModeInit; 
 
         public enum ExecutionOrder
         {
@@ -63,9 +65,11 @@ namespace DO
             //Delegates that runs the method anytime the inputs are pressed
             //Movement Inputs
             inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>();
+            //First Person CameraDir Input
+            inputActions.Player.FPCameraDirection.performed += i => lookInputDirection = i.ReadValue<Vector2>(); 
             //First Person Inputs
-            inputActions.Player.FirstPerson.started += i => freeLook = true;
-            inputActions.Player.FirstPerson.canceled += i => freeLook = false;
+            inputActions.Player.FirstPerson.started += i => isFP = true;
+            inputActions.Player.FirstPerson.canceled += i => isFP = false;
             //Jump Input (New weird behaviour, jump seems to occasionally multiply)
             inputActions.Player.Jump.performed += i => isJumping = true;
             //Sprint Input 
@@ -93,8 +97,29 @@ namespace DO
         {
             float delta = Time.deltaTime;
 
-            isInteracting = Input.GetKey(KeyCode.E);
-            isThrowing = Input.GetKey(KeyCode.Mouse0); 
+            //FPMode = Automatically move to first person state
+            //for things like vents, under tables, etc. 
+            if (controller.isFPMode)
+            {
+                if(!FPSModeInit)
+                {
+                    cameraManager.fpCameraObject.SetActive(true); 
+                    FPSModeInit = true; 
+                }
+
+                moveDirection = controller.mTransform.forward * moveInputDirection.y;
+                moveDirection += controller.mTransform.right * moveInputDirection.x;
+                moveDirection.Normalize();
+                controller.FPRotation(lookInputDirection.x, delta);
+                controller.Move(moveDirection, delta);
+
+                return;
+            }
+            if(FPSModeInit)
+            {
+                cameraManager.fpCameraObject.SetActive(false);
+                FPSModeInit = false; 
+            }
 
             moveAmount = moveInputDirection.magnitude;
 
@@ -146,7 +171,7 @@ namespace DO
 
             #region First Person Camera
             //First Person
-            if (freeLook)
+            if (isFP)
             {
                 cameraManager.fpCameraObject.SetActive(true);      
                 controller.FPRotation(moveInputDirection.x, delta);
@@ -170,7 +195,7 @@ namespace DO
 
         void HandleMovement(Vector3 moveDirection, float delta)
         {
-            if(freeLook)
+            if(isFP)
             {
                 return; 
             }

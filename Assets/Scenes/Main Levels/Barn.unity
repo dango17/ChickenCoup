@@ -267,6 +267,64 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 1182320385632495882, guid: 4261717fa5641f048b3294da2755b359, type: 3}
   m_PrefabInstance: {fileID: 775074618}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &593350473
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 593350474}
+  - component: {fileID: 593350475}
+  - component: {fileID: 593350476}
+  m_Layer: 0
+  m_Name: FPCamTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &593350474
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593350473}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8513471231854613152}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &593350475
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593350473}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.32915726, y: 0.2543512, z: 0.95529}
+  m_Center: {x: -0.011171279, y: -0.00023016625, z: -0.49857208}
+--- !u!114 &593350476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593350473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba239f502bb2ee8479e4a8d6fccf877b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &653214226
 GameObject:
   m_ObjectHideFlags: 0
@@ -674,6 +732,14 @@ PrefabInstance:
       value: 0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495882, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: far clip plane
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1182320385632495882, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: near clip plane
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1182320385632495882, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_BackGroundColor.b
       value: 0
       objectReference: {fileID: 0}
@@ -790,6 +856,10 @@ PrefabInstance:
       value: -0.15
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154574, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: FPSModeInit
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154574, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: wallAngleThreshold
       value: 40
       objectReference: {fileID: 0}
@@ -814,6 +884,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: isFPMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: fallForce
       value: 2
       objectReference: {fileID: 0}
@@ -827,7 +901,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: rotateSpeed
-      value: 0.1
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
+      propertyPath: FPRotationSpeed
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1615524504985154575, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: wallCameraParent
@@ -11283,7 +11361,7 @@ GameObject:
   - component: {fileID: 3051522155478433076}
   - component: {fileID: 8513471231854613153}
   m_Layer: 0
-  m_Name: Box250
+  m_Name: Table1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12836,7 +12914,8 @@ Transform:
   m_LocalPosition: {x: -3.7215781, y: 1.1528, z: -19.915455}
   m_LocalScale: {x: 6.700876, y: 33.23226, z: 1.1924746}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 593350474}
   m_Father: {fileID: 543450652535653081}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

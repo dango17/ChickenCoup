@@ -32,7 +32,8 @@ namespace DO
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
-        [SerializeField] public bool isInFreeLook; 
+        [SerializeField] public bool isInFreeLook;
+        [SerializeField] public bool isFPMode; 
 
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
@@ -132,10 +133,9 @@ namespace DO
             HandleRotation(moveDirection, delta);         
         }
 
-        void HandleRotation(Vector3 lookDir, float delta)
+        public void HandleRotation(Vector3 lookDir, float delta)
         {
-            //Handle Rotation
-            //lookDir = currentRotation point      
+            //Handle Rotation     
             if (lookDir == Vector3.zero)
                 lookDir = mTransform.forward;
 

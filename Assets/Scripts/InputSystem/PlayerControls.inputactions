@@ -15,6 +15,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "FPCameraDirection",
+                    "type": "PassThrough",
+                    "id": "2e021fe9-c46b-4308-8edd-be870724de52",
+                    "expectedControlType": "Vector2",
+                    "processors": "StickDeadzone",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "6e36f94d-10d3-416b-a029-a56ea6c3e594",
@@ -234,6 +243,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f1522a5a-26a1-4a18-9a3b-6d07d3bc4448",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FPCameraDirection",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
