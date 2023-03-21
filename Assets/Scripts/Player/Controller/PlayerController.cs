@@ -15,6 +15,7 @@ namespace DO
         [SerializeField] public float sprintSpeed = 0.8f;
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
+
         [Header("Jumping")]
         [SerializeField] public float jumpForce = 5f;
         [SerializeField] public float fallForce = 2f;

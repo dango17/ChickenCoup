@@ -18,6 +18,17 @@ namespace DO
             }
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+            InputHandler inputHandler = other.GetComponentInParent<InputHandler>();
+
+            if (other.tag == "Player")
+            {
+                inputHandler.controller.isFPMode = true;
+            }
+
+        }
+
         private void OnTriggerExit(Collider other)
         {
             InputHandler inputHandler = other.GetComponentInParent<InputHandler>();

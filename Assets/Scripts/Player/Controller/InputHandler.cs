@@ -17,6 +17,7 @@ namespace DO
         [SerializeField] public ExecutionOrder movementOrder;
         [SerializeField] public PlayerController controller;
         [SerializeField] public CameraManager cameraManager;
+        [SerializeField] public GameObject playerModel; 
         PlayerControls inputActions; 
 
         [Header("Components")]
@@ -66,9 +67,9 @@ namespace DO
             //Movement Inputs
             inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>();
             //First Person CameraDir Input
-            inputActions.Player.FPCameraDirection.performed += i => lookInputDirection = i.ReadValue<Vector2>(); 
+            inputActions.Player.FPCameraDirection.performed += i => lookInputDirection = i.ReadValue<Vector2>();
             //First Person Inputs
-            inputActions.Player.FirstPerson.started += i => isFP = true;
+            inputActions.Player.FirstPerson.started += i => isFP = true; cameraManager.tiltAngle = 0;
             inputActions.Player.FirstPerson.canceled += i => isFP = false;
             //Jump Input (New weird behaviour, jump seems to occasionally multiply)
             inputActions.Player.Jump.performed += i => isJumping = true;
@@ -97,29 +98,39 @@ namespace DO
         {
             float delta = Time.deltaTime;
 
+            #region FP Automatic Mode
             //FPMode = Automatically move to first person state
             //for things like vents, under tables, etc. 
             if (controller.isFPMode)
             {
                 if(!FPSModeInit)
                 {
-                    cameraManager.fpCameraObject.SetActive(true); 
-                    FPSModeInit = true; 
+                    cameraManager.tiltAngle = 0;
+                    cameraManager.fpCameraObject.SetActive(true);
+                    playerModel.SetActive(false);
+                    FPSModeInit = true;
+                    controller.rotateSpeed = 1.2f; 
                 }
 
                 moveDirection = controller.mTransform.forward * moveInputDirection.y;
                 moveDirection += controller.mTransform.right * moveInputDirection.x;
                 moveDirection.Normalize();
-                controller.FPRotation(lookInputDirection.x, delta);
+
+                controller.FPRotation(moveInputDirection.x, delta);
+                cameraManager.HandleFPSTile(lookInputDirection.y, delta);
                 controller.Move(moveDirection, delta);
 
                 return;
             }
             if(FPSModeInit)
             {
+                cameraManager.tiltAngle = 0;
                 cameraManager.fpCameraObject.SetActive(false);
-                FPSModeInit = false; 
+                playerModel.SetActive(true);
+                FPSModeInit = false;
+                controller.rotateSpeed = 0.01f; 
             }
+            #endregion
 
             moveAmount = moveInputDirection.magnitude;
 
@@ -173,14 +184,18 @@ namespace DO
             //First Person
             if (isFP)
             {
-                cameraManager.fpCameraObject.SetActive(true);      
-                controller.FPRotation(moveInputDirection.x, delta);
+                cameraManager.fpCameraObject.SetActive(true);
+                playerModel.SetActive(false);
+                controller.FPRotation(lookInputDirection.x, delta);
+                cameraManager.HandleFPSTile(lookInputDirection.y, delta); 
                 controller.isInFreeLook = true;
             }
             else
             {
                 cameraManager.fpCameraObject.SetActive(false);
+                playerModel.SetActive(true);
                 controller.isInFreeLook = false;
+                cameraManager.tiltAngle = 0;
             }
             #endregion
 
