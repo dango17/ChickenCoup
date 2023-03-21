@@ -37,6 +37,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""FPCameraDirection"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""2e021fe9-c46b-4308-8edd-be870724de52"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": ""StickDeadzone"",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""6e36f94d-10d3-416b-a029-a56ea6c3e594"",
@@ -258,6 +267,72 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f1522a5a-26a1-4a18-9a3b-6d07d3bc4448"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FPCameraDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Keyboard"",
+                    ""id"": ""b9d22476-96e2-4700-a652-4575c0209146"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FPCameraDirection"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""12a58b56-97f6-45ba-bcf4-940c924cb52b"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FPCameraDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""d64c4e74-70c3-4332-8c17-4aadb29a860d"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FPCameraDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""099ad88a-68ce-4a97-92f9-6f56905ee1a9"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FPCameraDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""bc30c391-541d-48c9-9bad-d58b19aad76c"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FPCameraDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -267,6 +342,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
+        m_Player_FPCameraDirection = m_Player.FindAction("FPCameraDirection", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
         m_Player_Cluck = m_Player.FindAction("Cluck", throwIfNotFound: true);
@@ -332,6 +408,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_Movement;
+    private readonly InputAction m_Player_FPCameraDirection;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Grab;
     private readonly InputAction m_Player_Cluck;
@@ -342,6 +419,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         private @PlayerControls m_Wrapper;
         public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
+        public InputAction @FPCameraDirection => m_Wrapper.m_Player_FPCameraDirection;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Grab => m_Wrapper.m_Player_Grab;
         public InputAction @Cluck => m_Wrapper.m_Player_Cluck;
@@ -359,6 +437,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Movement.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMovement;
                 @Movement.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMovement;
                 @Movement.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMovement;
+                @FPCameraDirection.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFPCameraDirection;
+                @FPCameraDirection.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFPCameraDirection;
+                @FPCameraDirection.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFPCameraDirection;
                 @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
@@ -381,6 +462,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Movement.started += instance.OnMovement;
                 @Movement.performed += instance.OnMovement;
                 @Movement.canceled += instance.OnMovement;
+                @FPCameraDirection.started += instance.OnFPCameraDirection;
+                @FPCameraDirection.performed += instance.OnFPCameraDirection;
+                @FPCameraDirection.canceled += instance.OnFPCameraDirection;
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
@@ -403,6 +487,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnMovement(InputAction.CallbackContext context);
+        void OnFPCameraDirection(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnGrab(InputAction.CallbackContext context);
         void OnCluck(InputAction.CallbackContext context);

@@ -15,6 +15,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "FPCameraDirection",
+                    "type": "PassThrough",
+                    "id": "2e021fe9-c46b-4308-8edd-be870724de52",
+                    "expectedControlType": "Vector2",
+                    "processors": "StickDeadzone",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "6e36f94d-10d3-416b-a029-a56ea6c3e594",
@@ -236,6 +245,72 @@
                     "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f1522a5a-26a1-4a18-9a3b-6d07d3bc4448",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FPCameraDirection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Keyboard",
+                    "id": "b9d22476-96e2-4700-a652-4575c0209146",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FPCameraDirection",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "12a58b56-97f6-45ba-bcf4-940c924cb52b",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FPCameraDirection",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "d64c4e74-70c3-4332-8c17-4aadb29a860d",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FPCameraDirection",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "099ad88a-68ce-4a97-92f9-6f56905ee1a9",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FPCameraDirection",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "bc30c391-541d-48c9-9bad-d58b19aad76c",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FPCameraDirection",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

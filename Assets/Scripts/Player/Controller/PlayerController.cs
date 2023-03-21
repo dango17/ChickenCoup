@@ -15,6 +15,7 @@ namespace DO
         [SerializeField] public float sprintSpeed = 0.8f;
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
+
         [Header("Jumping")]
         [SerializeField] public float jumpForce = 5f;
         [SerializeField] public float fallForce = 2f;
@@ -32,7 +33,8 @@ namespace DO
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
-        [SerializeField] public bool isInFreeLook; 
+        [SerializeField] public bool isInFreeLook;
+        [SerializeField] public bool isFPMode; 
 
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
@@ -132,10 +134,9 @@ namespace DO
             HandleRotation(moveDirection, delta);         
         }
 
-        void HandleRotation(Vector3 lookDir, float delta)
+        public void HandleRotation(Vector3 lookDir, float delta)
         {
-            //Handle Rotation
-            //lookDir = currentRotation point      
+            //Handle Rotation     
             if (lookDir == Vector3.zero)
                 lookDir = mTransform.forward;
 
