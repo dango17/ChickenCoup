@@ -7,9 +7,7 @@ using System.Collections;
 
 namespace DO
 {
-    /// <summary>
-    /// Handles and Holds all relevant logic for Inputs.
-    /// </summary>
+    //Handles and Holds all relevant logic for Inputs.
     public class InputHandler : MonoBehaviour
     {
         [Header("Camera-Holder")]
@@ -19,15 +17,17 @@ namespace DO
         [SerializeField] public ExecutionOrder movementOrder;
         [SerializeField] public PlayerController controller;
         [SerializeField] public CameraManager cameraManager;
+        [SerializeField] public GameObject playerModel; 
+        PlayerControls inputActions; 
 
         [Header("Components")]
         [SerializeField] Vector3 moveDirection;
+        [SerializeField] Vector3 lookInputDirection;
         [SerializeField] public float wallDetectionDistance = 0.2f;
         [SerializeField] public float wallDetectionDistanceOnWall = 1.2f;
 
         [Header("Movement")]
-        [SerializeField] float horizontal;
-        [SerializeField] float vertical;
+        Vector2 moveInputDirection;
         [SerializeField] float moveAmount;
 
         [Header("Sprint")]
@@ -35,13 +35,15 @@ namespace DO
         [SerializeField] public float staminaTimer = 4f;
 
         [Header("Flags")]
-        public bool freeLook;
+        public bool isFP;
         public bool isJumping;
         public bool isSprinting;
-        public bool isInteracting; 
+        public bool isInteracting;
+        public bool isClucking; 
         public bool isTired;
-        public bool isHolding;
-        public bool isThrowing; 
+        public bool isGrabbing;
+        public bool isThrowing;
+        public bool FPSModeInit; 
 
         public enum ExecutionOrder
         {
@@ -59,44 +61,98 @@ namespace DO
 
         private void Start()
         {
+            inputActions = new PlayerControls();
+
+            //Delegates that runs the method anytime the inputs are pressed
+            //Movement Inputs
+            inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>();
+            //First Person CameraDir Input
+            inputActions.Player.FPCameraDirection.performed += i => lookInputDirection = i.ReadValue<Vector2>();
+            //First Person Inputs
+            inputActions.Player.FirstPerson.started += i => isFP = true; cameraManager.tiltAngle = 0;
+            inputActions.Player.FirstPerson.canceled += i => isFP = false;
+            //Jump Input (New weird behaviour, jump seems to occasionally multiply)
+            inputActions.Player.Jump.performed += i => isJumping = true;
+            //Sprint Input 
+            inputActions.Player.Sprint.performed += i => isSprinting = true;
+            //Grabbing Input 
+            inputActions.Player.Grab.started += i => isGrabbing = true;
+            inputActions.Player.Grab.canceled += i => isGrabbing = false;
+            //Clucking Input 
+            inputActions.Player.Cluck.performed += i => isClucking = true;
+            //inputActions.Player.Cluck.canceled += i => isClucking = false; 
+
+            inputActions.Enable(); 
+
             cameraManager.wallCameraObject.SetActive(false);
             cameraManager.mainCameraObject.SetActive(true);
             cameraManager.fpCameraObject.SetActive(false); 
         }
 
+        private void OnDisable()
+        {
+            inputActions.Disable();
+        }
+
         private void Update()
         {
-            horizontal = Input.GetAxis("Horizontal");
-            vertical = Input.GetAxis("Vertical");
-            freeLook = Input.GetKey(KeyCode.F);
-            isInteracting = Input.GetKey(KeyCode.E);
-            isJumping = Input.GetKeyDown(KeyCode.Space);
-            isHolding = Input.GetKey(KeyCode.Mouse1);
-            isThrowing = Input.GetKey(KeyCode.Mouse0); 
-
-            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
-
-            moveDirection = camHolder.forward * vertical;
-            moveDirection += camHolder.right * horizontal;
-            moveDirection.Normalize();
-
             float delta = Time.deltaTime;
+
+            #region FP Automatic Mode
+            //FPMode = Automatically move to first person state
+            //for things like vents, under tables, etc. 
+            if (controller.isFPMode)
+            {
+                if(!FPSModeInit)
+                {
+                    cameraManager.tiltAngle = 0;
+                    cameraManager.fpCameraObject.SetActive(true);
+                    playerModel.SetActive(false);
+                    FPSModeInit = true;
+                    controller.rotateSpeed = 1.2f; 
+                }
+
+                moveDirection = controller.mTransform.forward * moveInputDirection.y;
+                moveDirection += controller.mTransform.right * moveInputDirection.x;
+                moveDirection.Normalize();
+
+                controller.FPRotation(moveInputDirection.x, delta);
+                cameraManager.HandleFPSTile(lookInputDirection.y, delta);
+                controller.Move(moveDirection, delta);
+
+                return;
+            }
+            if(FPSModeInit)
+            {
+                cameraManager.tiltAngle = 0;
+                cameraManager.fpCameraObject.SetActive(false);
+                playerModel.SetActive(true);
+                FPSModeInit = false;
+                controller.rotateSpeed = 0.01f; 
+            }
+            #endregion
+
+            moveAmount = moveInputDirection.magnitude;
+
+            moveDirection = camHolder.forward * moveInputDirection.y;
+            moveDirection += camHolder.right * moveInputDirection.x;
+            moveDirection.Normalize();
 
             #region Jumping & Running
             //Jumping
-            if (isJumping && controller.isGrounded)
-            {          
-                controller.HandleJump(); 
+            if (isJumping && controller.isInFreeLook == false)
+            {
+                controller.HandleJump();
             }
             else if (controller.isGrounded == false)
             {
-                controller.handleFalling(); 
+                controller.handleFalling();
             }
 
             //Sprinting 
-            if(isTired == false && Input.GetKeyDown(KeyCode.LeftShift))
+            if (isTired == false && isSprinting == true)
             {
-                controller.moveSpeed = 3.5f;
+                controller.moveSpeed = 4f;
                 isSprinting = true;
                 isTired = false; 
                 StartCoroutine(RunTimer()); 
@@ -106,7 +162,7 @@ namespace DO
                 yield return new WaitForSeconds(runningTimer);
                 isSprinting = false;
 
-                controller.moveSpeed = 2f;
+                controller.moveSpeed = 3f;
                 isTired = true; 
 
                 if(isTired == true && (Input.GetKeyDown(KeyCode.LeftShift)))
@@ -126,16 +182,20 @@ namespace DO
 
             #region First Person Camera
             //First Person
-            if (freeLook)
+            if (isFP)
             {
-                cameraManager.fpCameraObject.SetActive(true);      
-                controller.FPRotation(horizontal, delta);
+                cameraManager.fpCameraObject.SetActive(true);
+                playerModel.SetActive(false);
+                controller.FPRotation(lookInputDirection.x, delta);
+                cameraManager.HandleFPSTile(lookInputDirection.y, delta); 
                 controller.isInFreeLook = true;
             }
             else
             {
                 cameraManager.fpCameraObject.SetActive(false);
+                playerModel.SetActive(true);
                 controller.isInFreeLook = false;
+                cameraManager.tiltAngle = 0;
             }
             #endregion
 
@@ -150,7 +210,7 @@ namespace DO
 
         void HandleMovement(Vector3 moveDirection, float delta)
         {
-            if(freeLook)
+            if(isFP)
             {
                 return; 
             }
