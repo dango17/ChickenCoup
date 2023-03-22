@@ -413,8 +413,8 @@ public class Farmer : MonoBehaviour {
 	/// in place. </param>
 	private void HoldOntoPlayer(bool holdOntoPlayer) {
 		holdOntoPlayer = !holdOntoPlayer;
-		player.GetComponent<PlayerController>().enabled = holdOntoPlayer;
-		player.GetComponent<InputHandler>().enabled = holdOntoPlayer;
+		player.GetComponentInChildren<PlayerController>().enabled = holdOntoPlayer;
+		player.GetComponentInChildren<InputHandler>().enabled = holdOntoPlayer;
 		player.GetComponentInChildren<Rigidbody>().useGravity = holdOntoPlayer;
 	}
 }

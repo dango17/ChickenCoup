@@ -56,6 +56,12 @@ public abstract class Sensor : MonoBehaviour {
 				switch (VerifyDetection(detectedGameObject.gameObject)) {
 					case Visibility.Visible: {
 						if (!discovered) {
+							DetectionPoint[] detectionPoints = detectedGameObject.transform.root.gameObject.GetComponentsInChildren<DetectionPoint>();
+
+							foreach (DetectionPoint detectionPoint in detectionPoints) {
+								detectionPoint.IsVisible(true);
+							}
+
 							data.AddLast(detectedGameObject.transform.root.gameObject);
 						}
 
@@ -105,6 +111,12 @@ public abstract class Sensor : MonoBehaviour {
 
 	private void OnTriggerExit(Collider other) {
 		if (data.Contains(other.gameObject)) {
+			DetectionPoint[] detectionPoints = other.transform.root.gameObject.GetComponentsInChildren<DetectionPoint>();
+
+			foreach (DetectionPoint detectionPoint in detectionPoints) {
+				detectionPoint.IsVisible(false);
+			}
+
 			data.Remove(other.gameObject);
 		}
 	}
