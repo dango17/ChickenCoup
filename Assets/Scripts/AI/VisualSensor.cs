@@ -39,14 +39,15 @@ public class VisualSensor : Sensor {
 	private Visibility IsWithinLineOfSight(GameObject detectedGameObject) {
 		DetectionPoint[] detectionPoints = detectedGameObject.GetComponentsInChildren<DetectionPoint>();
 
-		// Commented out code as a temp fix to stop raycasts hitting the floor.
-		/*if (detectionPoints.Length > 0) {
+		if (detectionPoints.Length > 0) {
 			float pointsDetected = 0;
 
 			// Check how many of the object's detection points are visible.
 			foreach (DetectionPoint detectionPoint in detectionPoints) {
 				if (RaycastHit(sensorOrigin.position,
-					detectionLayer,
+					// Append the detection point layer onto the raycast,
+					// so they can be found.
+					detectionLayer | LayerMask.GetMask("DetectionPoints"),
 					detectionPoint.gameObject,
 					detectedGameObject)) {
 					++pointsDetected;
@@ -63,7 +64,7 @@ public class VisualSensor : Sensor {
 			} else {
 				return Visibility.NotVisible;
 			}
-		} else*/ if (RaycastHit(sensorOrigin.position,
+		} else if (RaycastHit(sensorOrigin.position,
 			detectionLayer,
 			detectedGameObject,
 			null)) {
@@ -87,8 +88,7 @@ public class VisualSensor : Sensor {
 			GameObject gameObjectToIgnore) {
 			RaycastHit[] raycastHits = new RaycastHit[2];
 			Physics.RaycastNonAlloc(raycastOrigin,
-			// Temp fix to raycast correct part of player.
-			targetObject.transform.position + Vector3.up * 0.5f - sensorOrigin.position,
+			targetObject.transform.position - sensorOrigin.position,
 			raycastHits,
 			detectionRange,
 			raycastLayer);
