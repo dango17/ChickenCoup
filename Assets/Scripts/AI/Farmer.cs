@@ -35,7 +35,7 @@ public class Farmer : MonoBehaviour {
 	private float blindTime = 0.0f;
 	private float maximumBlindTime = 5.0f;
 	private float visitPointOfInterestTime = 0.0f;
-	private float maximumVisitPointOfInterestTime = 15.0f;
+	private float maximumVisitPointOfInterestTime = 25.0f;
 
 	private Vector3 lastKnownPlayerPosition = Vector3.zero;
 
