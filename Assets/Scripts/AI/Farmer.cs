@@ -20,6 +20,8 @@ public class Farmer : MonoBehaviour {
 	private bool seenPlayerRecently = false;
 	private bool catchColliderTouchingPlayer = false;
 	private bool caughtPlayer = false;
+	private bool canVisitPointOfInterest = true;
+	private int pointOfInterestIndex = 0;
 	private float catchRange = 1.5f;
 	private float containPlayerInsitence = 0.0f;
 	private float maximumContainChickenInsitence = 100.0f;
@@ -32,6 +34,8 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private float blindTime = 0.0f;
 	private float maximumBlindTime = 5.0f;
+	private float visitPointOfInterestTime = 0.0f;
+	private float maximumVisitPointOfInterestTime = 15.0f;
 
 	private Vector3 lastKnownPlayerPosition = Vector3.zero;
 
@@ -49,6 +53,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private Transform releasePosition = null;
 	private Flashlight flashlight = null;
+	private PointOfInterest[] pointsOfInterest = null;
 
 	public static float PathLength(NavMeshPath path) {
 		float pathLength = 0.0f;
@@ -97,6 +102,7 @@ public class Farmer : MonoBehaviour {
 		player = playersParent.GetComponentInChildren<PlayerController>();
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
+		pointsOfInterest = FindObjectsOfType<PointOfInterest>();
 	}
 
 	private void Update() {
@@ -106,6 +112,14 @@ public class Farmer : MonoBehaviour {
 			if (blindTime <= 0) {
 				visualSensor.gameObject.SetActive(true);
 				audioSensor.gameObject.SetActive(true);
+			}
+		}
+
+		if (visitPointOfInterestTime > 0) {
+			visitPointOfInterestTime -= Time.deltaTime;
+
+			if (visitPointOfInterestTime <= 0) {
+				canVisitPointOfInterest = true;
 			}
 		}
 
@@ -284,6 +298,15 @@ public class Farmer : MonoBehaviour {
 		}
 
 		if (!destinationSet) {
+			if (canVisitPointOfInterest) {
+				GoToPointOfInterest();
+
+				// Check if the farmer is walking to a point of interest.
+				if (destinationSet) {
+					return false;
+                }
+            }
+
 			const int maxRotation = 60;
 			int rotationAroundYAxis = Random.Range(-maxRotation, maxRotation);
 			// Gets a new direction to move in.
@@ -312,6 +335,21 @@ public class Farmer : MonoBehaviour {
 		}
 
 		return false;
+
+		void GoToPointOfInterest() {
+			if (pointsOfInterest.Length == 0) {
+				return;
+            }
+
+			if (pointOfInterestIndex > pointsOfInterest.Length - 1) {
+				pointOfInterestIndex = 0;
+            }
+
+			Vector3 wonderDestination = pointsOfInterest[pointOfInterestIndex++].GetComponent<PointOfInterest>().StandPosition;
+			destinationSet = navMeshAgent.SetDestination(wonderDestination);
+			visitPointOfInterestTime = maximumVisitPointOfInterestTime;
+			canVisitPointOfInterest = false;
+		}
 	}
 
 	/// <summary>
