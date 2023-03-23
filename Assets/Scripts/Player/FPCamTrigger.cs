@@ -1,5 +1,5 @@
 // Author: Daniel Oldham/s1903729
-// Collaborator: Liam Bansal.
+// Collaborator: /A
 // Created On: 20/03/2023
 
 using UnityEngine;
@@ -8,34 +8,36 @@ namespace DO
 {
     public class FPCamTrigger : MonoBehaviour
     {
-        private PlayerController playerController = null;
-
-        private void Start() {
-            playerController = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<PlayerController>();
-		}
-
         private void OnTriggerEnter(Collider other)
         {
+            InputHandler inputHandler = other.GetComponentInParent<InputHandler>(); 
+
             if(other.tag == "Player")
             {
-				playerController.EnableFirstPerson(true);
-			}
+                inputHandler.controller.isFPMode = true; 
+            }
         }
 
         private void OnTriggerStay(Collider other)
         {
+            InputHandler inputHandler = other.GetComponentInParent<InputHandler>();
+
             if (other.tag == "Player")
             {
-				playerController.EnableFirstPerson(true);
-			}
+                inputHandler.controller.isFPMode = true;
+            }
+
         }
 
         private void OnTriggerExit(Collider other)
         {
+            InputHandler inputHandler = other.GetComponentInParent<InputHandler>();
+
             if (other.tag == "Player")
             {
-				playerController.EnableFirstPerson(false);
-			}
+                inputHandler.controller.isFPMode = false;
+            }
+
         }
     }
 }

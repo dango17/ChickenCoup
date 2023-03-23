@@ -8,17 +8,9 @@ using System.Collections;
 namespace DO
 {
     //playerManager that handles movement types and the relevant logic to execute.
-    public class PlayerController : MonoBehaviour, DetectionPoint.IDetectionPointData {
-		public int VisibleDetectionPoints {
-			get;
-			set;
-		}
-        public int NumberOfDetectionPoints {
-            get { return detectionPoints.Length; }
-            private set { }
-        }
-
-		[Header("Speeds")]
+    public class PlayerController : MonoBehaviour
+    {
+        [Header("Speeds")]
         [SerializeField] public float moveSpeed = 0.4f;
         [SerializeField] public float sprintSpeed = 0.8f;
         [SerializeField] public float rotateSpeed = 0.2f;
@@ -50,24 +42,13 @@ namespace DO
         [HideInInspector] public SkinnedMeshRenderer meshRenderer;
         [HideInInspector] public InputHandler inputHandler;
 
-		private DetectionPoint[] detectionPoints = null;
-
-		public void EnableFirstPerson(bool enableFirstPerson) {
-			inputHandler.controller.isFPMode = enableFirstPerson;
-		}
-
-		private void Start()
+        private void Start()
         {
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
             animator = GetComponentInChildren<Animator>();
-            inputHandler = GetComponent<InputHandler>();
-			detectionPoints = GetComponentsInChildren<DetectionPoint>();
-
-            foreach (DetectionPoint detectionPoint in detectionPoints) {
-                detectionPoint.SetDataSource(this);
-			}
-		}
+            inputHandler = GetComponent<InputHandler>(); 
+        }
 
         private void Update()
         {

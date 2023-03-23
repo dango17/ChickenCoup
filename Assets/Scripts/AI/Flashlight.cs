@@ -20,12 +20,13 @@ public class Flashlight : MonoBehaviour {
 	/// Changes the colour of the flashlight based whether or not the farmer 
 	/// can see the player.
 	/// </summary>
-	/// <param name="colourChange"> Percentage to lerp between the unspotted and spotted colours. </param>
-	public void ChangeColour(float colourChange) {
-		Color lerpedColour = new Color(Mathf.Lerp(unspottedLightColour.r, spottedLightColour.r, colourChange),
-			Mathf.Lerp(unspottedLightColour.g, spottedLightColour.g, colourChange),
-			Mathf.Lerp(unspottedLightColour.b, spottedLightColour.b, colourChange));
-		spotlight.color = lerpedColour;
+	/// <param name="canSeePlayer"> Whether or not the farmer can see the player. </param>
+	public void ChangeColour(bool canSeePlayer) {
+		if (canSeePlayer) {
+			spotlight.color = spottedLightColour;
+		} else {
+			spotlight.color = unspottedLightColour;
+		}
 	}
 
 	private void Awake() {

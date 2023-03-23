@@ -41,10 +41,10 @@ public class AudioSensor : Sensor {
 		}
 	}
 
-	protected override Visibility VerifyDetection(GameObject gameobject) {
+	protected override bool VerifyDetection(GameObject gameobject) {
 		AudioSource soundSource = gameobject.GetComponent<AudioSource>();
 		return soundSource && TracePathToSound(gameobject.transform.position,
-			soundSource.maxDistance) ? Visibility.Visible : Visibility.NotVisible;
+			soundSource.maxDistance) ? true : false;
 	}
 
 	private void Awake() {

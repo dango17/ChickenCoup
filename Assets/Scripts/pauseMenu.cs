@@ -5,15 +5,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
 
 public class pauseMenu : MonoBehaviour
 {
     public static bool isPaused = false;
 
     public GameObject pauseUI;
-    public GameObject pausefirstBtn;
 
     // Update is called once per frame
     void Update()
@@ -44,16 +41,13 @@ public class pauseMenu : MonoBehaviour
         pauseUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
-        EventSystem.current.SetSelectedGameObject(null);
-
-        EventSystem.current.SetSelectedGameObject(pausefirstBtn);
-    }
+   }
 
     public void Restart()
     {
         //Restarts the current level
         //threw in the resume function in here so that it's not still paused after resetting
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(0);
         Resume();
     }
 

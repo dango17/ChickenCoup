@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// 
@@ -16,7 +15,7 @@ public class ResolutionManager : MonoBehaviour
     private const string RESOLUTION_PREF_KEY = "resolution";
 
     [SerializeField]
-    private TextMeshProUGUI resolutionText;
+    private Text resolutionText;
 
     private Resolution[] resolutions;
 

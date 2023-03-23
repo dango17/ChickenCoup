@@ -310,9 +310,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 8
-  visibleLayer:
-    serializedVersion: 2
-    m_Bits: 1984
   detectionLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -393,7 +390,7 @@ SphereCollider:
   m_GameObject: {fileID: 8627085775679455011}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Radius: 8
   m_Center: {x: 0, y: 0, z: 0}
@@ -420,18 +417,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8627085775679455011}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae5977fc5852af64c846838c817d40dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 8
-  visibleLayer:
-    serializedVersion: 2
-    m_Bits: 320
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 320
+    m_Bits: 64
   sensorOrigin: {fileID: 7576291519940325098}
 --- !u!1 &8833609758056789184
 GameObject:

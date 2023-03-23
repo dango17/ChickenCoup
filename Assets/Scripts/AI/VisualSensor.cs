@@ -28,15 +28,11 @@ public class VisualSensor : Sensor {
 	/// Checks if the object is visible to the detector.
 	/// </summary>
 	/// <returns> True if the game object should be detected. </returns>
-	protected override Visibility VerifyDetection(GameObject detectedGameObject) {
-		if (IsWithinFieldOfView(detectedGameObject)) {
-			return IsWithinLineOfSight(detectedGameObject);
-		}
-
-		return Visibility.NotVisible;
+	protected override bool VerifyDetection(GameObject detectedGameObject) {
+		return IsWithinFieldOfView(detectedGameObject) && IsWithinLineOfSight(detectedGameObject);
 	}
 
-	private Visibility IsWithinLineOfSight(GameObject detectedGameObject) {
+	private bool IsWithinLineOfSight(GameObject detectedGameObject) {
 		DetectionPoint[] detectionPoints = detectedGameObject.GetComponentsInChildren<DetectionPoint>();
 
 		if (detectionPoints.Length > 0) {
@@ -45,36 +41,24 @@ public class VisualSensor : Sensor {
 			// Check how many of the object's detection points are visible.
 			foreach (DetectionPoint detectionPoint in detectionPoints) {
 				if (RaycastHit(sensorOrigin.position,
-					// Append the detection point layer onto the raycast,
-					// so they can be found.
-					visibleLayer | LayerMask.GetMask("DetectionPoints"),
+					detectionLayer,
 					detectionPoint.gameObject,
 					detectedGameObject)) {
-					detectionPoint.IsVisible(true);
 					++pointsDetected;
-				} else {
-					detectionPoint.IsVisible(false);
 				}
 			}
 
 			const int oneHundred = 100;
 			float percentOfPointsDetected = pointsDetected / detectionPoints.Length * oneHundred;
-
-			if (percentOfPointsDetected >= detectionPercentage) {
-				return Visibility.Visible;
-			} else if (percentOfPointsDetected > 0) {
-				return Visibility.PartiallyVisible;
-			} else {
-				return Visibility.NotVisible;
-			}
+			return percentOfPointsDetected >= detectionPercentage ? true : false;
 		} else if (RaycastHit(sensorOrigin.position,
-			visibleLayer,
+			detectionLayer,
 			detectedGameObject,
 			null)) {
-			return Visibility.Visible;
+			return true;
 		}
 
-		return Visibility.NotVisible;
+		return false;
 
 		/// <summary>
 		/// Sends a ray along a desired direction to check for a clear line of 
@@ -89,33 +73,28 @@ public class VisualSensor : Sensor {
 			LayerMask raycastLayer,
 			GameObject targetObject,
 			GameObject gameObjectToIgnore) {
-			RaycastHit[] raycastHits = new RaycastHit[5];
+			RaycastHit[] raycastHit = new RaycastHit[2];
 			Physics.RaycastNonAlloc(raycastOrigin,
 			targetObject.transform.position - sensorOrigin.position,
-			raycastHits,
-			detectionRange,
-			raycastLayer);
-			raycastHits.OrderBy(hit => hit.distance);
+			raycastHit,
+			detectionRange);
+			raycastHit.OrderBy(hit => hit.distance);
 
-			foreach (RaycastHit hit in raycastHits) {
-				Debug.DrawLine(raycastOrigin, hit.point, Color.red, 5.0f);
-			}
-
-			for (int i = 0; i < raycastHits.Length; ++i) {
-				if (raycastHits[i].collider) {
-					if (targetObject && raycastHits[i].collider.gameObject == targetObject) {
+			for (int i = 0; i < raycastHit.Length; ++i) {
+				if (raycastHit[i].collider) {
+					if (targetObject && raycastHit[i].collider.gameObject == targetObject) {
 						return true;
-					} else if (gameObjectToIgnore && raycastHits[i].collider.gameObject == gameObjectToIgnore) {
+					} else if (gameObjectToIgnore && raycastHit[i].collider.gameObject == gameObjectToIgnore) {
 						// Continue searching for the target game object
 						// because the current raycast hit's game object is
 						// set to be ignored.
 						continue;
-					} else if (raycastHits[i].collider.gameObject.GetComponent<DetectionPoint>()) {
+					} else if (raycastHit[i].collider.gameObject.GetComponent<DetectionPoint>()) {
 						// Continue raycasting for the target game object from the
 						// intersected detection point's position because
 						// detection points shouldn't prevent raycasts from
 						// passing through.
-						return RaycastHit(raycastHits[i].point,
+						return RaycastHit(raycastHit[i].collider.transform.position,
 							raycastLayer,
 							targetObject,
 							gameObjectToIgnore);

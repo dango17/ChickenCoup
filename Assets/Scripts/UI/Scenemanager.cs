@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems;
+
 /// <summary>
 /// 
 /// </summary>
@@ -16,8 +16,6 @@ public class Scenemanager : MonoBehaviour
     public GameObject optBtn;
     public GameObject extBtn;
     public GameObject backBtn;
-    public GameObject ResMenu;
-    public GameObject selectfirstBtn, optionsfirstBtn, optionsclosedBtn;
 
     // Start is called before the first frame update
     void Start()
@@ -27,11 +25,6 @@ public class Scenemanager : MonoBehaviour
         optBtn.SetActive(true);
         extBtn.SetActive(true);
         backBtn.SetActive(false);
-        ResMenu.SetActive(false);
-
-        EventSystem.current.SetSelectedGameObject(null);
-
-        EventSystem.current.SetSelectedGameObject(selectfirstBtn);
     }
 
     // Update is called once per frame
@@ -40,19 +33,12 @@ public class Scenemanager : MonoBehaviour
         
     }
 
-    public void Play()
-    {
-        SceneManager.LoadScene("Barn");
-    }
-
     public void Options()
     {
         playBtn.SetActive(false);
         optBtn.SetActive(false);
         extBtn.SetActive(false);
         backBtn.SetActive(true);
-        ResMenu.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(optionsfirstBtn);
     }
 
     public void backButton()
@@ -61,12 +47,5 @@ public class Scenemanager : MonoBehaviour
         optBtn.SetActive(true);
         extBtn.SetActive(true);
         backBtn.SetActive(false);
-        ResMenu.SetActive(false);
-        EventSystem.current.SetSelectedGameObject(optionsclosedBtn);
-    }
-
-    public void Quit()
-    {
-        Application.Quit();
     }
 }
