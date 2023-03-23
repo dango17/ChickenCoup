@@ -27,7 +27,9 @@ public abstract class Sensor : MonoBehaviour {
 	[SerializeField, Tooltip("Data will only be gathered within this range " +
 		"i.e. it's the view distance, hearing range etc.")]
 	protected int detectionRange = 5;
-	[SerializeField, Tooltip("Select additional layers to detect objects on that layer.")]
+	[SerializeField, Tooltip("The AI can only see objects on this layer.")]
+	protected LayerMask visibleLayer = default;
+	[SerializeField, Tooltip("The AI will only remember objects on this layer.")]
 	protected LayerMask detectionLayer = default;
 	/// <summary>
 	/// Stores references to the game objects the agent has gathered data about.
@@ -45,7 +47,8 @@ public abstract class Sensor : MonoBehaviour {
 	public void ObjectDetected(GameObject detectedGameObject) {
 		int detectedGameObjectsLayer = 1 << detectedGameObject.gameObject.layer;
 
-		// Check if the data should be saved.
+		// Check if the object exists on a layer which the AI should save data
+		// about.
 		if ((detectionLayer & detectedGameObjectsLayer) != 0) {
 			bool discovered = data.Contains(detectedGameObject.transform.root.gameObject);
 			bool partiallyDiscovered = partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject);
@@ -56,12 +59,6 @@ public abstract class Sensor : MonoBehaviour {
 				switch (VerifyDetection(detectedGameObject.gameObject)) {
 					case Visibility.Visible: {
 						if (!discovered) {
-							DetectionPoint[] detectionPoints = detectedGameObject.transform.root.gameObject.GetComponentsInChildren<DetectionPoint>();
-
-							foreach (DetectionPoint detectionPoint in detectionPoints) {
-								detectionPoint.IsVisible(true);
-							}
-
 							data.AddLast(detectedGameObject.transform.root.gameObject);
 						}
 
@@ -79,12 +76,24 @@ public abstract class Sensor : MonoBehaviour {
 						break;
 					}
 					case Visibility.NotVisible: {
+						ForgetObject();
 						return;
 					}
 					default: {
+						ForgetObject();
 						return;
 					}
 				}
+			}
+		}
+
+		void ForgetObject() {
+			if (data.Contains(detectedGameObject.transform.root.gameObject)) {
+				data.Remove(detectedGameObject.transform.root.gameObject);
+			}
+
+			if (partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject)) {
+				partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
 			}
 		}
 	}

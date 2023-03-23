@@ -350,7 +350,7 @@ public class Farmer : MonoBehaviour {
 	/// <summary>
 	/// The farmer will try to catch the chicken if it's close enough.
 	/// </summary>
-	/// <returns> True when the action has completed. </returns>
+	/// <returns> True if the action completed successfully. </returns>
 	private bool CatchPlayer() {
 		if (!CanCatchPlayer()) {
 			StopAction();
@@ -365,7 +365,8 @@ public class Farmer : MonoBehaviour {
 			player.transform.position = carryPosition.position;
 			return caughtPlayer = true;
 		}
-		
+
+		StopAction();
 		return false;
 	}
 

@@ -29,6 +29,10 @@ public class DetectionPoint : MonoBehaviour {
 	}
 
 	public void IsVisible(bool isVisible) {
+		if (this.isVisible == isVisible) {
+			return;
+		}
+
 		this.isVisible = isVisible;
 		UpdatePointData();		
 	}

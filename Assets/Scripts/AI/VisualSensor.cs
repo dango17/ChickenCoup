@@ -47,10 +47,13 @@ public class VisualSensor : Sensor {
 				if (RaycastHit(sensorOrigin.position,
 					// Append the detection point layer onto the raycast,
 					// so they can be found.
-					detectionLayer | LayerMask.GetMask("DetectionPoints"),
+					visibleLayer | LayerMask.GetMask("DetectionPoints"),
 					detectionPoint.gameObject,
 					detectedGameObject)) {
+					detectionPoint.IsVisible(true);
 					++pointsDetected;
+				} else {
+					detectionPoint.IsVisible(false);
 				}
 			}
 
@@ -65,7 +68,7 @@ public class VisualSensor : Sensor {
 				return Visibility.NotVisible;
 			}
 		} else if (RaycastHit(sensorOrigin.position,
-			detectionLayer,
+			visibleLayer,
 			detectedGameObject,
 			null)) {
 			return Visibility.Visible;
