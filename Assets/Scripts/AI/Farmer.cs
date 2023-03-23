@@ -27,6 +27,11 @@ public class Farmer : MonoBehaviour {
 	[SerializeField, Tooltip("The length of time the farmer will spend " +
 		"searching for the player. Measured in seconds.")]
 	private float maximumTimeToSpendSearchingForPlayer = 15.0f;
+	/// <summary>
+	/// How much time should pass by before the farmer can see/hear again.
+	/// </summary>
+	private float blindTime = 0.0f;
+	private float maximumBlindTime = 5.0f;
 
 	private Vector3 lastKnownPlayerPosition = Vector3.zero;
 
@@ -95,6 +100,15 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void Update() {
+		if (blindTime > 0) {
+			blindTime -= Time.deltaTime;
+
+			if (blindTime <= 0) {
+				visualSensor.gameObject.SetActive(true);
+				audioSensor.gameObject.SetActive(true);
+			}
+		}
+
 		// Handles seeing the player.
 		if (!canSeePlayer && visualSensor.Data.Contains(playersParent)) {
 			containPlayerInsitence = maximumContainChickenInsitence;
@@ -384,6 +398,11 @@ public class Farmer : MonoBehaviour {
 			// Set to zer so the farmer doesn't instantly chase the chicken
 			// after letting them go.
 			containPlayerInsitence = 0.0f;
+			visualSensor.ForgetObject(player.transform.root.gameObject);
+			audioSensor.ForgetObject(player.transform.root.gameObject);
+			visualSensor.gameObject.SetActive(false);
+			audioSensor.gameObject.SetActive(false);
+			blindTime = maximumBlindTime;
 			return true;
 		}
 

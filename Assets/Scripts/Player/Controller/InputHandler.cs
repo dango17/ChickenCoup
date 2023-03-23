@@ -90,12 +90,16 @@ namespace DO
         }
 
         private void OnEnable() {
-			inputActions.Enable();
+            if (inputActions != null) {
+                inputActions.Enable();
+            }
 		}
 
         private void OnDisable()
         {
-            inputActions.Disable();
+            if (inputActions != null) {
+                inputActions.Disable();
+            }
         }
 
         private void Update()

@@ -76,26 +76,32 @@ public abstract class Sensor : MonoBehaviour {
 						break;
 					}
 					case Visibility.NotVisible: {
-						ForgetObject();
+						ForgetObject(detectedGameObject.transform.root.gameObject);
 						return;
 					}
 					default: {
-						ForgetObject();
+						ForgetObject(detectedGameObject.transform.root.gameObject);
 						return;
 					}
 				}
 			}
 		}
+	}
 
-		void ForgetObject() {
-			if (data.Contains(detectedGameObject.transform.root.gameObject)) {
-				data.Remove(detectedGameObject.transform.root.gameObject);
-			}
-
-			if (partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject)) {
-				partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
-			}
+	/// <summary>
+	/// Makes the sensor forget about a specific bit of data.
+	/// </summary>
+	/// <param name="gameObjectToForget"> The game-object to forget. Must be the root game-object. </param>
+	public void ForgetObject(GameObject gameObjectToForget) {
+		if (data.Contains(gameObjectToForget)) {
+			data.Remove(gameObjectToForget);
 		}
+
+		if (partiallyDiscoveredData.Contains(gameObjectToForget)) {
+			partiallyDiscoveredData.Remove(gameObjectToForget);
+		}
+
+		DisableObjectsDetectionPoints(gameObjectToForget);
 	}
 
 	/// <summary>
@@ -119,14 +125,30 @@ public abstract class Sensor : MonoBehaviour {
 	}
 
 	private void OnTriggerExit(Collider other) {
-		if (data.Contains(other.gameObject)) {
-			DetectionPoint[] detectionPoints = other.transform.root.gameObject.GetComponentsInChildren<DetectionPoint>();
+		GameObject othersRootGameObject = other.transform.root.gameObject;
 
-			foreach (DetectionPoint detectionPoint in detectionPoints) {
-				detectionPoint.IsVisible(false);
-			}
+		// Check the root game-object because that's what the sensor saves a
+		// reference to.
+		if (data.Contains(othersRootGameObject)) {
+			DisableObjectsDetectionPoints(othersRootGameObject);
+			data.Remove(othersRootGameObject);
+		}
 
-			data.Remove(other.gameObject);
+		if (partiallyDiscoveredData.Contains(othersRootGameObject)) {
+			DisableObjectsDetectionPoints(othersRootGameObject);
+			partiallyDiscoveredData.Remove(othersRootGameObject);
+		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="gameobject"> ...Must be the root game-object. </param>
+	private void DisableObjectsDetectionPoints(GameObject gameobject) {
+		DetectionPoint[] detectionPoints = gameobject.GetComponentsInChildren<DetectionPoint>();
+
+		foreach (DetectionPoint detectionPoint in detectionPoints) {
+			detectionPoint.IsVisible(false);
 		}
 	}
 }
