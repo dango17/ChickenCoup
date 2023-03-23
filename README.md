@@ -1,2 +1,3 @@
 # ChickenCoup
-3D Stealth Game, Made In Unity, Apart Of The Advanced Group Project 
+A 3D Stealth Game made in Unity for the Advanced Group Project module on the Creative Computing courses at
+University of Gloucestershire.
