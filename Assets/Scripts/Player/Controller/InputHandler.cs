@@ -89,9 +89,17 @@ namespace DO
             cameraManager.fpCameraObject.SetActive(false); 
         }
 
+        private void OnEnable() {
+            if (inputActions != null) {
+                inputActions.Enable();
+            }
+		}
+
         private void OnDisable()
         {
-            inputActions.Disable();
+            if (inputActions != null) {
+                inputActions.Disable();
+            }
         }
 
         private void Update()

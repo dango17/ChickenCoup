@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 1182320384819585364}
   m_Layer: 0
   m_Name: Player Camera Manager
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -157,6 +157,8 @@ MonoBehaviour:
   wallCameraObject: {fileID: 1615524504534141112}
   fpCameraObject: {fileID: 1615524503599042471}
   camTransform: {fileID: 1182320385632495885}
+  tiltAngle: 0
+  tileRotation: 5
 --- !u!1 &1182320385009183198
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,7 +279,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385291458575}
-  m_LocalRotation: {x: 0.55130094, y: 0.000000035888483, z: -0.000000023714733, w: 0.83430654}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000035888483, z: 0.000000023714733, w: 0.83430654}
   m_LocalPosition: {x: 0, y: 10.611, z: -4.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -381,8 +383,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385632495880}
-  m_LocalRotation: {x: 0.55130094, y: 0.000000035888483, z: -0.000000023714733, w: 0.83430654}
-  m_LocalPosition: {x: -0.07000017, y: 10.611, z: -4.66}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000035888483, z: 0.000000023714733, w: 0.83430654}
+  m_LocalPosition: {x: -0.069999695, y: 10.611, z: -4.6600018}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -877,6 +879,7 @@ MonoBehaviour:
   movementOrder: 1
   controller: {fileID: 1615524504985154575}
   cameraManager: {fileID: 1182320384819585364}
+  playerModel: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   lookInputDirection: {x: 0, y: 0, z: 0}
   wallDetectionDistance: 0.05
@@ -1683,7 +1686,7 @@ GameObject:
   - component: {fileID: 7402244214924864601}
   m_Layer: 0
   m_Name: ChickenModel
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
