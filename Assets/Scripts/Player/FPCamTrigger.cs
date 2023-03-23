@@ -16,7 +16,7 @@ namespace DO
 
         private void OnTriggerEnter(Collider other)
         {
-            if(other.transform.parent.tag == "Player")
+            if(other.tag == "Player")
             {
 				playerController.EnableFirstPerson(true);
 			}
@@ -24,7 +24,7 @@ namespace DO
 
         private void OnTriggerStay(Collider other)
         {
-            if (other.transform.parent.tag == "Player")
+            if (other.tag == "Player")
             {
 				playerController.EnableFirstPerson(true);
 			}
@@ -32,7 +32,7 @@ namespace DO
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.transform.parent.tag == "Player")
+            if (other.tag == "Player")
             {
 				playerController.EnableFirstPerson(false);
 			}

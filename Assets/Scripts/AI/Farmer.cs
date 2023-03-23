@@ -35,7 +35,8 @@ public class Farmer : MonoBehaviour {
 	private BoxCollider catchCollider = null;
 	private UtilityScript utilityScript = null;
 	private NavMeshAgent navMeshAgent = null;
-	private GameObject player = null;
+	private GameObject playersParent = null;
+	private PlayerController player = null;
 	private Transform carryPosition = null;
 	/// <summary>
 	/// The position where the farmer will attempt the place the player after 
@@ -87,14 +88,15 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void Start() {
-		player = GameObject.FindGameObjectWithTag("Player");
+		playersParent = GameObject.FindGameObjectWithTag("Player").transform.root.gameObject;
+		player = playersParent.GetComponentInChildren<PlayerController>();
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
 	}
 
 	private void Update() {
 		// Handles seeing the player.
-		if (!canSeePlayer && visualSensor.Data.Contains(player)) {
+		if (!canSeePlayer && visualSensor.Data.Contains(playersParent)) {
 			containPlayerInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
 			flashlight.ChangeColour(canSeePlayer);
@@ -105,7 +107,7 @@ public class Farmer : MonoBehaviour {
 		}
 
 		// Handles losing sight of the player.
-		if (canSeePlayer && !visualSensor.Data.Contains(player)) {
+		if (canSeePlayer && !visualSensor.Data.Contains(playersParent)) {
 			canSeePlayer = false;
 			flashlight.ChangeColour(canSeePlayer);
 			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
@@ -131,13 +133,13 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		if (other.CompareTag("Player")) {
+		if (other.transform.root.gameObject.CompareTag("Player")) {
 			catchColliderTouchingPlayer = true;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
-		if (other.CompareTag("Player")) {
+		if (other.transform.root.gameObject.CompareTag("Player")) {
 			catchColliderTouchingPlayer = false;
 		}
 	}
@@ -358,7 +360,7 @@ public class Farmer : MonoBehaviour {
 		catchCollider.enabled = true;
 
 		if (catchColliderTouchingPlayer) {
-			HoldOntoPlayer(false);
+			HoldOntoPlayer(true);
 			catchCollider.enabled = false;
 			player.transform.position = carryPosition.position;
 			return caughtPlayer = true;
@@ -413,8 +415,8 @@ public class Farmer : MonoBehaviour {
 	/// in place. </param>
 	private void HoldOntoPlayer(bool holdOntoPlayer) {
 		holdOntoPlayer = !holdOntoPlayer;
-		player.GetComponentInChildren<PlayerController>().enabled = holdOntoPlayer;
-		player.GetComponentInChildren<InputHandler>().enabled = holdOntoPlayer;
-		player.GetComponentInChildren<Rigidbody>().useGravity = holdOntoPlayer;
+		player.enabled = holdOntoPlayer;
+		playersParent.GetComponentInChildren<InputHandler>().enabled = holdOntoPlayer;
+		playersParent.GetComponentInChildren<Rigidbody>().useGravity = holdOntoPlayer;
 	}
 }
