@@ -89,7 +89,7 @@ public class VisualSensor : Sensor {
 			LayerMask raycastLayer,
 			GameObject targetObject,
 			GameObject gameObjectToIgnore) {
-			RaycastHit[] raycastHits = new RaycastHit[2];
+			RaycastHit[] raycastHits = new RaycastHit[5];
 			Physics.RaycastNonAlloc(raycastOrigin,
 			targetObject.transform.position - sensorOrigin.position,
 			raycastHits,
