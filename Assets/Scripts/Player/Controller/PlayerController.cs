@@ -13,6 +13,10 @@ namespace DO
 			get;
 			set;
 		}
+        public int NumberOfDetectionPoints {
+            get { return detectionPoints.Length; }
+            private set { }
+        }
 
 		[Header("Speeds")]
         [SerializeField] public float moveSpeed = 0.4f;

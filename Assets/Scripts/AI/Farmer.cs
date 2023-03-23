@@ -99,7 +99,6 @@ public class Farmer : MonoBehaviour {
 		if (!canSeePlayer && visualSensor.Data.Contains(playersParent)) {
 			containPlayerInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
-			flashlight.ChangeColour(canSeePlayer);
 			seenPlayerRecently = true;
 			// Stops the current action so the AI can react to seeing the
 			// player for the first time in a while.
@@ -109,7 +108,6 @@ public class Farmer : MonoBehaviour {
 		// Handles losing sight of the player.
 		if (canSeePlayer && !visualSensor.Data.Contains(playersParent)) {
 			canSeePlayer = false;
-			flashlight.ChangeColour(canSeePlayer);
 			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
 		}
 
@@ -130,6 +128,11 @@ public class Farmer : MonoBehaviour {
 		}
 
 		utilityScript.Update();
+	}
+
+	private void FixedUpdate() {
+		float percentageOfVisiblePoints = (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints;
+		flashlight.ChangeColour(percentageOfVisiblePoints);
 	}
 
 	private void OnTriggerEnter(Collider other) {
