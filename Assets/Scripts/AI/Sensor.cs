@@ -9,6 +9,12 @@ using UnityEngine;
 /// Uses a trigger collider to detect game-objects of a certain type.
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
+	public enum Visibility {
+		Visible,
+		PartiallyVisible,
+		NotVisible
+	}
+
 	public LinkedList<GameObject> Data {
 		get {
 			return data;
@@ -21,12 +27,15 @@ public abstract class Sensor : MonoBehaviour {
 	[SerializeField, Tooltip("Data will only be gathered within this range " +
 		"i.e. it's the view distance, hearing range etc.")]
 	protected int detectionRange = 5;
-	[SerializeField, Tooltip("Select additional layers to detect objects on that layer.")]
+	[SerializeField, Tooltip("The AI can only see objects on this layer.")]
+	protected LayerMask visibleLayer = default;
+	[SerializeField, Tooltip("The AI will only remember objects on this layer.")]
 	protected LayerMask detectionLayer = default;
 	/// <summary>
 	/// Stores references to the game objects the agent has gathered data about.
 	/// </summary>
 	protected LinkedList<GameObject> data = new LinkedList<GameObject>();
+	protected LinkedList<GameObject> partiallyDiscoveredData = new LinkedList<GameObject>();
 	[SerializeField, Tooltip("The location where raycasts will originate from, " +
 		"when checking for line of sight on objects.")]
 	protected Transform sensorOrigin = null;
@@ -38,14 +47,55 @@ public abstract class Sensor : MonoBehaviour {
 	public void ObjectDetected(GameObject detectedGameObject) {
 		int detectedGameObjectsLayer = 1 << detectedGameObject.gameObject.layer;
 
-		// Check if the data should be saved.
-		if (detectionLayer != detectedGameObjectsLayer ||
-			data.Contains(detectedGameObject.gameObject) ||
-			!VerifyDetection(detectedGameObject.gameObject)) {
-			return;
+		// Check if the object exists on a layer which the AI should save data
+		// about.
+		if ((detectionLayer & detectedGameObjectsLayer) != 0) {
+			bool discovered = data.Contains(detectedGameObject.transform.root.gameObject);
+			bool partiallyDiscovered = partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject);
+
+			// Only verify detection if the data is not already discovered or
+			// is only partilly discovered.
+			if (!discovered || (!discovered && !partiallyDiscovered)) {
+				switch (VerifyDetection(detectedGameObject.gameObject)) {
+					case Visibility.Visible: {
+						if (!discovered) {
+							data.AddLast(detectedGameObject.transform.root.gameObject);
+						}
+
+						if (partiallyDiscovered) {
+							partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
+						}
+
+						break;
+					}
+					case Visibility.PartiallyVisible: {
+						if (!partiallyDiscovered) {
+							partiallyDiscoveredData.AddLast(detectedGameObject.transform.root.gameObject);
+						}
+
+						break;
+					}
+					case Visibility.NotVisible: {
+						ForgetObject();
+						return;
+					}
+					default: {
+						ForgetObject();
+						return;
+					}
+				}
+			}
 		}
 
-		data.AddLast(detectedGameObject.gameObject);
+		void ForgetObject() {
+			if (data.Contains(detectedGameObject.transform.root.gameObject)) {
+				data.Remove(detectedGameObject.transform.root.gameObject);
+			}
+
+			if (partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject)) {
+				partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
+			}
+		}
 	}
 
 	/// <summary>
@@ -53,7 +103,7 @@ public abstract class Sensor : MonoBehaviour {
 	/// </summary>
 	/// <param name="gameobject"> Gathered data that needs verifying. </param>
 	/// <returns> True if the data is valid and should be saved. </returns>
-	protected abstract bool VerifyDetection(GameObject gameobject);
+	protected abstract Visibility VerifyDetection(GameObject gameobject);
 
 	private void Awake() {
 		SphereCollider sphereCollider = GetComponent<SphereCollider>();
@@ -70,6 +120,12 @@ public abstract class Sensor : MonoBehaviour {
 
 	private void OnTriggerExit(Collider other) {
 		if (data.Contains(other.gameObject)) {
+			DetectionPoint[] detectionPoints = other.transform.root.gameObject.GetComponentsInChildren<DetectionPoint>();
+
+			foreach (DetectionPoint detectionPoint in detectionPoints) {
+				detectionPoint.IsVisible(false);
+			}
+
 			data.Remove(other.gameObject);
 		}
 	}

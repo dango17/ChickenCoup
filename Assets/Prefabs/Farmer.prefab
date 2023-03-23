@@ -310,6 +310,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 8
+  visibleLayer:
+    serializedVersion: 2
+    m_Bits: 448
   detectionLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -364,7 +367,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8312545775162478312
 Transform:
   m_ObjectHideFlags: 0
@@ -423,9 +426,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 8
+  visibleLayer:
+    serializedVersion: 2
+    m_Bits: 320
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   sensorOrigin: {fileID: 7576291519940325098}
 --- !u!1 &8833609758056789184
 GameObject:
