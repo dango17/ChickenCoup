@@ -7,6 +7,9 @@ TagManager:
   - Carry Position
   - Release Position
   - Farmer
+  - Crates
+  - Pullable
+  - Pushable
   layers:
   - Default
   - TransparentFX
@@ -22,8 +25,8 @@ TagManager:
   - FarmerVisualSensor
   - FarmerAudioSensor
   - DetectionPoints
-  - 
-  - 
+  - Pushable
+  - Pullable
   - 
   - 
   - 

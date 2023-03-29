@@ -138,6 +138,10 @@ namespace DO
                 FPSModeInit = false;
                 controller.rotateSpeed = 0.01f; 
             }
+            else
+            {
+                controller.rotateSpeed = 0.1f;
+            }
             #endregion
 
             moveAmount = moveInputDirection.magnitude;
@@ -148,7 +152,7 @@ namespace DO
 
             #region Jumping & Running
             //Jumping
-            if (isJumping && controller.isInFreeLook == false)
+            if (isJumping && controller.isInFreeLook == false && controller.isGrounded == true)
             {
                 controller.HandleJump();
             }
