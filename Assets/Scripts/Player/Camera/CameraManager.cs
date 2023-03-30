@@ -19,7 +19,7 @@ namespace DO
         public float tiltAngle;
         public float tileRotation = 5f; 
 
-        public void HandleFPSTile(float vertical, float delta)
+        public void HandleFPSTilt(float vertical, float delta)
         {
             tiltAngle -= vertical * tileRotation;
 

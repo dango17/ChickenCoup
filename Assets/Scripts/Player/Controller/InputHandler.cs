@@ -125,7 +125,7 @@ namespace DO
                 moveDirection.Normalize();
 
                 controller.FPRotation(moveInputDirection.x, delta);
-                cameraManager.HandleFPSTile(lookInputDirection.y, delta);
+                cameraManager.HandleFPSTilt(lookInputDirection.y, delta);
                 controller.Move(moveDirection, delta);
 
                 return;
@@ -199,7 +199,7 @@ namespace DO
                 cameraManager.fpCameraObject.SetActive(true);
                 playerModel.SetActive(false);
                 controller.FPRotation(lookInputDirection.x, delta);
-                cameraManager.HandleFPSTile(lookInputDirection.y, delta); 
+                cameraManager.HandleFPSTilt(lookInputDirection.y, delta); 
                 controller.isInFreeLook = true;
             }
             else

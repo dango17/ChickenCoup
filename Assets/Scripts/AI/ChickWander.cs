@@ -35,26 +35,28 @@ namespace DO
             if (idleTimer > 0.0f)
             {
                 idleTimer -= Time.deltaTime;
-                //anim.SetBool("IsWalking", false);
+                anim.SetBool("isWalking", false);
                 return;
             }
 
-            // If the chicken has reached its target position, choose a new target position
+            //If the chicken has reached its target position, choose a new target position
             if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
             {
                 targetPosition = GetRandomTargetPosition();
                 idleTimer = Random.Range(0.0f, idleTime);
             }
 
-            // Rotate towards target position
+            //Rotate towards target position
             Vector3 direction = (targetPosition - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, turnSpeed * Time.deltaTime);
 
-
             navAgent.SetDestination(targetPosition);
 
-            //anim.SetBool("IsWalking", true);
+            //scale the aniamtion speed in accordance to movement speed
+            anim.SetFloat("Speed", navAgent.velocity.magnitude / moveSpeed);
+
+            anim.SetBool("isWalking", true);
         }
 
         //Get random target position within a certain range
