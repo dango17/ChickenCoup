@@ -9,10 +9,21 @@ namespace DO
 {
     //playerManager that handles movement types and the relevant logic to execute.
     public class PlayerController : MonoBehaviour, DetectionPoint.IDetectionPointData {
+		/// <summary>
+		/// True when the player is considered as hidden e.g. player is under 
+        /// a table or in a vent.
+		/// </summary>
+		public bool IsHiding {
+            get;
+            private set;
+        }
 		public int VisibleDetectionPoints {
 			get;
 			set;
 		}
+        /// <summary>
+        /// The amount of detection points placed around the character's model.
+        /// </summary>
         public int NumberOfDetectionPoints {
             get { return detectionPoints.Length; }
             private set { }
@@ -82,6 +93,31 @@ namespace DO
                 isGrounded = false; 
             }
         }
+
+        private void OnTriggerEnter(Collider other) {
+            if (other.CompareTag("CoverForHiding")) {
+				IsHiding = true;
+			}
+        }
+
+        /// <summary>
+        /// Prevents the player from being revealed when entering cover
+        /// that's adjacent to the one their currently in, because they'll 
+        /// exit the old cover only after entering the new one, thus triggering
+        /// isHidden to be set to false after entering the new cover.
+        /// </summary>
+        /// <param name="other"></param>
+        private void OnTriggerStay(Collider other) {
+			if (other.CompareTag("CoverForHiding")) {
+				IsHiding = true;
+			}
+		}
+
+        private void OnTriggerExit(Collider other) {
+			if (other.CompareTag("CoverForHiding")) {
+				IsHiding = false;
+			}
+		}
 
         public void WallMovement(Vector3 moveDirection, Vector3 normal, float delta)
         {

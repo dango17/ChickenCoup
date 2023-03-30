@@ -124,7 +124,7 @@ public class Farmer : MonoBehaviour {
 		}
 
 		// Handles seeing the player.
-		if (!canSeePlayer && visualSensor.Data.Contains(playersParent)) {
+		if (!canSeePlayer && !player.IsHiding && visualSensor.Data.Contains(playersParent)) {
 			containPlayerInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
 			seenPlayerRecently = true;
@@ -159,7 +159,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void FixedUpdate() {
-		float percentageOfVisiblePoints = (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints;
+		float percentageOfVisiblePoints = player.IsHiding && !canSeePlayer ? 0.0f : (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints;
 		flashlight.ChangeColour(percentageOfVisiblePoints);
 	}
 

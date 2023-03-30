@@ -2073,9 +2073,9 @@ GameObject:
   - component: {fileID: 593350474}
   - component: {fileID: 593350475}
   - component: {fileID: 593350476}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: FPCamTrigger
-  m_TagString: Untagged
+  m_TagString: CoverForHiding
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2975,11 +2975,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385291458561, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000035888483
+      value: -0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385291458561, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000023714733
+      value: 0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495882, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: far clip plane
@@ -3023,11 +3023,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495885, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000035888483
+      value: -0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1182320385632495885, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000023714733
+      value: 0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1491982670673855873, guid: 4261717fa5641f048b3294da2755b359, type: 3}
       propertyPath: m_VerticalAxis.m_InputAxisName
