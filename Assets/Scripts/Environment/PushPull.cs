@@ -8,6 +8,10 @@ namespace DO
 {
     public class PushPull : MonoBehaviour
     {
+        /// <summary>
+        /// Allows the player to push or pull specifed game objects. Pushing would be a pecking action in-game
+        /// </summary>
+
         public float pushForce = 10f;
         public float pullForce = 5f;
         public float distance = 1.5f;

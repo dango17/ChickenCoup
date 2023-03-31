@@ -3,10 +3,15 @@
 // Created On: 30/03/2023
 
 using UnityEngine;
-using UnityEngine.AI; 
+using UnityEngine.AI;
 
 namespace DO
 {
+    /// <summary>
+    /// NPC Chicken script. Basic AI that randomly patrols a small area, detects obsticles and animates. 
+    /// Occasionally pauses like a real chicken does.
+    /// </summary>
+
     public class ChickWander : MonoBehaviour
     {
         public float moveSpeed = 1.0f;

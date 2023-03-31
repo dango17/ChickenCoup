@@ -1,12 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
+// Author: Daniel Oldham/s1903729
+// Collaborator: N/A
+// Created On: 31/03/2023
+
 using UnityEngine;
 
 namespace DO
 {
+    /// <summary>
+    /// Detects if player is inside the cage, if so lock them in-place inside the cage for a 
+    /// specified amount of time, eventually 'unlocked'.
+    /// </summary>
+
     public class CageController : MonoBehaviour
     {
-  
         public Transform playerTransformPoint;
         public float lockTime = 10f;
         public float lockCooldown = 2f;
@@ -42,7 +48,7 @@ namespace DO
             playerTransform.position = playerTransformPoint.position;
 
             isLocked = true;
-            //Record the time the player was locked
+            //Record the time player was locked
             lockStartTime = Time.time;
 
             //Disable player movement and physics while locked
@@ -60,13 +66,11 @@ namespace DO
 
         private void UnlockPlayer()
         {
-            // Move the player back to their original transform
+            //Move the player back to their original transform
             playerOriginalTransform.position = playerTransformPoint.position;
-
-            // Unlock the player
             isLocked = false;
 
-            // Re-enable player movement and physics
+            //Re-enable player movement and physics
             Rigidbody playerRigidbody = playerOriginalTransform.GetComponent<Rigidbody>();
             if (playerRigidbody != null)
             {
@@ -79,7 +83,7 @@ namespace DO
                 playerController.enabled = true;
             }
 
-            // Record the time the player was last unlocked
+            //Record the time the player was last unlocked
             lastUnlockTime = Time.time;
         }
     }
