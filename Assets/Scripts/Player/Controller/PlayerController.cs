@@ -34,7 +34,6 @@ namespace DO
         [SerializeField] public float sprintSpeed = 0.8f;
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
-
         [Header("Jumping")]
         [SerializeField] public float jumpForce = 5f;
         [SerializeField] public float fallForce = 2f;
@@ -47,8 +46,13 @@ namespace DO
         [SerializeField] public float wallCheckDistance = 0.2f;
         [SerializeField] public LayerMask coverLayer;
         [Header("Peeking")]
-        public float wallCamXPosition = 1;
-        public Transform wallCameraParent;
+        [SerializeField] public float wallCamXPosition = 1;
+        [SerializeField] public Transform wallCameraParent;
+        [Header("EggLaying")]
+        [SerializeField] public GameObject eggPrefab;
+        [SerializeField] public Transform spawnPoint;
+        [SerializeField] public float cooldownTime = 1f;
+        [SerializeField] public float timeSinceLastSpawn = 3f; 
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
@@ -82,6 +86,9 @@ namespace DO
 
         private void Update()
         {
+            //Increment time since last eggSpawn
+            timeSinceLastSpawn += Time.deltaTime;
+
             //Ground Check the player
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
@@ -228,6 +235,18 @@ namespace DO
             animator.SetFloat("movement", m, 0.1f, delta);
         }
 
+        public void HandleEggSpawning()
+        {
+            inputHandler.isLayingEgg = true;
+            timeSinceLastSpawn = 0f;
+
+            Instantiate(eggPrefab, spawnPoint.position, Quaternion.identity);
+        }
+
+        public void HandleEggCoolDown()
+        {
+            inputHandler.isLayingEgg = false;
+        }
 
         public void HandleJump()
         {

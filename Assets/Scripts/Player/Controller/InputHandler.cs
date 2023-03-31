@@ -43,6 +43,7 @@ namespace DO
         public bool isTired;
         public bool isGrabbing;
         public bool isThrowing;
+        public bool isLayingEgg; 
         public bool FPSModeInit; 
 
         public enum ExecutionOrder
@@ -66,21 +67,31 @@ namespace DO
             //Delegates that runs the method anytime the inputs are pressed
             //Movement Inputs
             inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>();
+
             //First Person CameraDir Input
             inputActions.Player.FPCameraDirection.performed += i => lookInputDirection = i.ReadValue<Vector2>();
+
             //First Person Inputs
             inputActions.Player.FirstPerson.started += i => isFP = true; cameraManager.tiltAngle = 0;
             inputActions.Player.FirstPerson.canceled += i => isFP = false;
-            //Jump Input (New weird behaviour, jump seems to occasionally multiply)
+
+            //Jump Input
             inputActions.Player.Jump.performed += i => isJumping = true;
+
             //Sprint Input 
             inputActions.Player.Sprint.performed += i => isSprinting = true;
+
             //Grabbing Input 
             inputActions.Player.Grab.started += i => isGrabbing = true;
             inputActions.Player.Grab.canceled += i => isGrabbing = false;
-            //Clucking Input 
+
+            //Clucking Input (Need to set up properly)
             inputActions.Player.Cluck.performed += i => isClucking = true;
             //inputActions.Player.Cluck.canceled += i => isClucking = false; 
+
+            //LayEgg Input
+            inputActions.Player.LayEgg.started += i => isLayingEgg = true;
+            inputActions.Player.LayEgg.canceled += i => isLayingEgg = false; 
 
             inputActions.Enable(); 
 
@@ -209,6 +220,19 @@ namespace DO
                 controller.isInFreeLook = false;
                 cameraManager.tiltAngle = 0;
             }
+            #endregion
+
+            #region EggLaying
+
+            if(isLayingEgg && controller.timeSinceLastSpawn >= controller.cooldownTime)
+            {
+                controller.HandleEggSpawning(); 
+            }
+            else
+            {
+                controller.HandleEggCoolDown(); 
+            }
+
             #endregion
 
             //Execution Order
