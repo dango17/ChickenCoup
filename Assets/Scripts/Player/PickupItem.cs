@@ -14,6 +14,8 @@ namespace DO
         [SerializeField] public Transform pickupPoint;
         [SerializeField] public InputHandler inputHandler;
 
+        public bool isHoldingItem = false; 
+
         #region Pickup Items
         //OTE && OTS Functions are identically to eachother 
         public void OnTriggerEnter(Collider other)
@@ -23,11 +25,18 @@ namespace DO
                 currentObject.GetComponent<Rigidbody>().isKinematic = true;
                 currentObject.GetComponent<BoxCollider>().enabled = false;
                 currentObject.transform.parent = pickupPoint.transform;
-                currentObject.transform.localPosition = Vector3.zero; 
+                currentObject.transform.localPosition = Vector3.zero;
+                isHoldingItem = true;
+                
+                if(isHoldingItem)
+                {
+                    //Do nothing
+                }
             }
             else if (inputHandler.isGrabbing == false)
             {
                 DropItem();
+                isHoldingItem = false; 
             }
         }
 
@@ -39,6 +48,7 @@ namespace DO
                 currentObject.GetComponent<BoxCollider>().enabled = false;
                 currentObject.transform.parent = pickupPoint.transform;
                 currentObject.transform.localPosition = Vector3.zero;
+                isHoldingItem = true; 
             }
             else if (inputHandler.isGrabbing == false) 
             {

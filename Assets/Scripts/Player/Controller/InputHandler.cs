@@ -128,7 +128,9 @@ namespace DO
                     cameraManager.fpCameraObject.SetActive(true);
                     playerModel.SetActive(false);
                     FPSModeInit = true;
-                    controller.rotateSpeed = 1.2f; 
+                    controller.rotateSpeed = 1.2f;
+
+                    moveDirection = Vector3.zero; 
                 }
 
                 moveDirection = controller.mTransform.forward * moveInputDirection.y;
@@ -206,7 +208,7 @@ namespace DO
             #region First Person Camera
             //First Person
             if (isFP)
-            {
+            { 
                 cameraManager.fpCameraObject.SetActive(true);
                 playerModel.SetActive(false);
                 controller.FPRotation(lookInputDirection.x, delta);
