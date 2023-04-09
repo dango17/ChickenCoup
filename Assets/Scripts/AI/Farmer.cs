@@ -21,6 +21,8 @@ public class Farmer : MonoBehaviour {
 	private bool catchColliderTouchingPlayer = false;
 	private bool caughtPlayer = false;
 	private bool canVisitPointOfInterest = true;
+	private bool isBlind = false;
+	private bool isStunned = false;
 	private int pointOfInterestIndex = 0;
 	private float catchRange = 1.5f;
 	private float containPlayerInsitence = 0.0f;
@@ -34,6 +36,11 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private float blindTime = 0.0f;
 	private float maximumBlindTime = 5.0f;
+	/// <summary>
+	/// How much time should pass by before the farmer can move again.
+	/// </summary>
+	private float stunTime = 0.0f;
+	private float maximumStunLength = 3.0f;
 	private float visitPointOfInterestTime = 0.0f;
 	private float maximumVisitPointOfInterestTime = 25.0f;
 
@@ -54,6 +61,29 @@ public class Farmer : MonoBehaviour {
 	private Transform releasePosition = null;
 	private Flashlight flashlight = null;
 	private PointOfInterest[] pointsOfInterest = null;
+
+	/// <summary>
+	/// Stuns the farmer by freezing their position and disabling sensors for a set time.
+	/// </summary>
+	/// <param name="stunLength"> Amount of time (in seconds) the farmer is immobile for. </param>
+	public void StunFarmer(float stunLength) {
+		isStunned = true;
+		navMeshAgent.enabled = false;
+		BlindFarmer(stunLength);
+		stunTime = stunLength;
+	}
+
+	/// <summary>
+	/// Disables the farmers sensors for a set time, so they can't process or 
+	/// gather information.
+	/// </summary>
+	/// <param name="blindLength"> How long (in seconds) the farmer's sensors are turned off for. </param>
+	public void BlindFarmer(float blindLength) {
+		isBlind = true;
+		visualSensor.gameObject.SetActive(false);
+		audioSensor.gameObject.SetActive(false);
+		blindTime = blindLength;
+	}
 
 	public static float PathLength(NavMeshPath path) {
 		float pathLength = 0.0f;
@@ -106,53 +136,15 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void Update() {
-		if (blindTime > 0) {
-			blindTime -= Time.deltaTime;
+		Blind();
+		Stunned();
 
-			if (blindTime <= 0) {
-				visualSensor.gameObject.SetActive(true);
-				audioSensor.gameObject.SetActive(true);
-			}
+		if (!isBlind) {
+			HandlePlayerVisibility();
 		}
 
-		if (visitPointOfInterestTime > 0) {
-			visitPointOfInterestTime -= Time.deltaTime;
-
-			if (visitPointOfInterestTime <= 0) {
-				canVisitPointOfInterest = true;
-			}
-		}
-
-		// Handles seeing the player.
-		if (!canSeePlayer && !player.IsHiding && visualSensor.Data.Contains(playersParent)) {
-			containPlayerInsitence = maximumContainChickenInsitence;
-			canSeePlayer = true;
-			seenPlayerRecently = true;
-			// Stops the current action so the AI can react to seeing the
-			// player for the first time in a while.
-			StopAction();
-		}
-
-		// Handles losing sight of the player.
-		if (canSeePlayer && !visualSensor.Data.Contains(playersParent)) {
-			canSeePlayer = false;
-			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
-		}
-
-		// Handles what happens whilst the player is visible to the farmer.
-		if (canSeePlayer) {
-			lastKnownPlayerPosition = player.transform.position;
-		}
-
-		// Handles what happens if the player isn't visible to the farmer,
-		// but was seen recently.
-		if (!canSeePlayer && seenPlayerRecently) {
-			timeToSpendSearchingForPlayer -= Time.deltaTime;
-
-			if (timeToSpendSearchingForPlayer <= 0.0f) {
-				containPlayerInsitence = 0.0f;
-				seenPlayerRecently = false;
-			}
+		if (isStunned) {
+			return;
 		}
 
 		utilityScript.Update();
@@ -274,6 +266,40 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 
+	private void HandlePlayerVisibility() {
+		// Handles seeing the player.
+		if (!canSeePlayer && !player.IsHiding && visualSensor.Data.Contains(playersParent)) {
+			containPlayerInsitence = maximumContainChickenInsitence;
+			canSeePlayer = true;
+			seenPlayerRecently = true;
+			// Stops the current action so the AI can react to seeing the
+			// player for the first time in a while.
+			StopAction();
+		}
+
+		// Handles losing sight of the player.
+		if (canSeePlayer && !visualSensor.Data.Contains(playersParent)) {
+			canSeePlayer = false;
+			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
+		}
+
+		// Handles what happens whilst the player is visible to the farmer.
+		if (canSeePlayer) {
+			lastKnownPlayerPosition = player.transform.position;
+		}
+
+		// Handles what happens if the player isn't visible to the farmer,
+		// but was seen recently.
+		if (!canSeePlayer && seenPlayerRecently) {
+			timeToSpendSearchingForPlayer -= Time.deltaTime;
+
+			if (timeToSpendSearchingForPlayer <= 0.0f) {
+				containPlayerInsitence = 0.0f;
+				seenPlayerRecently = false;
+			}
+		}
+	}
+
 	#region Farmer's Actions
 	/// <summary>
 	/// Stops the current action from executing.
@@ -295,6 +321,14 @@ public class Farmer : MonoBehaviour {
 	private bool Wonder() {
 		if (HasArrivedAtDestination()) {
 			return true;
+		}
+
+		if (visitPointOfInterestTime > 0) {
+			visitPointOfInterestTime -= Time.deltaTime;
+
+			if (visitPointOfInterestTime <= 0) {
+				canVisitPointOfInterest = true;
+			}
 		}
 
 		if (!destinationSet) {
@@ -440,9 +474,7 @@ public class Farmer : MonoBehaviour {
 			containPlayerInsitence = 0.0f;
 			visualSensor.ForgetObject(player.transform.root.gameObject);
 			audioSensor.ForgetObject(player.transform.root.gameObject);
-			visualSensor.gameObject.SetActive(false);
-			audioSensor.gameObject.SetActive(false);
-			blindTime = maximumBlindTime;
+			BlindFarmer(maximumBlindTime);
 			return true;
 		}
 
@@ -455,6 +487,29 @@ public class Farmer : MonoBehaviour {
 		return false;
 	}
 	#endregion
+
+	private void Blind() {
+		if (blindTime > 0) {
+			blindTime -= Time.deltaTime;
+
+			if (blindTime <= 0) {
+				visualSensor.gameObject.SetActive(true);
+				audioSensor.gameObject.SetActive(true);
+				isBlind = false;
+			}
+		}
+	}
+
+	private void Stunned() {
+		if (stunTime > 0) {
+			stunTime -= Time.deltaTime;
+
+			if (stunTime <= 0) {
+				navMeshAgent.enabled = true;
+				isStunned = false;
+			}
+		}
+	}
 
 	/// <summary>
 	/// Checks if the agent has arrived at their destination.
