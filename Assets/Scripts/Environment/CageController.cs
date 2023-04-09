@@ -22,17 +22,6 @@ namespace DO
 
         private Transform playerOriginalTransform;
 
-        //The time the player was last unlocked from the cage
-        private float lastUnlockTime = Mathf.NegativeInfinity;
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player") && !isLocked && Time.time - lastUnlockTime >= lockCooldown)
-            {
-                LockPlayer(other.transform);
-            }
-        }
-
         private void Update()
         {
             if (isLocked && Time.time - lockStartTime >= lockTime)
@@ -41,7 +30,7 @@ namespace DO
             }
         }
 
-        private void LockPlayer(Transform playerTransform)
+        public void LockPlayer(Transform playerTransform)
         {
             
             playerOriginalTransform = playerTransform;
@@ -82,9 +71,6 @@ namespace DO
             {
                 playerController.enabled = true;
             }
-
-            //Record the time the player was last unlocked
-            lastUnlockTime = Time.time;
         }
     }
 }

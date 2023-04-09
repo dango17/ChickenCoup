@@ -432,6 +432,8 @@ public class Farmer : MonoBehaviour {
 	private bool CarryPlayer() {
 		if (HasArrivedAtDestination()) {
 			HoldOntoPlayer(false);
+			CageController cageController = GameObject.FindGameObjectWithTag("ChickenCage").GetComponent<CageController>();
+			cageController.LockPlayer(player.transform);
 			caughtPlayer = false;
 			// Set to zer so the farmer doesn't instantly chase the chicken
 			// after letting them go.
