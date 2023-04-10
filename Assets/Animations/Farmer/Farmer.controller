@@ -76,7 +76,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 6ffa94ae998a53447b037e014d627bbc, type: 3}
+  m_Motion: {fileID: 7400000, guid: 547cebed373b022418901a868b289cf5, type: 2}
   m_Tag: Carrying
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -277,7 +277,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: d7384641c74976647989bbea3ce8e1e3, type: 3}
+  m_Motion: {fileID: 7400000, guid: 2ae8898b4acb94b40910f54c0a53186a, type: 2}
   m_Tag: Walking
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -446,7 +446,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 3062295d3304c584180858a8d8a9fe5d, type: 3}
+  m_Motion: {fileID: 7400000, guid: 06597fa437b048b49806d36e9f5f09f9, type: 2}
   m_Tag: Stunned
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -473,7 +473,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: d7384641c74976647989bbea3ce8e1e3, type: 3}
+  m_Motion: {fileID: 7400000, guid: 2ae8898b4acb94b40910f54c0a53186a, type: 2}
   m_Tag: Walking
   m_SpeedParameter: 
   m_MirrorParameter: 
