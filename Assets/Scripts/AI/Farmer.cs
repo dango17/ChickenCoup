@@ -174,12 +174,12 @@ public class Farmer : MonoBehaviour {
 	/// scripts game object, or children of.
 	/// </summary>
 	private void GetComponents() {
+		navMeshAgent = GetComponent<NavMeshAgent>();
 		visualSensor = GetComponentInChildren<VisualSensor>();
 		audioSensor = GetComponentInChildren<AudioSensor>();
 		catchCollider = GetComponentInChildren<BoxCollider>();
-		navMeshAgent = GetComponent<NavMeshAgent>();
 		flashlight = GetComponentInChildren<Flashlight>();
-		animator = GetComponent<Animator>();
+		animator = GetComponentInChildren<Animator>();
 	}
 
 	/// <summary>
