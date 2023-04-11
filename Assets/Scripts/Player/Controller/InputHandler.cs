@@ -33,8 +33,9 @@ namespace DO
         [Header("Sprint")]
         [SerializeField] public float runningTimer = 5f;
         [SerializeField] public float staminaTimer = 4f;
+        [SerializeField] public float sprintIncrease = 1f;
 
-        [Header("Flags")]
+       [Header("Flags")]
         public bool isFP;
         public bool isJumping;
         public bool isSprinting;
@@ -79,7 +80,9 @@ namespace DO
             inputActions.Player.Jump.performed += i => isJumping = true;
 
             //Sprint Input 
-            inputActions.Player.Sprint.performed += i => isSprinting = true;
+            inputActions.Player.Sprint.started += i => isSprinting = true;
+            inputActions.Player.Sprint.canceled += i => isSprinting = false;
+
 
             //Grabbing Input 
             inputActions.Player.Grab.started += i => isGrabbing = true;
@@ -177,7 +180,7 @@ namespace DO
             //Sprinting 
             if (isTired == false && isSprinting == true)
             {
-                controller.moveSpeed = 4f;
+                controller.moveSpeed += 0.01f;
                 isSprinting = true;
                 isTired = false; 
                 StartCoroutine(RunTimer()); 

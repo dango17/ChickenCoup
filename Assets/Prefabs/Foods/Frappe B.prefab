@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3484303018633938432
+--- !u!1 &3750306683757465822
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,50 +8,50 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4256301380904361146}
-  - component: {fileID: 918365005647188767}
-  - component: {fileID: 3123887712098117589}
-  - component: {fileID: 4367316205714037552}
-  - component: {fileID: 4367316205714037554}
-  - component: {fileID: 4367316205714037553}
-  - component: {fileID: 2430012386429867091}
+  - component: {fileID: 4557665515603184228}
+  - component: {fileID: 643961105938138561}
+  - component: {fileID: 3389865263218077963}
+  - component: {fileID: 643961105938138560}
+  - component: {fileID: 643961105938138566}
+  - component: {fileID: 643961105938138567}
+  - component: {fileID: 643961105938138565}
   m_Layer: 0
-  m_Name: GrainSack_Open
+  m_Name: Frappe B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4256301380904361146
+--- !u!4 &4557665515603184228
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3484303018633938432}
-  m_LocalRotation: {x: -0.4449109, y: -0.5495947, z: -0.43352187, w: 0.5586223}
-  m_LocalPosition: {x: -2.2810001, y: 0.071517706, z: -19.947998}
-  m_LocalScale: {x: 1.8682158, y: 1.8682157, z: 1.8682157}
+  m_GameObject: {fileID: 3750306683757465822}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.087814, y: -0.10002732, z: 24.372551}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: -76.805, y: -90, z: 1.178}
---- !u!33 &918365005647188767
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &643961105938138561
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3484303018633938432}
-  m_Mesh: {fileID: 433927969293656462, guid: 240483271ae26b6419ce14d0c3c6ba7b, type: 3}
---- !u!23 &3123887712098117589
+  m_GameObject: {fileID: 3750306683757465822}
+  m_Mesh: {fileID: -4571587102024858354, guid: 2c5f7338ca981914d95bd056f366d9b1, type: 3}
+--- !u!23 &3389865263218077963
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3484303018633938432}
+  m_GameObject: {fileID: 3750306683757465822}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -65,8 +65,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8647576486979050145, guid: 240483271ae26b6419ce14d0c3c6ba7b, type: 3}
-  - {fileID: 1965548878240436506, guid: 240483271ae26b6419ce14d0c3c6ba7b, type: 3}
+  - {fileID: 2100000, guid: 30c5e465dc21c534bada8d020bae91f4, type: 2}
+  - {fileID: 2100000, guid: b133b755a13992d4e820112f19c845cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -88,13 +88,58 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!54 &4367316205714037552
+--- !u!114 &643961105938138560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3750306683757465822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eddb6d668b355c94fbd4e0475c12270d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentObject: {fileID: 3750306683757465822}
+  pickupPoint: {fileID: 0}
+  canMove: 0
+  isFood: 0
+  isSugary: 1
+  isAlcohol: 0
+  EatEffectPrefab: {fileID: 5211720938116222224, guid: 74a44174ed71ba84ea364d48d526f455, type: 3}
+--- !u!65 &643961105938138566
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3750306683757465822}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.35762787, y: 0.7449866, z: 0.35582316}
+  m_Center: {x: -0.0037419498, y: 0.37249324, z: -0.0026400462}
+--- !u!135 &643961105938138567
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3750306683757465822}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.26
+  m_Center: {x: -0.0037419498, y: 0.37249324, z: -0.0026400462}
+--- !u!54 &643961105938138565
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3484303018633938432}
+  m_GameObject: {fileID: 3750306683757465822}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
@@ -104,48 +149,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &4367316205714037554
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3484303018633938432}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.5091806, y: 0.28463274, z: 0.6270548}
-  m_Center: {x: -0.0014294677, y: 0.0024345217, z: 0.23402159}
---- !u!114 &4367316205714037553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3484303018633938432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eddb6d668b355c94fbd4e0475c12270d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentObject: {fileID: 3484303018633938432}
-  pickupPoint: {fileID: 0}
-  canMove: 1
-  isFood: 0
-  isSugary: 0
-  isAlcohol: 0
-  EatEffectPrefab: {fileID: 0}
---- !u!135 &2430012386429867091
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3484303018633938432}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.6
-  m_Center: {x: -0.0014275602, y: 0.0024345252, z: 0.23402159}

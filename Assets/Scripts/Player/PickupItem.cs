@@ -15,8 +15,8 @@ namespace DO
         [SerializeField] public GameObject currentObject;
         [Header("PickupPoint Transform")]
         [SerializeField] public Transform pickupPoint;
-        [Header("Input-Handler")]
-        [SerializeField] public InputHandler inputHandler;
+        InputHandler inputHandler;
+        PlayerController controller; 
         [Header("What Item Is This?")]
         [SerializeField] public bool canMove;
         [SerializeField] public bool isFood;
@@ -24,6 +24,15 @@ namespace DO
         [SerializeField] public bool isAlcohol;
         [Header("Eaten ParticleEffect")]
         public GameObject EatEffectPrefab;
+
+        //0.05f is equal to 0.15 in the inspector on moveSpeed?!
+        private float speedBoost = 0.025f; //(0.15f)
+
+        public void Start()
+        {
+           controller = FindObjectOfType<PlayerController>();
+           inputHandler = FindObjectOfType<InputHandler>(); 
+        }
 
         #region Pickup Items
         //OTE && OTS Functions are identically to eachother 
@@ -52,7 +61,20 @@ namespace DO
 
                     Invoke("DestoryCurrentObject", 0.75f); 
                 }
-                //Do Sugary Foods Here (speed boost player)
+                //Sugary Foods Here (speed boost player)
+                {
+                    if (inputHandler.isGrabbing == true && isSugary == true)
+                    {
+                        currentObject.GetComponent<Rigidbody>().isKinematic = true;
+                        currentObject.GetComponent<BoxCollider>().enabled = false;
+                        currentObject.transform.parent = pickupPoint.transform;
+                        currentObject.transform.localPosition = Vector3.zero;
+
+                        controller.moveSpeed += speedBoost; 
+                        
+                        Invoke("DestoryCurrentObject", 0.75f);
+                    }
+                }
 
                 //Do Alcohol Foods Here (Add chromatic abbrasion)
             }
