@@ -15,15 +15,18 @@ namespace DO
         [SerializeField] public GameObject currentObject;
         [Header("PickupPoint Transform")]
         [SerializeField] public Transform pickupPoint;
-        InputHandler inputHandler;
-        PlayerController controller; 
-        [Header("What Item Is This?")]
+        [SerializeField] public MeshRenderer meshRenderer;
+        [Header("ItemType")]
         [SerializeField] public bool canMove;
         [SerializeField] public bool isFood;
         [SerializeField] public bool isSugary;
         [SerializeField] public bool isAlcohol;
         [Header("Eaten ParticleEffect")]
         public GameObject EatEffectPrefab;
+        InputHandler inputHandler;
+        PlayerController controller;
+
+        private Material[] originalMaterials;
 
         //0.05f is equal to 0.15 in the inspector on moveSpeed?!
         private float speedBoost = 0.025f; //(0.15f)
@@ -31,7 +34,15 @@ namespace DO
         public void Start()
         {
            controller = FindObjectOfType<PlayerController>();
-           inputHandler = FindObjectOfType<InputHandler>(); 
+           inputHandler = FindObjectOfType<InputHandler>();
+
+            //Save the original materials array
+            originalMaterials = meshRenderer.materials;
+
+            //Disable the second material on the mesh renderer
+            Material[] materials = meshRenderer.materials;
+            materials[1] = null;
+            meshRenderer.materials = materials;
         }
 
         #region Pickup Items
@@ -40,6 +51,11 @@ namespace DO
         {
             if (other.tag == "Player")
             {
+                //Turn on outline shader here
+                Material[] materials = meshRenderer.materials;
+                materials[1] = originalMaterials[1];
+                meshRenderer.materials = materials;
+
                 //Player can pick up item as normal if canMove == true
                 if (inputHandler.isGrabbing == true && canMove == true)
                 {
@@ -100,6 +116,14 @@ namespace DO
             }
         }
         #endregion
+
+        private void OnTriggerExit(Collider other)
+        {
+            //Disable the outline material 
+            Material[] materials = meshRenderer.materials;
+            materials[1] = null;
+            meshRenderer.materials = materials;
+        }
 
         public void DestoryCurrentObject()
         {

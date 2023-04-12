@@ -29,13 +29,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 972222397198116891}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -7.626835, y: -0.100027084, z: 23.405712}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3574182617510280452
 MeshFilter:
@@ -66,6 +66,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 30c5e465dc21c534bada8d020bae91f4, type: 2}
+  - {fileID: 2100000, guid: 633cd3ca10d2a1a489a863ffe53f664e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -101,6 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentObject: {fileID: 972222397198116891}
   pickupPoint: {fileID: 0}
+  meshRenderer: {fileID: 1621009368801839566}
   canMove: 0
   isFood: 0
   isSugary: 1
@@ -130,7 +132,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.26
+  m_Radius: 0.45
   m_Center: {x: -0.0033057965, y: 0.01865711, z: -0.0013388321}
 --- !u!54 &1621009368801839562
 Rigidbody:
