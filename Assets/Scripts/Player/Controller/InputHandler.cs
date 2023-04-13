@@ -45,7 +45,8 @@ namespace DO
         public bool isGrabbing;
         public bool isThrowing;
         public bool isLayingEgg; 
-        public bool FPSModeInit; 
+        public bool FPSModeInit;
+        public bool isConcealed; 
 
         public enum ExecutionOrder
         {

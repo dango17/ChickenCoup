@@ -1,3 +1,7 @@
+// Author: Daniel Oldham/s1903729
+// Collaborator: N/A
+// Created On: 11/04/2023
+
 using UnityEngine;
 
 namespace DO
@@ -41,7 +45,16 @@ namespace DO
             }
 
             isCracked = true;
+        }
 
+        //If farmer steps on egg crack open
+        public void OnTriggerEnter(Collider other)
+        {
+            if(other.tag == "Farmer")
+            {
+                //I'd imagine the logic to stun the farmer would go here somewhere?
+                CrackOpen(); 
+            }
         }
     }
 }
