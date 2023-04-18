@@ -33,8 +33,9 @@ namespace DO
         [Header("Sprint")]
         [SerializeField] public float runningTimer = 5f;
         [SerializeField] public float staminaTimer = 4f;
+        [SerializeField] public float sprintIncrease = 1f;
 
-        [Header("Flags")]
+       [Header("Flags")]
         public bool isFP;
         public bool isJumping;
         public bool isSprinting;
@@ -43,7 +44,9 @@ namespace DO
         public bool isTired;
         public bool isGrabbing;
         public bool isThrowing;
-        public bool FPSModeInit; 
+        public bool isLayingEgg; 
+        public bool FPSModeInit;
+        public bool isConcealed; 
 
         public enum ExecutionOrder
         {
@@ -66,21 +69,33 @@ namespace DO
             //Delegates that runs the method anytime the inputs are pressed
             //Movement Inputs
             inputActions.Player.Movement.performed += i => moveInputDirection = i.ReadValue<Vector2>();
+
             //First Person CameraDir Input
             inputActions.Player.FPCameraDirection.performed += i => lookInputDirection = i.ReadValue<Vector2>();
+
             //First Person Inputs
             inputActions.Player.FirstPerson.started += i => isFP = true; cameraManager.tiltAngle = 0;
             inputActions.Player.FirstPerson.canceled += i => isFP = false;
-            //Jump Input (New weird behaviour, jump seems to occasionally multiply)
+
+            //Jump Input
             inputActions.Player.Jump.performed += i => isJumping = true;
+
             //Sprint Input 
-            inputActions.Player.Sprint.performed += i => isSprinting = true;
+            inputActions.Player.Sprint.started += i => isSprinting = true;
+            inputActions.Player.Sprint.canceled += i => isSprinting = false;
+
+
             //Grabbing Input 
             inputActions.Player.Grab.started += i => isGrabbing = true;
             inputActions.Player.Grab.canceled += i => isGrabbing = false;
-            //Clucking Input 
+
+            //Clucking Input (Need to set up properly)
             inputActions.Player.Cluck.performed += i => isClucking = true;
             //inputActions.Player.Cluck.canceled += i => isClucking = false; 
+
+            //LayEgg Input
+            inputActions.Player.LayEgg.started += i => isLayingEgg = true;
+            inputActions.Player.LayEgg.canceled += i => isLayingEgg = false; 
 
             inputActions.Enable(); 
 
@@ -117,7 +132,9 @@ namespace DO
                     cameraManager.fpCameraObject.SetActive(true);
                     playerModel.SetActive(false);
                     FPSModeInit = true;
-                    controller.rotateSpeed = 1.2f; 
+                    controller.rotateSpeed = 1.2f;
+
+                    moveDirection = Vector3.zero; 
                 }
 
                 moveDirection = controller.mTransform.forward * moveInputDirection.y;
@@ -125,7 +142,7 @@ namespace DO
                 moveDirection.Normalize();
 
                 controller.FPRotation(moveInputDirection.x, delta);
-                cameraManager.HandleFPSTile(lookInputDirection.y, delta);
+                cameraManager.HandleFPSTilt(lookInputDirection.y, delta);
                 controller.Move(moveDirection, delta);
 
                 return;
@@ -138,6 +155,10 @@ namespace DO
                 FPSModeInit = false;
                 controller.rotateSpeed = 0.01f; 
             }
+            else
+            {
+                controller.rotateSpeed = 0.1f;
+            }
             #endregion
 
             moveAmount = moveInputDirection.magnitude;
@@ -148,7 +169,7 @@ namespace DO
 
             #region Jumping & Running
             //Jumping
-            if (isJumping && controller.isInFreeLook == false)
+            if (isJumping && controller.isInFreeLook == false && controller.isGrounded == true)
             {
                 controller.HandleJump();
             }
@@ -160,7 +181,7 @@ namespace DO
             //Sprinting 
             if (isTired == false && isSprinting == true)
             {
-                controller.moveSpeed = 4f;
+                controller.moveSpeed += 0.01f;
                 isSprinting = true;
                 isTired = false; 
                 StartCoroutine(RunTimer()); 
@@ -191,11 +212,11 @@ namespace DO
             #region First Person Camera
             //First Person
             if (isFP)
-            {
+            { 
                 cameraManager.fpCameraObject.SetActive(true);
                 playerModel.SetActive(false);
                 controller.FPRotation(lookInputDirection.x, delta);
-                cameraManager.HandleFPSTile(lookInputDirection.y, delta); 
+                cameraManager.HandleFPSTilt(lookInputDirection.y, delta); 
                 controller.isInFreeLook = true;
             }
             else
@@ -205,6 +226,19 @@ namespace DO
                 controller.isInFreeLook = false;
                 cameraManager.tiltAngle = 0;
             }
+            #endregion
+
+            #region EggLaying
+
+            if(isLayingEgg && controller.timeSinceLastSpawn >= controller.cooldownTime)
+            {
+                controller.HandleEggSpawning(); 
+            }
+            else
+            {
+                controller.HandleEggCoolDown(); 
+            }
+
             #endregion
 
             //Execution Order

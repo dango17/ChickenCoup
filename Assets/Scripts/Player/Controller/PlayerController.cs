@@ -9,10 +9,21 @@ namespace DO
 {
     //playerManager that handles movement types and the relevant logic to execute.
     public class PlayerController : MonoBehaviour, DetectionPoint.IDetectionPointData {
+		/// <summary>
+		/// True when the player is considered as hidden e.g. player is under 
+        /// a table or in a vent.
+		/// </summary>
+		public bool IsHiding {
+            get;
+            private set;
+        }
 		public int VisibleDetectionPoints {
 			get;
 			set;
 		}
+        /// <summary>
+        /// The amount of detection points placed around the character's model.
+        /// </summary>
         public int NumberOfDetectionPoints {
             get { return detectionPoints.Length; }
             private set { }
@@ -23,7 +34,6 @@ namespace DO
         [SerializeField] public float sprintSpeed = 0.8f;
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
-
         [Header("Jumping")]
         [SerializeField] public float jumpForce = 5f;
         [SerializeField] public float fallForce = 2f;
@@ -36,8 +46,13 @@ namespace DO
         [SerializeField] public float wallCheckDistance = 0.2f;
         [SerializeField] public LayerMask coverLayer;
         [Header("Peeking")]
-        public float wallCamXPosition = 1;
-        public Transform wallCameraParent;
+        [SerializeField] public float wallCamXPosition = 1;
+        [SerializeField] public Transform wallCameraParent;
+        [Header("EggLaying")]
+        [SerializeField] public GameObject eggPrefab;
+        [SerializeField] public Transform spawnPoint;
+        [SerializeField] public float cooldownTime = 1f;
+        [SerializeField] public float timeSinceLastSpawn = 3f; 
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
@@ -71,6 +86,9 @@ namespace DO
 
         private void Update()
         {
+            //Increment time since last eggSpawn
+            timeSinceLastSpawn += Time.deltaTime;
+
             //Ground Check the player
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
@@ -82,6 +100,31 @@ namespace DO
                 isGrounded = false; 
             }
         }
+
+        private void OnTriggerEnter(Collider other) {
+            if (other.CompareTag("CoverForHiding")) {
+				IsHiding = true;
+			}
+        }
+
+        /// <summary>
+        /// Prevents the player from being revealed when entering cover
+        /// that's adjacent to the one their currently in, because they'll 
+        /// exit the old cover only after entering the new one, thus triggering
+        /// isHidden to be set to false after entering the new cover.
+        /// </summary>
+        /// <param name="other"></param>
+        private void OnTriggerStay(Collider other) {
+			if (other.CompareTag("CoverForHiding")) {
+				IsHiding = true;
+			}
+		}
+
+        private void OnTriggerExit(Collider other) {
+			if (other.CompareTag("CoverForHiding")) {
+				IsHiding = false;
+			}
+		}
 
         public void WallMovement(Vector3 moveDirection, Vector3 normal, float delta)
         {
@@ -192,6 +235,18 @@ namespace DO
             animator.SetFloat("movement", m, 0.1f, delta);
         }
 
+        public void HandleEggSpawning()
+        {
+            inputHandler.isLayingEgg = true;
+            timeSinceLastSpawn = 0f;
+
+            Instantiate(eggPrefab, spawnPoint.position, Quaternion.identity);
+        }
+
+        public void HandleEggCoolDown()
+        {
+            inputHandler.isLayingEgg = false;
+        }
 
         public void HandleJump()
         {

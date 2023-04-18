@@ -89,6 +89,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LayEgg"",
+                    ""type"": ""Button"",
+                    ""id"": ""a3f6003e-1f49-472d-9f47-0bcbda57c26b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -333,6 +342,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""FPCameraDirection"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""591ecb06-1367-4258-bf9b-4283167fee16"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LayEgg"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3fa7858d-cf15-4005-a767-30f756a7d990"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LayEgg"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -348,6 +379,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Player_Cluck = m_Player.FindAction("Cluck", throwIfNotFound: true);
         m_Player_FirstPerson = m_Player.FindAction("FirstPerson", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
+        m_Player_LayEgg = m_Player.FindAction("LayEgg", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -414,6 +446,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Cluck;
     private readonly InputAction m_Player_FirstPerson;
     private readonly InputAction m_Player_Sprint;
+    private readonly InputAction m_Player_LayEgg;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -425,6 +458,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Cluck => m_Wrapper.m_Player_Cluck;
         public InputAction @FirstPerson => m_Wrapper.m_Player_FirstPerson;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
+        public InputAction @LayEgg => m_Wrapper.m_Player_LayEgg;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -455,6 +489,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Sprint.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSprint;
                 @Sprint.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSprint;
                 @Sprint.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSprint;
+                @LayEgg.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLayEgg;
+                @LayEgg.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLayEgg;
+                @LayEgg.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLayEgg;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -480,6 +517,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Sprint.started += instance.OnSprint;
                 @Sprint.performed += instance.OnSprint;
                 @Sprint.canceled += instance.OnSprint;
+                @LayEgg.started += instance.OnLayEgg;
+                @LayEgg.performed += instance.OnLayEgg;
+                @LayEgg.canceled += instance.OnLayEgg;
             }
         }
     }
@@ -493,5 +533,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnCluck(InputAction.CallbackContext context);
         void OnFirstPerson(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnLayEgg(InputAction.CallbackContext context);
     }
 }
