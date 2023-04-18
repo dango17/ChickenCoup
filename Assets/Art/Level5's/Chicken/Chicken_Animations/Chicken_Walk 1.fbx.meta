@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 0b29e0182a66d53499a407d1f6e585f2
+guid: fc8a77ddff576db4fb6c9579b368ada6
 ModelImporter:
   serializedVersion: 22103
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
-    second: Chicken_Anim_Idle_Scratch
+    second: Walk_Right
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -36,18 +36,18 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Chicken_Anim_Idle_Scratch
+      name: Walk_Right
       takeName: Take 001
       internalID: 0
       firstFrame: 0
-      lastFrame: 140
+      lastFrame: 33
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -58,7 +58,32 @@ ModelImporter:
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
+      curves:
+      - name: Curve
+        curve:
+          serializedVersion: 2
+          curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: -0.0022632438
+            outSlope: -0.0022632438
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0.10420842
+          - serializedVersion: 3
+            time: 1
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          preInfinity: 3
+          postInfinity: 3
+          rotationOrder: 4
       events: []
       transformMask: []
       maskType: 3
@@ -130,7 +155,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

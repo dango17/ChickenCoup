@@ -171,7 +171,8 @@ namespace DO
             //Jumping
             if (isJumping && controller.isInFreeLook == false && controller.isGrounded == true)
             {
-                controller.HandleJump();
+                controller.animator.Play("Jump");
+                controller.Jump();
             }
             else if (controller.isGrounded == false)
             {
