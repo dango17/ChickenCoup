@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5396994384829133779}
   - component: {fileID: 9028066169412369526}
   - component: {fileID: 6534394377389426876}
+  - component: {fileID: 8021627378077703914}
   m_Layer: 0
   m_Name: GrainSack_Closed
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -180, y: -90, z: 0}
 --- !u!33 &9028066169412369526
 MeshFilter:
@@ -83,3 +84,23 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8021627378077703914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4732765754736568681}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eddb6d668b355c94fbd4e0475c12270d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentObject: {fileID: 4732765754736568681}
+  pickupPoint: {fileID: 0}
+  meshRenderer: {fileID: 6534394377389426876}
+  canMove: 0
+  isFood: 0
+  isSugary: 0
+  isAlcohol: 0
+  EatEffectPrefab: {fileID: 0}

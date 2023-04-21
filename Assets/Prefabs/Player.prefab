@@ -279,7 +279,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385291458575}
-  m_LocalRotation: {x: 0.55130094, y: 0.000000035888483, z: -0.000000023714733, w: 0.83430654}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000035888483, z: 0.000000023714733, w: 0.83430654}
   m_LocalPosition: {x: 0, y: 10.611, z: -4.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -383,8 +383,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182320385632495880}
-  m_LocalRotation: {x: 0.55130094, y: 0.000000035888483, z: -0.000000023714733, w: 0.83430654}
-  m_LocalPosition: {x: -0.07000017, y: 10.611, z: -4.66}
+  m_LocalRotation: {x: 0.55130094, y: -0.000000035888483, z: 0.000000023714733, w: 0.83430654}
+  m_LocalPosition: {x: -0.07000017, y: 11.271, z: -4.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -823,6 +823,7 @@ Transform:
   - {fileID: 7402244214934700951}
   - {fileID: 875339384750867808}
   - {fileID: 4274314652323692057}
+  - {fileID: 5464034371796575275}
   m_Father: {fileID: 1752816793553067403}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -856,6 +857,10 @@ MonoBehaviour:
     m_Bits: 0
   wallCamXPosition: 1
   wallCameraParent: {fileID: 875339384750867808}
+  eggPrefab: {fileID: 0}
+  spawnPoint: {fileID: 0}
+  cooldownTime: 1
+  timeSinceLastSpawn: 3
   isOnCover: 0
   isGrounded: 1
   isInFreeLook: 0
@@ -888,6 +893,7 @@ MonoBehaviour:
   moveAmount: 0
   runningTimer: 5
   staminaTimer: 4
+  sprintIncrease: 1
   isFP: 0
   isJumping: 0
   isSprinting: 0
@@ -896,6 +902,7 @@ MonoBehaviour:
   isTired: 0
   isGrabbing: 0
   isThrowing: 0
+  isLayingEgg: 0
   FPSModeInit: 0
 --- !u!54 &1615524504985154569
 Rigidbody:
@@ -1890,6 +1897,37 @@ Transform:
   m_Father: {fileID: 7402244214934700973}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 1.23601, y: -1.0276147, z: 56.705242}
+--- !u!1 &8354918201321357891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5464034371796575275}
+  m_Layer: 8
+  m_Name: concealmentPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5464034371796575275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8354918201321357891}
+  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0.44, z: -0.047}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1615524504985154572}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
 --- !u!1001 &772322797060391027
 PrefabInstance:
   m_ObjectHideFlags: 0

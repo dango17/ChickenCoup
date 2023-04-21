@@ -131,7 +131,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentObject: {fileID: 3484303018633938432}
   pickupPoint: {fileID: 0}
-  inputHandler: {fileID: 0}
+  canMove: 1
+  isFood: 0
+  isSugary: 0
+  isAlcohol: 0
+  EatEffectPrefab: {fileID: 0}
 --- !u!135 &2430012386429867091
 SphereCollider:
   m_ObjectHideFlags: 0

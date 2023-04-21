@@ -21,6 +21,8 @@ public class Farmer : MonoBehaviour {
 	private bool catchColliderTouchingPlayer = false;
 	private bool caughtPlayer = false;
 	private bool canVisitPointOfInterest = true;
+	private bool isBlind = false;
+	private bool isStunned = false;
 	private int pointOfInterestIndex = 0;
 	private float catchRange = 1.5f;
 	private float containPlayerInsitence = 0.0f;
@@ -34,6 +36,10 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private float blindTime = 0.0f;
 	private float maximumBlindTime = 5.0f;
+	/// <summary>
+	/// How much time should pass by before the farmer can move again.
+	/// </summary>
+	private float stunTime = 0.0f;
 	private float visitPointOfInterestTime = 0.0f;
 	private float maximumVisitPointOfInterestTime = 25.0f;
 
@@ -54,6 +60,32 @@ public class Farmer : MonoBehaviour {
 	private Transform releasePosition = null;
 	private Flashlight flashlight = null;
 	private PointOfInterest[] pointsOfInterest = null;
+	private Animator animator = null;
+
+	/// <summary>
+	/// Stuns the farmer by freezing their position and disabling sensors for a set time.
+	/// </summary>
+	/// <param name="stunLength"> Amount of time (in seconds) the farmer is immobile for. </param>
+	public void StunFarmer(float stunLength) {
+		isStunned = true;
+		navMeshAgent.enabled = false;
+		BlindFarmer(stunLength);
+		stunTime = stunLength;
+		animator.SetBool("Stunned", true);
+		animator.SetTrigger("StunnedTrigger");
+	}
+
+	/// <summary>
+	/// Disables the farmers sensors for a set time, so they can't process or 
+	/// gather information.
+	/// </summary>
+	/// <param name="blindLength"> How long (in seconds) the farmer's sensors are turned off for. </param>
+	public void BlindFarmer(float blindLength) {
+		isBlind = true;
+		visualSensor.gameObject.SetActive(false);
+		audioSensor.gameObject.SetActive(false);
+		blindTime = blindLength;
+	}
 
 	public static float PathLength(NavMeshPath path) {
 		float pathLength = 0.0f;
@@ -93,7 +125,7 @@ public class Farmer : MonoBehaviour {
 	#endregion
 
 	private void Awake() {
-		FindComponents();
+		GetComponents();
 		CreateUtilityInstance();
 	}
 
@@ -106,53 +138,15 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void Update() {
-		if (blindTime > 0) {
-			blindTime -= Time.deltaTime;
+		Blind();
+		Stunned();
 
-			if (blindTime <= 0) {
-				visualSensor.gameObject.SetActive(true);
-				audioSensor.gameObject.SetActive(true);
-			}
+		if (!isBlind) {
+			HandlePlayerVisibility();
 		}
 
-		if (visitPointOfInterestTime > 0) {
-			visitPointOfInterestTime -= Time.deltaTime;
-
-			if (visitPointOfInterestTime <= 0) {
-				canVisitPointOfInterest = true;
-			}
-		}
-
-		// Handles seeing the player.
-		if (!canSeePlayer && !player.IsHiding && visualSensor.Data.Contains(playersParent)) {
-			containPlayerInsitence = maximumContainChickenInsitence;
-			canSeePlayer = true;
-			seenPlayerRecently = true;
-			// Stops the current action so the AI can react to seeing the
-			// player for the first time in a while.
-			StopAction();
-		}
-
-		// Handles losing sight of the player.
-		if (canSeePlayer && !visualSensor.Data.Contains(playersParent)) {
-			canSeePlayer = false;
-			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
-		}
-
-		// Handles what happens whilst the player is visible to the farmer.
-		if (canSeePlayer) {
-			lastKnownPlayerPosition = player.transform.position;
-		}
-
-		// Handles what happens if the player isn't visible to the farmer,
-		// but was seen recently.
-		if (!canSeePlayer && seenPlayerRecently) {
-			timeToSpendSearchingForPlayer -= Time.deltaTime;
-
-			if (timeToSpendSearchingForPlayer <= 0.0f) {
-				containPlayerInsitence = 0.0f;
-				seenPlayerRecently = false;
-			}
+		if (isStunned) {
+			return;
 		}
 
 		utilityScript.Update();
@@ -179,12 +173,13 @@ public class Farmer : MonoBehaviour {
 	/// Finds the components that are used by this script, and attached to the 
 	/// scripts game object, or children of.
 	/// </summary>
-	private void FindComponents() {
+	private void GetComponents() {
+		navMeshAgent = GetComponent<NavMeshAgent>();
 		visualSensor = GetComponentInChildren<VisualSensor>();
 		audioSensor = GetComponentInChildren<AudioSensor>();
 		catchCollider = GetComponentInChildren<BoxCollider>();
-		navMeshAgent = GetComponent<NavMeshAgent>();
 		flashlight = GetComponentInChildren<Flashlight>();
+		animator = GetComponentInChildren<Animator>();
 	}
 
 	/// <summary>
@@ -274,6 +269,40 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 
+	private void HandlePlayerVisibility() {
+		// Handles seeing the player.
+		if (!canSeePlayer && !player.IsHiding && visualSensor.Data.Contains(playersParent)) {
+			containPlayerInsitence = maximumContainChickenInsitence;
+			canSeePlayer = true;
+			seenPlayerRecently = true;
+			// Stops the current action so the AI can react to seeing the
+			// player for the first time in a while.
+			StopAction();
+		}
+
+		// Handles losing sight of the player.
+		if (canSeePlayer && !visualSensor.Data.Contains(playersParent)) {
+			canSeePlayer = false;
+			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
+		}
+
+		// Handles what happens whilst the player is visible to the farmer.
+		if (canSeePlayer) {
+			lastKnownPlayerPosition = player.transform.position;
+		}
+
+		// Handles what happens if the player isn't visible to the farmer,
+		// but was seen recently.
+		if (!canSeePlayer && seenPlayerRecently) {
+			timeToSpendSearchingForPlayer -= Time.deltaTime;
+
+			if (timeToSpendSearchingForPlayer <= 0.0f) {
+				containPlayerInsitence = 0.0f;
+				seenPlayerRecently = false;
+			}
+		}
+	}
+
 	#region Farmer's Actions
 	/// <summary>
 	/// Stops the current action from executing.
@@ -294,7 +323,16 @@ public class Farmer : MonoBehaviour {
 	/// <returns> True if Ai has completed the action. </returns>
 	private bool Wonder() {
 		if (HasArrivedAtDestination()) {
+			animator.SetBool("Walking", false);
 			return true;
+		}
+
+		if (visitPointOfInterestTime > 0) {
+			visitPointOfInterestTime -= Time.deltaTime;
+
+			if (visitPointOfInterestTime <= 0) {
+				canVisitPointOfInterest = true;
+			}
 		}
 
 		if (!destinationSet) {
@@ -332,6 +370,7 @@ public class Farmer : MonoBehaviour {
 			}
 
 			destinationSet = navMeshAgent.SetDestination(wonderDestination);
+			animator.SetBool("Walking", true);
 		}
 
 		return false;
@@ -347,6 +386,7 @@ public class Farmer : MonoBehaviour {
 
 			Vector3 wonderDestination = pointsOfInterest[pointOfInterestIndex++].GetComponent<PointOfInterest>().StandPosition;
 			destinationSet = navMeshAgent.SetDestination(wonderDestination);
+			animator.SetBool("Walking", true);
 			visitPointOfInterestTime = maximumVisitPointOfInterestTime;
 			canVisitPointOfInterest = false;
 		}
@@ -360,6 +400,7 @@ public class Farmer : MonoBehaviour {
 	private bool Search() {
 		if (canSeePlayer || !seenPlayerRecently) {
 			StopAction();
+			animator.SetBool("Walking", false);
 			return true;
 		}
 
@@ -371,6 +412,7 @@ public class Farmer : MonoBehaviour {
 		if (!destinationSet) {
 			// Move to the player's last known position.
 			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition);
+			animator.SetBool("Walking", true);
 		}
 		
 		return false;
@@ -383,6 +425,7 @@ public class Farmer : MonoBehaviour {
 	private bool ChasePlayer() {
 		if (HasArrivedAtDestination()) {
 			navMeshAgent.autoBraking = true;
+			animator.SetBool("Walking", false);
 			return true;
 		}
 
@@ -395,6 +438,7 @@ public class Farmer : MonoBehaviour {
 			// Must be lower than the catch range.
 			const float spaceBetweenAgentAndPlayer = 1.25f;
 			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
+			animator.SetBool("Walking", true);
 			navMeshAgent.autoBraking = false;
 			destinationChanged = false;
 		}
@@ -402,6 +446,7 @@ public class Farmer : MonoBehaviour {
 		return false;
 	}
 
+	// TODO: disable relevant aniamtions properties by keyframing an event in the animations.
 	/// <summary>
 	/// The farmer will try to catch the chicken if it's close enough.
 	/// </summary>
@@ -418,6 +463,7 @@ public class Farmer : MonoBehaviour {
 			HoldOntoPlayer(true);
 			catchCollider.enabled = false;
 			player.transform.position = carryPosition.position;
+			animator.SetBool("Catching", true);
 			return caughtPlayer = true;
 		}
 
@@ -432,15 +478,16 @@ public class Farmer : MonoBehaviour {
 	private bool CarryPlayer() {
 		if (HasArrivedAtDestination()) {
 			HoldOntoPlayer(false);
+			CageController cageController = GameObject.FindGameObjectWithTag("ChickenCage").GetComponent<CageController>();
+			cageController.LockPlayer(player.transform);
 			caughtPlayer = false;
 			// Set to zer so the farmer doesn't instantly chase the chicken
 			// after letting them go.
 			containPlayerInsitence = 0.0f;
 			visualSensor.ForgetObject(player.transform.root.gameObject);
 			audioSensor.ForgetObject(player.transform.root.gameObject);
-			visualSensor.gameObject.SetActive(false);
-			audioSensor.gameObject.SetActive(false);
-			blindTime = maximumBlindTime;
+			BlindFarmer(maximumBlindTime);
+			animator.SetBool("Carrying", false);
 			return true;
 		}
 
@@ -448,11 +495,37 @@ public class Farmer : MonoBehaviour {
 
 		if (!destinationSet) {
 			destinationSet = navMeshAgent.SetDestination(releasePosition.position);
+			animator.SetBool("Walking", true);
+			animator.SetBool("Carrying", true);
 		}
 
 		return false;
 	}
 	#endregion
+
+	private void Blind() {
+		if (blindTime > 0) {
+			blindTime -= Time.deltaTime;
+
+			if (blindTime <= 0) {
+				visualSensor.gameObject.SetActive(true);
+				audioSensor.gameObject.SetActive(true);
+				isBlind = false;
+			}
+		}
+	}
+
+	private void Stunned() {
+		if (stunTime > 0) {
+			stunTime -= Time.deltaTime;
+
+			if (stunTime <= 0) {
+				navMeshAgent.enabled = true;
+				isStunned = false;
+				animator.SetBool("Stunned", false);
+			}
+		}
+	}
 
 	/// <summary>
 	/// Checks if the agent has arrived at their destination.
