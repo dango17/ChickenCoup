@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Audio;
 
 namespace DO
 {
@@ -57,6 +58,9 @@ namespace DO
         [SerializeField] public Transform spawnPoint;
         [SerializeField] public float cooldownTime = 1f;
         [SerializeField] public float timeSinceLastSpawn = 3f; 
+        [Header("Clucking")]
+        [SerializeField] public AudioClip[] cluckSounds;
+        [SerializeField] private AudioSource audioSource;
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
@@ -75,7 +79,7 @@ namespace DO
 			inputHandler.controller.isFPMode = enableFirstPerson;
 		}
 
-		private void Start()
+        private void Start()
         {
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
@@ -88,7 +92,14 @@ namespace DO
             foreach (DetectionPoint detectionPoint in detectionPoints) {
                 detectionPoint.SetDataSource(this);
 			}
-		}
+
+            audioSource = GetComponentInChildren<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+        }
+
 
         private void Update()
         {
@@ -301,6 +312,14 @@ namespace DO
             {
                 rigidbody.AddForce(Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * rigidbody.mass, ForceMode.Acceleration);
             }
+        }
+
+        public void HandleClucking()
+        {
+            int randomIndex = Random.Range(0, cluckSounds.Length);
+            audioSource.clip = cluckSounds[randomIndex];
+            audioSource.spatialBlend = 1;
+            audioSource.Play();
         }
     }
 }

@@ -90,8 +90,8 @@ namespace DO
             inputActions.Player.Grab.canceled += i => isGrabbing = false;
 
             //Clucking Input (Need to set up properly)
-            inputActions.Player.Cluck.performed += i => isClucking = true;
-            //inputActions.Player.Cluck.canceled += i => isClucking = false; 
+            inputActions.Player.Cluck.started += i => isClucking = true;
+            inputActions.Player.Cluck.canceled += i => isClucking = false; 
 
             //LayEgg Input
             inputActions.Player.LayEgg.started += i => isLayingEgg = true;
@@ -238,6 +238,14 @@ namespace DO
             else
             {
                 controller.HandleEggCoolDown(); 
+            }
+
+            #endregion
+
+            #region Clucking
+            if(isClucking == true)
+            {
+                controller.HandleClucking(); 
             }
 
             #endregion
