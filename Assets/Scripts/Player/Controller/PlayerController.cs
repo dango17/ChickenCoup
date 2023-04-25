@@ -65,7 +65,8 @@ namespace DO
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
         [SerializeField] public bool isInFreeLook;
-        [SerializeField] public bool isFPMode; 
+        [SerializeField] public bool isFPMode;
+        [SerializeField] public bool objectInHand; 
 
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
