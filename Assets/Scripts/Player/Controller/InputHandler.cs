@@ -17,7 +17,8 @@ namespace DO
         [SerializeField] public ExecutionOrder movementOrder;
         [SerializeField] public PlayerController controller;
         [SerializeField] public CameraManager cameraManager;
-        [SerializeField] public GameObject playerModel; 
+        [SerializeField] public GameObject playerModel;
+        [SerializeField] public Animator UIAnims;
         PlayerControls inputActions; 
 
         [Header("Components")]
@@ -245,7 +246,15 @@ namespace DO
             #region Clucking
             if(isClucking == true)
             {
-                controller.HandleClucking(); 
+                controller.HandleClucking();
+
+                //Play UI cluck element 
+                UIAnims.SetBool("isClucking", true);
+            }
+            if(isClucking == false)
+            {
+                //Play UI cluck element 
+                UIAnims.SetBool("isClucking", false);
             }
 
             #endregion
