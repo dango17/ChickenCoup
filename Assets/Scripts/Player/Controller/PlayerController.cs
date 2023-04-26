@@ -35,9 +35,13 @@ namespace DO
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
         [Header("Jumping")]
-        [SerializeField] public float jumpForce = 5f;
+        [SerializeField] public float jumpHeight = 2f;
+        [SerializeField] public float timeToJumpApex = 0.5f;
         [SerializeField] public float fallForce = 2f;
-        [SerializeField] public float gravityStrength; 
+        [SerializeField] private float gravity;
+        [SerializeField] public AnimationCurve jumpCurve;
+        [SerializeField] public float fallMultiplier = 2.5f;
+        [SerializeField] public float lowJumpMultiplier = 2f;
         [Header("Ground-Check")]
         [SerializeField] public LayerMask groundLayer;
         [SerializeField] public float raycastDistance = 0.2f; 
@@ -79,6 +83,8 @@ namespace DO
             inputHandler = GetComponent<InputHandler>();
 			detectionPoints = GetComponentsInChildren<DetectionPoint>();
 
+            gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+
             foreach (DetectionPoint detectionPoint in detectionPoints) {
                 detectionPoint.SetDataSource(this);
 			}
@@ -93,11 +99,16 @@ namespace DO
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
             {
-                isGrounded = true; 
+                isGrounded = true;
             }
             else
             {
                 isGrounded = false; 
+            }
+
+            if(isGrounded == true && isOnCover == false)
+            {
+                animator.Play("Locomotion");
             }
         }
 
@@ -248,15 +259,48 @@ namespace DO
             inputHandler.isLayingEgg = false;
         }
 
-        public void HandleJump()
+        public void Jump()
+        {
+            StartCoroutine(HandleJump());
+        }
+
+        public IEnumerator HandleJump()
         {
             inputHandler.isJumping = false;
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+
+            float jumpVelocity = Mathf.Sqrt(-2 * gravity * jumpHeight);
+            float timeToReachApex = Mathf.Sqrt(-2 * jumpHeight / gravity);
+
+            Vector3 jumpDirection = new Vector3(rigidbody.velocity.x, jumpVelocity, rigidbody.velocity.z);
+            float timeElapsed = 0f;
+
+            while (timeElapsed < timeToReachApex)
+            {
+                float t = timeElapsed / timeToReachApex;
+                float curveValue = jumpCurve.Evaluate(t);
+
+                Vector3 displacement = jumpDirection * curveValue * Time.deltaTime;
+                transform.position += displacement;
+
+                timeElapsed += Time.deltaTime;
+                yield return null;
+            } 
+
         }
 
         public void handleFalling()
         {
-            rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse);
+            animator.Play("Float");
+
+            rigidbody.AddForce(Vector3.down * 9.81f * rigidbody.mass);
+            if (rigidbody.velocity.y < 0)
+            {
+                rigidbody.AddForce(Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * rigidbody.mass, ForceMode.Acceleration);
+            }
+            else if (rigidbody.velocity.y > 0 && !inputHandler.isJumping)
+            {
+                rigidbody.AddForce(Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * rigidbody.mass, ForceMode.Acceleration);
+            }
         }
     }
 }
