@@ -19,6 +19,7 @@ public class Farmer : MonoBehaviour {
 	private bool canSeePlayer = false;
 	private bool seenPlayerRecently = false;
 	private bool catchColliderTouchingPlayer = false;
+	private bool playingCatchAnimation = false;
 	private bool caughtPlayer = false;
 	private bool canVisitPointOfInterest = true;
 	private bool isBlind = false;
@@ -124,6 +125,28 @@ public class Farmer : MonoBehaviour {
 	}
 	#endregion
 
+	/// <summary>
+	/// Stops the current action from executing.
+	/// Resets various variables used throughout the farmer's actions, to 
+	/// prevent the data being misread.
+	/// </summary>
+	public void StopAction() {
+		animator.SetTrigger("Idling");
+		destinationSet = false;
+		destinationChanged = false;
+		navMeshAgent.autoBraking = true;
+		navMeshAgent.ResetPath();
+		utilityScript.Reset();
+	}
+
+	public void StopCatchingPlayer() {
+		catchCollider.enabled = false;
+		animator.SetBool("Catching", false);
+		animator.ResetTrigger("CatchingTrigger");
+		playingCatchAnimation = false;
+		StopAction();
+	}
+
 	private void Awake() {
 		GetComponents();
 		CreateUtilityInstance();
@@ -138,6 +161,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void Update() {
+		animator.ResetTrigger("Idling");
 		Blind();
 		Stunned();
 
@@ -306,19 +330,6 @@ public class Farmer : MonoBehaviour {
 
 	#region Farmer's Actions
 	/// <summary>
-	/// Stops the current action from executing.
-	/// Resets various variables used throughout the farmer's actions, to 
-	/// prevent the data being misread.
-	/// </summary>
-	private void StopAction() {
-		destinationSet = false;
-		destinationChanged = false;
-		navMeshAgent.autoBraking = true;
-		navMeshAgent.ResetPath();
-		utilityScript.Reset();
-	}
-
-	/// <summary>
 	/// Makes the farmer wonder around the environment.
 	/// </summary>
 	/// <returns> True if Ai has completed the action. </returns>
@@ -447,28 +458,33 @@ public class Farmer : MonoBehaviour {
 		return false;
 	}
 
-	// TODO: disable relevant aniamtions properties by keyframing an event in the animations.
 	/// <summary>
-	/// The farmer will try to catch the chicken if it's close enough.
+	/// The farmer will try to catch the player if they're both close enough 
+	/// to each other.
 	/// </summary>
-	/// <returns> True if the action completed successfully. </returns>
+	/// <returns> True if the action has completed (successfully or unsuccessfully). </returns>
 	private bool CatchPlayer() {
-		if (!CanCatchPlayer()) {
-			StopAction();
+		if (!playingCatchAnimation && !CanCatchPlayer()) {
+			StopCatchingPlayer();
 			return true;
 		}
 
 		catchCollider.enabled = true;
+		animator.SetTrigger("CatchingTrigger");
+		playingCatchAnimation = true;
 
 		if (catchColliderTouchingPlayer) {
-			HoldOntoPlayer(true);
 			catchCollider.enabled = false;
+			HoldOntoPlayer(true);
 			player.transform.position = carryPosition.position;
-			animator.SetBool("Catching", true);
+			animator.SetBool("Catching", false);
+			animator.ResetTrigger("CatchingTrigger");
+			playingCatchAnimation = false;
 			return caughtPlayer = true;
 		}
 
-		StopAction();
+		// TODO: remove line once animation is in place.
+		StopCatchingPlayer();
 		return false;
 	}
 
