@@ -153,7 +153,8 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void FixedUpdate() {
-		float percentageOfVisiblePoints = player.IsHiding && !canSeePlayer ? 0.0f : (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints;
+		// Check if detection points are enabled to avoid potentially dividing 0 by 0.
+		float percentageOfVisiblePoints = player.NumberOfDetectionPoints == 0 ? 0.0f : (!canSeePlayer ? 0.0f : (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints);
 		flashlight.ChangeColour(percentageOfVisiblePoints);
 	}
 
