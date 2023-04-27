@@ -8,20 +8,21 @@ public class PostProcessingValues : MonoBehaviour
 {
     private PostProcessVolume _postProcessVolume;
     private AmbientOcclusion _ao;
+    
 
     private float intensityVal;
     private float radVal;
 
     //UI values
-    [Header("UIValues")]
+    [Header(" AO UI Values")]
     [SerializeField] private TextMeshProUGUI ao_intensityValueText;
     [SerializeField] private TextMeshProUGUI ao_radiusValueText;
-    
+
 
     private void Start()
     {
         _postProcessVolume = GetComponent<PostProcessVolume>();
-        _postProcessVolume.profile.TryGetSettings(out _ao);
+        _postProcessVolume.profile.TryGetSettings(out _ao);       
     }
 
     public void AmbientOcclusionOnOff(bool on)
@@ -101,4 +102,6 @@ public class PostProcessingValues : MonoBehaviour
         _ao.color.value = Color.blue;
         _ao.ambientOnly.value = true;
     }
+
+    
 }
