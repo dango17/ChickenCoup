@@ -18,6 +18,7 @@ public class Farmer : MonoBehaviour {
 	private bool destinationChanged = false;
 	private bool canSeePlayer = false;
 	private bool seenPlayerRecently = false;
+	private bool heardPlayerRecently = false;
 	private bool catchColliderTouchingPlayer = false;
 	private bool playingCatchAnimation = false;
 	private bool caughtPlayer = false;
@@ -32,6 +33,8 @@ public class Farmer : MonoBehaviour {
 	[SerializeField, Tooltip("The length of time the farmer will spend " +
 		"searching for the player. Measured in seconds.")]
 	private float maximumTimeToSpendSearchingForPlayer = 15.0f;
+	private float timeUntilPlayersLastSoundCudeIsForgotten = 0.0f;
+	private float maximumTimeUntilPlayersLastSoundCudeIsForgotten = 5.0f;
 	/// <summary>
 	/// How much time should pass by before the farmer can see/hear again.
 	/// </summary>
@@ -44,7 +47,8 @@ public class Farmer : MonoBehaviour {
 	private float visitPointOfInterestTime = 0.0f;
 	private float maximumVisitPointOfInterestTime = 25.0f;
 
-	private Vector3 lastKnownPlayerPosition = Vector3.zero;
+	private Vector3 playersLastKnownPosition = Vector3.zero;
+	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
@@ -120,8 +124,8 @@ public class Farmer : MonoBehaviour {
 		return caughtPlayer;
 	}
 
-	public bool SeenPlayerRecently() {
-		return seenPlayerRecently;
+	public bool ShouldSearchForPlayer() {
+		return seenPlayerRecently || heardPlayerRecently ? true : false;
 	}
 	#endregion
 
@@ -131,6 +135,10 @@ public class Farmer : MonoBehaviour {
 	/// prevent the data being misread.
 	/// </summary>
 	public void StopAction() {
+		if (isBlind || isStunned) {
+			return;
+		}
+
 		animator.SetTrigger("Idling");
 		destinationSet = false;
 		destinationChanged = false;
@@ -169,6 +177,8 @@ public class Farmer : MonoBehaviour {
 			HandlePlayerVisibility();
 		}
 
+		HandleAudioCues();
+
 		if (isStunned) {
 			return;
 		}
@@ -178,8 +188,12 @@ public class Farmer : MonoBehaviour {
 
 	private void FixedUpdate() {
 		// Check if detection points are enabled to avoid potentially dividing 0 by 0.
-		float percentageOfVisiblePoints = player.NumberOfDetectionPoints == 0 ? 0.0f : (!canSeePlayer ? 0.0f : (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints);
-		flashlight.ChangeColour(percentageOfVisiblePoints);
+		float percentageOfVisiblePoints = player.NumberOfDetectionPoints == 0 ?
+			0.0f : (!canSeePlayer ?
+			0.0f : (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints);
+		const float oneQuarter = 0.25f;
+		float canHearPlayer = heardPlayerRecently ? oneQuarter : 0.0f;
+		flashlight.ChangeColour(Mathf.Clamp(percentageOfVisiblePoints + canHearPlayer, 0.0f, 1.0f));
 	}
 
 	private void OnTriggerEnter(Collider other) {
@@ -275,12 +289,12 @@ public class Farmer : MonoBehaviour {
 			satisfactionAmount = 15;
 			Action searchAction = new Action(new KeyValuePair<string, Action.Bool>[] {
 				new KeyValuePair<string, Action.Bool>("Cannot See Player", CannotSeePlayer),
-				new KeyValuePair<string, Action.Bool>("Seen Player Recently", SeenPlayerRecently)
+				new KeyValuePair<string, Action.Bool>("Seen Player Recently", ShouldSearchForPlayer)
 			},
 			new KeyValuePair<Motive, float>[] {
 				new KeyValuePair<Motive, float>(containPlayerMotive, satisfactionAmount)
 			},
-			Search);
+			SearchForPlayer);
 			#endregion
 			Action[] actions = new Action[] {
 				wonderAction,
@@ -297,12 +311,12 @@ public class Farmer : MonoBehaviour {
 	private void HandlePlayerVisibility() {
 		// Handles seeing the player.
 		if (!canSeePlayer && !player.IsHiding && visualSensor.Data.Contains(playersParent)) {
-			containPlayerInsitence = maximumContainChickenInsitence;
-			canSeePlayer = true;
-			seenPlayerRecently = true;
-			// Stops the current action so the AI can react to seeing the
-			// player for the first time in a while.
-			StopAction();
+			//containPlayerInsitence = maximumContainChickenInsitence;
+			//canSeePlayer = true;
+			//seenPlayerRecently = true;
+			//// Stops the current action so the AI can react to seeing the
+			//// player for the first time in a while.
+			//StopAction();
 		}
 
 		// Handles losing sight of the player.
@@ -313,7 +327,7 @@ public class Farmer : MonoBehaviour {
 
 		// Handles what happens whilst the player is visible to the farmer.
 		if (canSeePlayer) {
-			lastKnownPlayerPosition = player.transform.position;
+			playersLastKnownPosition = player.transform.position;
 		}
 
 		// Handles what happens if the player isn't visible to the farmer,
@@ -324,6 +338,31 @@ public class Farmer : MonoBehaviour {
 			if (timeToSpendSearchingForPlayer <= 0.0f) {
 				containPlayerInsitence = 0.0f;
 				seenPlayerRecently = false;
+			}
+		}
+	}
+
+	private void HandleAudioCues() {
+		if (!heardPlayerRecently && audioSensor.Data.Contains(playersParent)) {
+			heardPlayerRecently = true;
+			playersLastKnownSoundCuePosition = player.transform.position;
+			timeUntilPlayersLastSoundCudeIsForgotten = maximumTimeUntilPlayersLastSoundCudeIsForgotten;
+
+			if (!canSeePlayer && !seenPlayerRecently) {
+				// The farmer only needs to stop their current action and respond
+				// to an audio cue if they haven't already found the player.
+				StopAction();
+			}
+		}
+
+		if (heardPlayerRecently) {
+			timeUntilPlayersLastSoundCudeIsForgotten -= Time.deltaTime;
+
+			if (timeUntilPlayersLastSoundCudeIsForgotten <= 0 &&
+				// Allow the farmer to remember they've heard the player whilst
+				// searching for them.
+				timeToSpendSearchingForPlayer <= 0) {
+				heardPlayerRecently = false;
 			}
 		}
 	}
@@ -409,7 +448,7 @@ public class Farmer : MonoBehaviour {
 	/// by moving to the players last known position and wondering around.
 	/// </summary>
 	/// <returns> True when the action has completed. </returns>
-	private bool Search() {
+	private bool SearchForPlayer() {
 		if (canSeePlayer || !seenPlayerRecently) {
 			StopAction();
 			animator.SetBool("Walking", false);
@@ -423,7 +462,7 @@ public class Farmer : MonoBehaviour {
 
 		if (!destinationSet) {
 			// Move to the player's last known position.
-			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition);
+			destinationSet = navMeshAgent.SetDestination(playersLastKnownPosition);
 			animator.SetBool("Walking", true);
 		}
 		
@@ -441,7 +480,7 @@ public class Farmer : MonoBehaviour {
 			return true;
 		}
 
-		if (navMeshAgent.destination != lastKnownPlayerPosition) {
+		if (navMeshAgent.destination != playersLastKnownPosition) {
 			destinationChanged = true;
 		}
 
@@ -449,7 +488,7 @@ public class Farmer : MonoBehaviour {
 			Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
 			// Must be lower than the catch range.
 			const float spaceBetweenAgentAndPlayer = 1.25f;
-			destinationSet = navMeshAgent.SetDestination(lastKnownPlayerPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
+			destinationSet = navMeshAgent.SetDestination(playersLastKnownPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
 			animator.SetBool("Walking", true);
 			navMeshAgent.autoBraking = false;
 			destinationChanged = false;

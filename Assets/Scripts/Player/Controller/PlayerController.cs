@@ -321,6 +321,7 @@ namespace DO
             audioSource.clip = cluckSounds[randomIndex];
             audioSource.spatialBlend = 1;
             audioSource.Play();
+            AudioSensor.NotifyNearbyAudioSensors(audioSource, transform.position);
         }
     }
 }
