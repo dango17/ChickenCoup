@@ -3,19 +3,31 @@
 // Created On: 30/01/2023
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
 /// Uses a trigger collider to detect game-objects of a certain type.
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
+	public struct CollectedData {
+		public static float defaultLifespan = 10.0f;
+		public float lifespan;
+		public GameObject gameobject;
+
+		public CollectedData (GameObject gameobject, float lifespan) {
+			this.gameobject = gameobject;
+			this.lifespan = lifespan;
+        }
+	}
+
 	public enum Visibility {
 		Visible,
 		PartiallyVisible,
 		NotVisible
 	}
 
-	public LinkedList<GameObject> Data {
+	public LinkedList<CollectedData> Data {
 		get {
 			return data;
 		}
@@ -24,6 +36,9 @@ public abstract class Sensor : MonoBehaviour {
 		}
 	}
 
+    [SerializeField, Tooltip("Toggle true if the gathered data should " +
+        "automatically be forgotten after 10 seconds.")]
+	protected bool forgetDataAfterDelay = false;
 	[SerializeField, Tooltip("Data will only be gathered within this range " +
 		"i.e. it's the view distance, hearing range etc.")]
 	protected int detectionRange = 5;
@@ -34,11 +49,29 @@ public abstract class Sensor : MonoBehaviour {
 	/// <summary>
 	/// Stores references to the game objects the agent has gathered data about.
 	/// </summary>
-	protected LinkedList<GameObject> data = new LinkedList<GameObject>();
-	protected LinkedList<GameObject> partiallyDiscoveredData = new LinkedList<GameObject>();
+	protected LinkedList<CollectedData> data = new LinkedList<CollectedData>();
+	protected LinkedList<CollectedData> partiallyDiscoveredData = new LinkedList<CollectedData>();
 	[SerializeField, Tooltip("The location where raycasts will originate from, " +
 		"when checking for line of sight on objects.")]
 	protected Transform sensorOrigin = null;
+
+    #region Helper Methods
+    public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+		return collection.Count == 0 ? false : collection.Contains(GetCollectedData(collection, gameobjectToSelect));
+	}
+
+	public void AddObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
+		if (!Contains(collection, objectToAdd)) {
+			collection.AddLast(new CollectedData(objectToAdd, CollectedData.defaultLifespan));
+		}
+	}
+
+	public void RemoveObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
+		if (Contains(collection, objectToAdd)) {
+			collection.Remove(GetCollectedData(collection, objectToAdd));
+		}
+	}
+	#endregion
 
 	/// <summary>
 	/// Notifies the sensor that a game-object was detected.
@@ -54,8 +87,8 @@ public abstract class Sensor : MonoBehaviour {
 			return;
 		}
 
-		bool discovered = data.Contains(detectedGameObject.transform.root.gameObject);
-		bool partiallyDiscovered = partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject);
+		bool discovered = Contains(data, detectedGameObject.transform.root.gameObject);
+		bool partiallyDiscovered = Contains(partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
 
 		// Don't verify detection if the data is already discovered or
 		// partially discovered. Include "discovered &&" because the data
@@ -68,18 +101,18 @@ public abstract class Sensor : MonoBehaviour {
 		switch (VerifyDetection(detectedGameObject)) {
 			case Visibility.Visible: {
 				if (!discovered) {
-					data.AddLast(detectedGameObject.transform.root.gameObject);
+					AddObject(ref data, detectedGameObject.transform.root.gameObject);
 				}
 
 				if (partiallyDiscovered) {
-					partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
+					RemoveObject(ref partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
 				}
 
 				break;
 			}
 			case Visibility.PartiallyVisible: {
 				if (!partiallyDiscovered) {
-					partiallyDiscoveredData.AddLast(detectedGameObject.transform.root.gameObject);
+					AddObject(ref partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
 				}
 
 				break;
@@ -100,14 +133,8 @@ public abstract class Sensor : MonoBehaviour {
 	/// </summary>
 	/// <param name="gameObjectToForget"> The game-object to forget. Must be the root game-object. </param>
 	public void ForgetObject(GameObject gameObjectToForget) {
-		if (data.Contains(gameObjectToForget)) {
-			data.Remove(gameObjectToForget);
-		}
-
-		if (partiallyDiscoveredData.Contains(gameObjectToForget)) {
-			partiallyDiscoveredData.Remove(gameObjectToForget);
-		}
-
+		RemoveObject(ref data, gameObjectToForget);
+		RemoveObject(ref partiallyDiscoveredData, gameObjectToForget);
 		DisableObjectsDetectionPoints(gameObjectToForget);
 	}
 
@@ -123,7 +150,41 @@ public abstract class Sensor : MonoBehaviour {
 		sphereCollider.radius = detectionRange;
 	}
 
-	private void OnTriggerEnter(Collider other) {
+    private void Update() {
+		if (forgetDataAfterDelay) {
+			for (LinkedListNode<CollectedData> iterator = data.First;
+				iterator != data.Last;
+				iterator = iterator.Next) {
+				CollectedData collectedData = iterator.Value;
+				collectedData.lifespan -= Time.deltaTime;
+
+				if (collectedData.lifespan <= 0) {
+					LinkedListNode<CollectedData> previousValue = iterator.Previous != null ? iterator.Previous : default;
+					data.Remove(iterator);
+					iterator = previousValue;
+				} else {
+					iterator.Value = collectedData;
+                }
+			}
+
+			for (LinkedListNode<CollectedData> iterator = partiallyDiscoveredData.First;
+				iterator != partiallyDiscoveredData.Last;
+				iterator = iterator.Next) {
+				CollectedData collectedData = iterator.Value;
+				collectedData.lifespan -= Time.deltaTime;
+
+				if (collectedData.lifespan <= 0) {
+					LinkedListNode<CollectedData> previousValue = iterator.Previous != null ? iterator.Previous : default;
+					partiallyDiscoveredData.Remove(iterator);
+					iterator = previousValue;
+				} else {
+					iterator.Value = collectedData;
+				}
+			}
+		}
+    }
+
+    private void OnTriggerEnter(Collider other) {
 		ObjectDetected(other.gameObject);
 	}
 
@@ -136,15 +197,19 @@ public abstract class Sensor : MonoBehaviour {
 
 		// Check the root game-object because that's what the sensor saves a
 		// reference to.
-		if (data.Contains(othersRootGameObject)) {
+		if (Contains(data, othersRootGameObject)) {
 			DisableObjectsDetectionPoints(othersRootGameObject);
-			data.Remove(othersRootGameObject);
+			RemoveObject(ref data, othersRootGameObject);
 		}
 
-		if (partiallyDiscoveredData.Contains(othersRootGameObject)) {
+		if (Contains(partiallyDiscoveredData, othersRootGameObject)) {
 			DisableObjectsDetectionPoints(othersRootGameObject);
-			partiallyDiscoveredData.Remove(othersRootGameObject);
+			RemoveObject(ref partiallyDiscoveredData, othersRootGameObject);
 		}
+	}
+
+	private CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
 	}
 
 	/// <summary>

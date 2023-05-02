@@ -312,7 +312,7 @@ public class Farmer : MonoBehaviour {
 	#region Handling Player Sight & Sound
 	private void HandlePlayerVisibility() {
 		// Handles seeing the player.
-		if (!canSeePlayer && !player.IsHiding && visualSensor.Data.Contains(playersParent)) {
+		if (!canSeePlayer && !player.IsHiding && visualSensor.Contains(visualSensor.Data, playersParent)) {
 			containPlayerInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
 			seenPlayerRecently = true;
@@ -322,7 +322,7 @@ public class Farmer : MonoBehaviour {
 		}
 
 		// Handles losing sight of the player.
-		if (canSeePlayer && !visualSensor.Data.Contains(playersParent)) {
+		if (canSeePlayer && !visualSensor.Contains(visualSensor.Data, playersParent)) {
 			canSeePlayer = false;
 			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
 		}
@@ -349,7 +349,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private void HandlePlayerAudioCues() {
 		if ((!heardPlayerRecently || !respondedToPlayerAudioCue) &&
-			audioSensor.Data.Contains(playersParent)) {
+			audioSensor.Contains(visualSensor.Data, playersParent)) {
 			const float half = 0.5f;
 			containPlayerInsitence = half * maximumContainChickenInsitence;
 			heardPlayerRecently = true;
@@ -364,7 +364,7 @@ public class Farmer : MonoBehaviour {
 			}
 		}
 
-		if (respondedToPlayerAudioCue && audioSensor.Data.Contains(playersParent)) {
+		if (respondedToPlayerAudioCue && audioSensor.Contains(visualSensor.Data, playersParent)) {
 			// Forget about the audio cue's source now it's been handled.
 			audioSensor.ForgetObject(playersParent);
 			respondedToPlayerAudioCue = false;
