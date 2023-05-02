@@ -19,6 +19,7 @@ public class Farmer : MonoBehaviour {
 	private bool canSeePlayer = false;
 	private bool seenPlayerRecently = false;
 	private bool heardPlayerRecently = false;
+	private bool respondedToPlayerAudioCue = false;
 	private bool catchColliderTouchingPlayer = false;
 	private bool playingCatchAnimation = false;
 	private bool caughtPlayer = false;
@@ -177,7 +178,7 @@ public class Farmer : MonoBehaviour {
 			HandlePlayerVisibility();
 		}
 
-		HandleAudioCues();
+		HandlePlayerAudioCues();
 
 		if (isStunned) {
 			return;
@@ -308,15 +309,16 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 
+	#region Handling Player Sight & Sound
 	private void HandlePlayerVisibility() {
 		// Handles seeing the player.
 		if (!canSeePlayer && !player.IsHiding && visualSensor.Data.Contains(playersParent)) {
-			//containPlayerInsitence = maximumContainChickenInsitence;
-			//canSeePlayer = true;
-			//seenPlayerRecently = true;
-			//// Stops the current action so the AI can react to seeing the
-			//// player for the first time in a while.
-			//StopAction();
+			containPlayerInsitence = maximumContainChickenInsitence;
+			canSeePlayer = true;
+			seenPlayerRecently = true;
+			// Stops the current action so the AI can react to seeing the
+			// player for the first time in a while.
+			StopAction();
 		}
 
 		// Handles losing sight of the player.
@@ -342,9 +344,16 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 
-	private void HandleAudioCues() {
-		if (!heardPlayerRecently && audioSensor.Data.Contains(playersParent)) {
+	/// <summary>
+	/// Acknowledges player sound cues detected by the farmer's audio sensor.
+	/// </summary>
+	private void HandlePlayerAudioCues() {
+		if ((!heardPlayerRecently || !respondedToPlayerAudioCue) &&
+			audioSensor.Data.Contains(playersParent)) {
+			const float half = 0.5f;
+			containPlayerInsitence = half * maximumContainChickenInsitence;
 			heardPlayerRecently = true;
+			respondedToPlayerAudioCue = true;
 			playersLastKnownSoundCuePosition = player.transform.position;
 			timeUntilPlayersLastSoundCudeIsForgotten = maximumTimeUntilPlayersLastSoundCudeIsForgotten;
 
@@ -353,6 +362,12 @@ public class Farmer : MonoBehaviour {
 				// to an audio cue if they haven't already found the player.
 				StopAction();
 			}
+		}
+
+		if (respondedToPlayerAudioCue && audioSensor.Data.Contains(playersParent)) {
+			// Forget about the audio cue's source now it's been handled.
+			audioSensor.ForgetObject(playersParent);
+			respondedToPlayerAudioCue = false;
 		}
 
 		if (heardPlayerRecently) {
@@ -366,6 +381,7 @@ public class Farmer : MonoBehaviour {
 			}
 		}
 	}
+	#endregion
 
 	#region Farmer's Actions
 	/// <summary>
@@ -449,7 +465,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True when the action has completed. </returns>
 	private bool SearchForPlayer() {
-		if (canSeePlayer || !seenPlayerRecently) {
+		if (canSeePlayer) {
 			StopAction();
 			animator.SetBool("Walking", false);
 			return true;
@@ -460,12 +476,19 @@ public class Farmer : MonoBehaviour {
 			Wonder();
 		}
 
-		if (!destinationSet) {
+		if (destinationSet) {
+			return false;
+		}
+
+		if (seenPlayerRecently) {
 			// Move to the player's last known position.
 			destinationSet = navMeshAgent.SetDestination(playersLastKnownPosition);
 			animator.SetBool("Walking", true);
+		} else if (heardPlayerRecently) {
+			destinationSet = navMeshAgent.SetDestination(playersLastKnownSoundCuePosition);
+			animator.SetBool("Walking", true);
 		}
-		
+
 		return false;
 	}
 

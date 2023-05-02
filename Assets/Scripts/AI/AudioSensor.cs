@@ -33,7 +33,7 @@ public class AudioSensor : Sensor {
 			QueryTriggerInteraction.Collide);
 
 		foreach (Collider collider in intersectingColliders) {
-			AudioSensor audioSensor = collider.GetComponent<AudioSensor>();
+			AudioSensor audioSensor = collider.GetComponentInChildren<AudioSensor>();
 
 			if (audioSensor) {
 				audioSensor.ObjectDetected(audioSource.gameObject);
