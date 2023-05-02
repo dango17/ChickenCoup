@@ -187,6 +187,8 @@ namespace DO
             materials[1] = null;
             meshRenderer.materials = materials;
 
+            inputHandler.isConcealed = true; 
+
             currentObject.transform.localPosition = Vector3.zero;
         }
 
@@ -194,7 +196,9 @@ namespace DO
         {
             currentObject.transform.parent = null;
             currentObject.GetComponent<Rigidbody>().isKinematic = false;
-            currentObject.GetComponent<BoxCollider>().enabled = true;                       
+            currentObject.GetComponent<BoxCollider>().enabled = true;
+
+            inputHandler.isConcealed = false; 
         }
 
         public void DestroyCurrentObject()
