@@ -45,45 +45,52 @@ public abstract class Sensor : MonoBehaviour {
 	/// </summary>
 	/// <param name="detectedGameObject"> The detected game-object. </param>
 	public void ObjectDetected(GameObject detectedGameObject) {
-		int detectedGameObjectsLayer = 1 << detectedGameObject.gameObject.layer;
+		int detectedGameObjectsLayer = 1 << detectedGameObject.layer;
 
-		// Check if the object exists on a layer which the AI should save data
-		// about.
-		if ((detectionLayer & detectedGameObjectsLayer) != 0) {
-			bool discovered = data.Contains(detectedGameObject.transform.root.gameObject);
-			bool partiallyDiscovered = partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject);
+		// Check if the game-object exists on the layers for visible and
+		// memorable game-objects to the farmer.
+		if (((visibleLayer & detectedGameObjectsLayer) == 0) &&
+			((detectionLayer & detectedGameObjectsLayer) == 0)) {
+			return;
+		}
 
-			// Only verify detection if the data is not already discovered or
-			// is only partilly discovered.
-			if (!discovered || (!discovered && !partiallyDiscovered)) {
-				switch (VerifyDetection(detectedGameObject.gameObject)) {
-					case Visibility.Visible: {
-						if (!discovered) {
-							data.AddLast(detectedGameObject.transform.root.gameObject);
-						}
+		bool discovered = data.Contains(detectedGameObject.transform.root.gameObject);
+		bool partiallyDiscovered = partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject);
 
-						if (partiallyDiscovered) {
-							partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
-						}
+		// Don't verify detection if the data is already discovered or
+		// partially discovered. Include "discovered &&" because the data
+		// first needs to change to fully discovered before being ignored, and
+		// using "partiallyDiscovered" by itself doesn't work.
+		if (discovered || (discovered && partiallyDiscovered)) {
+			return;
+		}
 
-						break;
-					}
-					case Visibility.PartiallyVisible: {
-						if (!partiallyDiscovered) {
-							partiallyDiscoveredData.AddLast(detectedGameObject.transform.root.gameObject);
-						}
-
-						break;
-					}
-					case Visibility.NotVisible: {
-						ForgetObject(detectedGameObject.transform.root.gameObject);
-						return;
-					}
-					default: {
-						ForgetObject(detectedGameObject.transform.root.gameObject);
-						return;
-					}
+		switch (VerifyDetection(detectedGameObject)) {
+			case Visibility.Visible: {
+				if (!discovered) {
+					data.AddLast(detectedGameObject.transform.root.gameObject);
 				}
+
+				if (partiallyDiscovered) {
+					partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
+				}
+
+				break;
+			}
+			case Visibility.PartiallyVisible: {
+				if (!partiallyDiscovered) {
+					partiallyDiscoveredData.AddLast(detectedGameObject.transform.root.gameObject);
+				}
+
+				break;
+			}
+			case Visibility.NotVisible: {
+				ForgetObject(detectedGameObject.transform.root.gameObject);
+				return;
+			}
+			default: {
+				ForgetObject(detectedGameObject.transform.root.gameObject);
+				return;
 			}
 		}
 	}
