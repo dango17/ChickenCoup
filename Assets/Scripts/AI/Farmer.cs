@@ -68,6 +68,33 @@ public class Farmer : MonoBehaviour {
 	private PointOfInterest[] pointsOfInterest = null;
 	private Animator animator = null;
 
+	#region Conditions
+	public bool CanWonder() {
+		return true;
+	}
+
+	public bool CanSeePlayer() {
+		return canSeePlayer;
+	}
+
+	public bool CannotSeePlayer() {
+		return canSeePlayer == false ? true : false;
+	}
+
+	public bool CanCatchPlayer() {
+		return Vector3.Distance(transform.position, player.transform.position) < catchRange ? true : false;
+	}
+
+	public bool HasCaughtPlayer() {
+		return caughtPlayer;
+	}
+
+	public bool ShouldSearchForPlayer() {
+		return seenPlayerRecently || heardPlayerRecently ? true : false;
+	}
+	#endregion
+
+	#region Public Action Triggers
 	/// <summary>
 	/// Stuns the farmer by freezing their position and disabling sensors for a set time.
 	/// </summary>
@@ -92,43 +119,6 @@ public class Farmer : MonoBehaviour {
 		audioSensor.gameObject.SetActive(false);
 		blindTime = blindLength;
 	}
-
-	public static float PathLength(NavMeshPath path) {
-		float pathLength = 0.0f;
-
-		for (int i = 0; i < path.corners.Length - 1; ++i) {
-			int nextElementsIndex = i + 1;
-			pathLength += Vector3.Distance(path.corners[i], path.corners[nextElementsIndex]);
-		}
-
-		return pathLength;
-	}
-
-	#region Conditions
-	public bool CanWonder() {
-		return true;
-	}
-
-	public bool CanSeePlayer() {
-		return canSeePlayer;
-	}
-
-	public bool CannotSeePlayer() {
-		return canSeePlayer == false ? true : false;
-	}
-
-	public bool CanCatchPlayer() {
-		return Vector3.Distance(transform.position, player.transform.position) < catchRange ? true : false;
-	}
-
-	public bool CanCarryPlayer() {
-		return caughtPlayer;
-	}
-
-	public bool ShouldSearchForPlayer() {
-		return seenPlayerRecently || heardPlayerRecently ? true : false;
-	}
-	#endregion
 
 	/// <summary>
 	/// Stops the current action from executing.
@@ -155,6 +145,34 @@ public class Farmer : MonoBehaviour {
 		playingCatchAnimation = false;
 		StopAction();
 	}
+	#endregion
+
+	#region Animation Events
+	public void ToggleCatchCollider(bool enableCollider) {
+		catchCollider.enabled = enableCollider;
+
+		if (!enableCollider && catchColliderTouchingPlayer) {
+			caughtPlayer = true;
+		}
+	}
+
+	public void CatchAnimationEnded() {
+		animator.SetBool("Catching", false);
+		animator.ResetTrigger("CatchingTrigger");
+		playingCatchAnimation = false;
+	}
+	#endregion
+
+	public static float PathLength(NavMeshPath path) {
+		float pathLength = 0.0f;
+
+		for (int i = 0; i < path.corners.Length - 1; ++i) {
+			int nextElementsIndex = i + 1;
+			pathLength += Vector3.Distance(path.corners[i], path.corners[nextElementsIndex]);
+		}
+
+		return pathLength;
+	}
 
 	private void Awake() {
 		GetComponents();
@@ -162,11 +180,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void Start() {
-		playersParent = GameObject.FindGameObjectWithTag("Player").transform.root.gameObject;
-		player = playersParent.GetComponentInChildren<PlayerController>();
-		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
-		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
-		pointsOfInterest = FindObjectsOfType<PointOfInterest>();
+		FindComponents();
 	}
 
 	private void Update() {
@@ -217,9 +231,20 @@ public class Farmer : MonoBehaviour {
 		navMeshAgent = GetComponent<NavMeshAgent>();
 		visualSensor = GetComponentInChildren<VisualSensor>();
 		audioSensor = GetComponentInChildren<AudioSensor>();
-		catchCollider = GetComponentInChildren<BoxCollider>();
 		flashlight = GetComponentInChildren<Flashlight>();
 		animator = GetComponentInChildren<Animator>();
+	}
+
+	/// <summary>
+	/// Searches other game-objects for necessary components.
+	/// </summary>
+	private void FindComponents() {
+		playersParent = GameObject.FindGameObjectWithTag("Player").transform.root.gameObject;
+		player = playersParent.GetComponentInChildren<PlayerController>();
+		catchCollider = GameObject.FindGameObjectWithTag("Catch Collider").GetComponent<BoxCollider>();
+		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
+		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
+		pointsOfInterest = FindObjectsOfType<PointOfInterest>();
 	}
 
 	/// <summary>
@@ -279,7 +304,7 @@ public class Farmer : MonoBehaviour {
 			satisfactionAmount = 75;
 			Action carryPlayerAction = new Action(new KeyValuePair<string, Action.Bool>[] {
 				new KeyValuePair<string, Action.Bool>("Can See Player", CanSeePlayer),
-				new KeyValuePair<string, Action.Bool>("Can Carry Player", CanCarryPlayer)
+				new KeyValuePair<string, Action.Bool>("Can Carry Player", HasCaughtPlayer)
 			},
 			new KeyValuePair<Motive, float>[] {
 				new KeyValuePair<Motive, float>(containPlayerMotive, satisfactionAmount)
@@ -531,22 +556,24 @@ public class Farmer : MonoBehaviour {
 			return true;
 		}
 
-		catchCollider.enabled = true;
-		animator.SetTrigger("CatchingTrigger");
-		playingCatchAnimation = true;
-
-		if (catchColliderTouchingPlayer) {
-			catchCollider.enabled = false;
-			HoldOntoPlayer(true);
-			player.transform.position = carryPosition.position;
-			animator.SetBool("Catching", false);
-			animator.ResetTrigger("CatchingTrigger");
-			playingCatchAnimation = false;
-			return caughtPlayer = true;
+		if (!caughtPlayer && !playingCatchAnimation) {
+			// Initiate the catch animation.
+			animator.SetTrigger("CatchingTrigger");
+			animator.SetBool("Catching", true);
+			playingCatchAnimation = true;
 		}
 
-		// TODO: remove line once animation is in place.
-		StopCatchingPlayer();
+		if (catchColliderTouchingPlayer) {
+			// Hold onto the player while the catch collider is touching them.
+			HoldOntoPlayer(true);
+			player.transform.position = carryPosition.position;
+		}
+
+		if (!playingCatchAnimation) {
+			// Stop the action once the animation has ended.
+			return true;
+		}
+
 		return false;
 	}
 
