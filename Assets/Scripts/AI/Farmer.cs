@@ -39,7 +39,7 @@ public class Farmer : MonoBehaviour {
 	/// <summary>
 	/// How much time should pass by before the farmer can see/hear again.
 	/// </summary>
-	private float blindTime = 0.0f;
+	private float blindAndDeafTime = 0.0f;
 	private float maximumBlindTime = 5.0f;
 	/// <summary>
 	/// How much time should pass by before the farmer can move again.
@@ -82,7 +82,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	public bool CanCatchPlayer() {
-		return Vector3.Distance(transform.position, player.transform.position) < catchRange ? true : false;
+		return !caughtPlayer && Vector3.Distance(transform.position, player.transform.position) < catchRange ? true : false;
 	}
 
 	public bool HasCaughtPlayer() {
@@ -96,13 +96,14 @@ public class Farmer : MonoBehaviour {
 
 	#region Public Action Triggers
 	/// <summary>
-	/// Stuns the farmer by freezing their position and disabling sensors for a set time.
+	/// Stuns the farmer by freezing their position and disabling sensors for 
+	/// a set time.
 	/// </summary>
 	/// <param name="stunLength"> Amount of time (in seconds) the farmer is immobile for. </param>
 	public void StunFarmer(float stunLength) {
 		isStunned = true;
 		navMeshAgent.enabled = false;
-		BlindFarmer(stunLength);
+		BlindAndDeafenFarmer(stunLength);
 		stunTime = stunLength;
 		animator.SetBool("Stunned", true);
 		animator.SetTrigger("StunnedTrigger");
@@ -112,12 +113,12 @@ public class Farmer : MonoBehaviour {
 	/// Disables the farmers sensors for a set time, so they can't process or 
 	/// gather information.
 	/// </summary>
-	/// <param name="blindLength"> How long (in seconds) the farmer's sensors are turned off for. </param>
-	public void BlindFarmer(float blindLength) {
+	/// <param name="blindAndDeafLength"> How long (in seconds) the farmer's sensors are turned off for. </param>
+	public void BlindAndDeafenFarmer(float blindAndDeafLength) {
 		isBlind = true;
 		visualSensor.gameObject.SetActive(false);
 		audioSensor.gameObject.SetActive(false);
-		blindTime = blindLength;
+		blindAndDeafTime = blindAndDeafLength;
 	}
 
 	/// <summary>
@@ -153,6 +154,7 @@ public class Farmer : MonoBehaviour {
 
 		if (!enableCollider && catchColliderTouchingPlayer) {
 			caughtPlayer = true;
+			catchColliderTouchingPlayer = false;
 		}
 	}
 
@@ -160,6 +162,7 @@ public class Farmer : MonoBehaviour {
 		animator.SetBool("Catching", false);
 		animator.ResetTrigger("CatchingTrigger");
 		playingCatchAnimation = false;
+		catchColliderTouchingPlayer = false;
 	}
 	#endregion
 
@@ -202,7 +205,8 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void FixedUpdate() {
-		// Check if detection points are enabled to avoid potentially dividing 0 by 0.
+		// Check if detection points are enabled to avoid potentially dividing
+		// 0 by 0.
 		float percentageOfVisiblePoints = player.NumberOfDetectionPoints == 0 ?
 			0.0f : (!canSeePlayer ?
 			0.0f : (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints);
@@ -212,13 +216,13 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		if (other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollider.enabled && other.transform.root.gameObject.CompareTag("Player")) {
 			catchColliderTouchingPlayer = true;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
-		if (other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollider.enabled && other.transform.root.gameObject.CompareTag("Player")) {
 			catchColliderTouchingPlayer = false;
 		}
 	}
@@ -587,12 +591,12 @@ public class Farmer : MonoBehaviour {
 			CageController cageController = GameObject.FindGameObjectWithTag("ChickenCage").GetComponent<CageController>();
 			cageController.LockPlayer(player.transform);
 			caughtPlayer = false;
-			// Set to zer so the farmer doesn't instantly chase the chicken
+			// Set to zero so the farmer doesn't instantly chase the chicken
 			// after letting them go.
 			containPlayerInsitence = 0.0f;
 			visualSensor.ForgetObject(player.transform.root.gameObject);
 			audioSensor.ForgetObject(player.transform.root.gameObject);
-			BlindFarmer(maximumBlindTime);
+			BlindAndDeafenFarmer(maximumBlindTime);
 			animator.SetBool("Carrying", false);
 			return true;
 		}
@@ -610,10 +614,10 @@ public class Farmer : MonoBehaviour {
 	#endregion
 
 	private void Blind() {
-		if (blindTime > 0) {
-			blindTime -= Time.deltaTime;
+		if (blindAndDeafTime > 0) {
+			blindAndDeafTime -= Time.deltaTime;
 
-			if (blindTime <= 0) {
+			if (blindAndDeafTime <= 0) {
 				visualSensor.gameObject.SetActive(true);
 				audioSensor.gameObject.SetActive(true);
 				isBlind = false;
@@ -638,7 +642,8 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True if the agent is standing close enough to their destination. </returns>
 	private bool HasArrivedAtDestination() {
-		// Once a destination is reached, the path is automatically removed from the nav mesh agent.
+		// Once a destination is reached, the path is automatically removed
+		// from the nav mesh agent.
 		if (destinationSet && !navMeshAgent.hasPath) {
 			destinationSet = false;
 			return true;
