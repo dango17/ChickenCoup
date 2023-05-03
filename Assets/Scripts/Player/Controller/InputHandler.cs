@@ -24,8 +24,8 @@ namespace DO
         PlayerControls inputActions; 
 
         [Header("Components")]
-        [SerializeField] Vector3 moveDirection;
-        [SerializeField] Vector3 lookInputDirection;
+        [SerializeField] public Vector3 moveDirection;
+        [SerializeField] public Vector3 lookInputDirection;
         [SerializeField] public float wallDetectionDistance = 0.2f;
         [SerializeField] public float wallDetectionDistanceOnWall = 1.2f;
 
