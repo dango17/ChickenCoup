@@ -24,7 +24,7 @@ public class Farmer : MonoBehaviour {
 	private bool playingCatchAnimation = false;
 	private bool caughtPlayer = false;
 	private bool canVisitPointOfInterest = true;
-	private bool isBlind = false;
+	private bool isBlindAndDeaf = false;
 	private bool isStunned = false;
 	private int pointOfInterestIndex = 0;
 	private float catchRange = 1.5f;
@@ -115,7 +115,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <param name="blindAndDeafLength"> How long (in seconds) the farmer's sensors are turned off for. </param>
 	public void BlindAndDeafenFarmer(float blindAndDeafLength) {
-		isBlind = true;
+		isBlindAndDeaf = true;
 		visualSensor.gameObject.SetActive(false);
 		audioSensor.gameObject.SetActive(false);
 		blindAndDeafTime = blindAndDeafLength;
@@ -127,7 +127,7 @@ public class Farmer : MonoBehaviour {
 	/// prevent the data being misread.
 	/// </summary>
 	public void StopAction() {
-		if (isBlind || isStunned) {
+		if (isBlindAndDeaf || isStunned) {
 			return;
 		}
 
@@ -188,14 +188,13 @@ public class Farmer : MonoBehaviour {
 
 	private void Update() {
 		animator.ResetTrigger("Idling");
-		Blind();
+		BlindAndDeaf();
 		Stunned();
 
-		if (!isBlind) {
+		if (!isBlindAndDeaf) {
 			HandlePlayerVisibility();
+			HandlePlayerAudioCues();
 		}
-
-		HandlePlayerAudioCues();
 
 		if (isStunned) {
 			return;
@@ -594,8 +593,7 @@ public class Farmer : MonoBehaviour {
 			// Set to zero so the farmer doesn't instantly chase the chicken
 			// after letting them go.
 			containPlayerInsitence = 0.0f;
-			visualSensor.ForgetObject(player.transform.root.gameObject);
-			audioSensor.ForgetObject(player.transform.root.gameObject);
+			ForgetAboutPlayer();
 			BlindAndDeafenFarmer(maximumBlindTime);
 			animator.SetBool("Carrying", false);
 			return true;
@@ -613,14 +611,14 @@ public class Farmer : MonoBehaviour {
 	}
 	#endregion
 
-	private void Blind() {
+	private void BlindAndDeaf() {
 		if (blindAndDeafTime > 0) {
 			blindAndDeafTime -= Time.deltaTime;
 
 			if (blindAndDeafTime <= 0) {
 				visualSensor.gameObject.SetActive(true);
 				audioSensor.gameObject.SetActive(true);
-				isBlind = false;
+				isBlindAndDeaf = false;
 			}
 		}
 	}
@@ -635,6 +633,18 @@ public class Farmer : MonoBehaviour {
 				animator.SetBool("Stunned", false);
 			}
 		}
+	}
+
+	/// <summary>
+	/// Causes the farmer's sensors to forget they detected the player, and 
+	/// makes the farmer completely forget about the player in every capacity.
+	/// </summary>
+	private void ForgetAboutPlayer() {
+		visualSensor.ForgetObject(player.transform.root.gameObject);
+		canSeePlayer = false;
+		seenPlayerRecently = false;
+		audioSensor.ForgetObject(player.transform.root.gameObject);
+		heardPlayerRecently = false;
 	}
 
 	/// <summary>
