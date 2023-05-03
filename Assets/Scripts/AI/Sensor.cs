@@ -11,7 +11,6 @@ using UnityEngine;
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
 	public struct CollectedData {
-		public static float defaultLifespan = 10.0f;
 		public float lifespan;
 		public GameObject gameobject;
 
@@ -37,22 +36,26 @@ public abstract class Sensor : MonoBehaviour {
 	}
 
     [SerializeField, Tooltip("Toggle true if the gathered data should " +
-        "automatically be forgotten after 10 seconds.")]
-	protected bool forgetDataAfterDelay = false;
-	[SerializeField, Tooltip("Data will only be gathered within this range " +
-		"i.e. it's the view distance, hearing range etc.")]
+        "be forgotten after 10 seconds.")]
+	protected bool deleteDataAfterDelay = false;
+	[SerializeField, Tooltip("The length of time data will be saved for, " +
+		"before being forgotten.")]
+	protected float defaultDataLifespan = 10.0f;
+	[SerializeField, Tooltip("Data will only be gathered within this radius" +
+		"of the sensors origin.")]
 	protected int detectionRange = 5;
-	[SerializeField, Tooltip("The AI can only see objects on this layer.")]
+	[SerializeField, Tooltip("The sensor will only 'see' data that exists " +
+		"on this layer.")]
 	protected LayerMask visibleLayer = default;
-	[SerializeField, Tooltip("The AI will only remember objects on this layer.")]
+	[SerializeField, Tooltip("The sensor will only remember data that exists " +
+		"on this layer.")]
 	protected LayerMask detectionLayer = default;
 	/// <summary>
 	/// Stores references to the game objects the agent has gathered data about.
 	/// </summary>
 	protected LinkedList<CollectedData> data = new LinkedList<CollectedData>();
 	protected LinkedList<CollectedData> partiallyDiscoveredData = new LinkedList<CollectedData>();
-	[SerializeField, Tooltip("The location where raycasts will originate from, " +
-		"when checking for line of sight on objects.")]
+	[SerializeField, Tooltip("The central point of the sensor bounds.")]
 	protected Transform sensorOrigin = null;
 
     #region Helper Methods
@@ -62,7 +65,7 @@ public abstract class Sensor : MonoBehaviour {
 
 	public void AddObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
 		if (!Contains(collection, objectToAdd)) {
-			collection.AddLast(new CollectedData(objectToAdd, CollectedData.defaultLifespan));
+			collection.AddLast(new CollectedData(objectToAdd, defaultDataLifespan));
 		}
 	}
 
@@ -154,38 +157,8 @@ public abstract class Sensor : MonoBehaviour {
 	}
 
     private void Update() {
-		if (forgetDataAfterDelay) {
-			for (LinkedListNode<CollectedData> iterator = data.First;
-				iterator != data.Last;
-				iterator = iterator.Next) {
-				CollectedData collectedData = iterator.Value;
-				collectedData.lifespan -= Time.deltaTime;
-
-				if (collectedData.lifespan <= 0) {
-					LinkedListNode<CollectedData> previousValue = iterator.Previous != null ? iterator.Previous : default;
-					data.Remove(iterator);
-					iterator = previousValue;
-				} else {
-					iterator.Value = collectedData;
-                }
-			}
-
-			for (LinkedListNode<CollectedData> iterator = partiallyDiscoveredData.First;
-				iterator != partiallyDiscoveredData.Last;
-				iterator = iterator.Next) {
-				CollectedData collectedData = iterator.Value;
-				collectedData.lifespan -= Time.deltaTime;
-
-				if (collectedData.lifespan <= 0) {
-					LinkedListNode<CollectedData> previousValue = iterator.Previous != null ? iterator.Previous : default;
-					partiallyDiscoveredData.Remove(iterator);
-					iterator = previousValue;
-				} else {
-					iterator.Value = collectedData;
-				}
-			}
-		}
-    }
+		DeleteGatheredDataThatsExpired();
+	}
 
     private void OnTriggerEnter(Collider other) {
 		ObjectDetected(other.gameObject);
@@ -213,6 +186,44 @@ public abstract class Sensor : MonoBehaviour {
 
 	private CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
 		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
+	}
+
+	private void DeleteGatheredDataThatsExpired() {
+		if (!deleteDataAfterDelay) {
+			return;
+		}
+
+		SearchCollectionForExpiredData(ref data);
+		SearchCollectionForExpiredData(ref partiallyDiscoveredData);
+
+		void SearchCollectionForExpiredData(ref LinkedList<CollectedData> collection) {
+			if (collection.Count == 0) {
+				return;
+			}
+
+			LinkedListNode<CollectedData> iterator = null;
+
+			for (iterator = collection.First;
+				iterator.Next != null;
+				iterator = iterator.Next) {
+				RemoveExpiredData(ref collection, ref iterator);
+			}
+
+			RemoveExpiredData(ref collection, ref iterator);
+		}
+
+		void RemoveExpiredData(ref LinkedList<CollectedData> collection, ref LinkedListNode<CollectedData> iterator) {
+			CollectedData collectedData = iterator.Value;
+			collectedData.lifespan -= Time.deltaTime;
+
+			if (collectedData.lifespan <= 0) {
+				LinkedListNode<CollectedData> previousValue = iterator.Previous != null ? iterator.Previous : default;
+				collection.Remove(iterator);
+				iterator = previousValue;
+			} else {
+				iterator.Value = collectedData;
+			}
+		}
 	}
 
 	/// <summary>

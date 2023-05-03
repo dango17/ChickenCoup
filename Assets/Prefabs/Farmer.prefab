@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 870f4b3c12a9b0743a9e07240324eb5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forgetDataAfterDelay: 0
+  deleteDataAfterDelay: 0
   detectionRange: 8
   visibleLayer:
     serializedVersion: 2
@@ -375,7 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae5977fc5852af64c846838c817d40dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forgetDataAfterDelay: 1
+  deleteDataAfterDelay: 1
   detectionRange: 8
   visibleLayer:
     serializedVersion: 2
