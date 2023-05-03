@@ -57,7 +57,7 @@ public abstract class Sensor : MonoBehaviour {
 
     #region Helper Methods
     public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
-		return collection.Count == 0 ? false : collection.Contains(GetCollectedData(collection, gameobjectToSelect));
+		return collection.Count == 0 ? false : collection.Select(element => element.gameobject == gameobjectToSelect).First();
 	}
 
 	public void AddObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
@@ -80,10 +80,13 @@ public abstract class Sensor : MonoBehaviour {
 	public void ObjectDetected(GameObject detectedGameObject) {
 		int detectedGameObjectsLayer = 1 << detectedGameObject.layer;
 
-		// Check if the game-object exists on the layers for visible and
-		// memorable game-objects to the farmer.
-		if (((visibleLayer & detectedGameObjectsLayer) == 0) &&
-			((detectionLayer & detectedGameObjectsLayer) == 0)) {
+		// A result of 0 means both layers do not share any of the same
+		// flipped bits.
+		if (((detectionLayer & detectedGameObjectsLayer) == 0) ||
+			// Data that doesn't exist on the visible layer should also be
+			// ignored, only if it's also not on the memorable layer.
+			(((visibleLayer & detectedGameObjectsLayer) == 0) &&
+			((detectionLayer & detectedGameObjectsLayer) == 0))) {
 			return;
 		}
 
