@@ -40,6 +40,7 @@ public class Farmer : MonoBehaviour {
 	/// True if the farmer can't move, but might be able to still see and/or hear.
 	/// </summary>
 	private bool isStunned = false;
+	private bool holdingKeycard = true;
 	/// <summary>
 	/// Index of the current point of interest that the farmer is wondering to.
 	/// </summary>
@@ -87,6 +88,7 @@ public class Farmer : MonoBehaviour {
 	private NavMeshAgent navMeshAgent = null;
 	private GameObject playersParent = null;
 	private PlayerController player = null;
+	private InputHandler inputHandler = null;
 	private Transform carryPosition = null;
 	/// <summary>
 	/// The position where the farmer will attempt the place the player after 
@@ -131,6 +133,7 @@ public class Farmer : MonoBehaviour {
 	/// <param name="stunLength"> Amount of time (in seconds) the farmer is immobile for. </param>
 	public void StunFarmer(float stunLength) {
 		isStunned = true;
+		DropKeycard();
 		navMeshAgent.enabled = false;
 		BlindAndDeafenFarmer(stunLength);
 		stunTime = stunLength;
@@ -148,6 +151,23 @@ public class Farmer : MonoBehaviour {
 		visualSensor.gameObject.SetActive(false);
 		audioSensor.gameObject.SetActive(false);
 		blindAndDeafTime = blindAndDeafLength;
+	}
+
+	/// <summary>
+	/// Unparents the keycard game-object from the farmer.
+	/// </summary>
+	public void DropKeycard() {
+		if (!holdingKeycard) {
+			return;
+        }
+
+		GameObject keycard = GameObject.FindGameObjectWithTag("Keycard");
+
+		if (keycard.transform.parent.gameObject == gameObject) {
+			keycard.transform.parent = null;
+        }
+		
+		holdingKeycard = false;
 	}
 
 	/// <summary>
@@ -273,6 +293,7 @@ public class Farmer : MonoBehaviour {
 	private void FindComponents() {
 		playersParent = GameObject.FindGameObjectWithTag("Player").transform.root.gameObject;
 		player = playersParent.GetComponentInChildren<PlayerController>();
+		inputHandler = playersParent.GetComponentInChildren<InputHandler>();
 		catchCollider = GameObject.FindGameObjectWithTag("Catch Collider").GetComponent<BoxCollider>();
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
@@ -369,7 +390,10 @@ public class Farmer : MonoBehaviour {
 	#region Handling Player Sight & Sound
 	private void HandlePlayerVisibility() {
 		// Handles seeing the player.
-		if (!canSeePlayer && !player.IsHiding && visualSensor.Contains(visualSensor.Data, playersParent)) {
+		if (!canSeePlayer &&
+			!player.IsHiding &&
+			!inputHandler.isConcealed &&
+			visualSensor.Contains(visualSensor.Data, playersParent)) {
 			containPlayerInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
 			seenPlayerRecently = true;

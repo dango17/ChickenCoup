@@ -43,7 +43,7 @@ namespace DO
 
             //Disable the second material on the mesh renderer
             Material[] materials = meshRenderer.materials;
-            materials[1] = null;
+            materials[1] = originalMaterials[0];
             meshRenderer.materials = materials;
         }
 
@@ -130,7 +130,7 @@ namespace DO
         {
             //Disable the outline material 
             Material[] materials = meshRenderer.materials;
-            materials[1] = null;
+            materials[1] = originalMaterials[0];
             meshRenderer.materials = materials;
         }
 
@@ -143,7 +143,7 @@ namespace DO
 
             //Disable the outline material 
             Material[] materials = meshRenderer.materials;
-            materials[1] = null;
+            materials[1] = originalMaterials[0];
             meshRenderer.materials = materials;
 
             controller.objectInHand = true;          
@@ -184,7 +184,7 @@ namespace DO
 
             //Disable the outline material 
             Material[] materials = meshRenderer.materials;
-            materials[1] = null;
+            materials[1] = originalMaterials[0];
             meshRenderer.materials = materials;
 
             inputHandler.isConcealed = true; 
