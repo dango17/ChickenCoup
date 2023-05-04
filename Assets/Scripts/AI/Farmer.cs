@@ -660,6 +660,7 @@ public class Farmer : MonoBehaviour {
 				navMeshAgent.enabled = true;
 				isStunned = false;
 				animator.SetBool("Stunned", false);
+				animator.ResetTrigger("StunnedTrigger");
 			}
 		}
 	}
