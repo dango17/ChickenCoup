@@ -18,6 +18,8 @@ namespace DO
         [SerializeField] public PlayerController controller;
         [SerializeField] public CameraManager cameraManager;
         [SerializeField] public GameObject playerModel;
+        [SerializeField] public GameObject playerLeftEye;
+        [SerializeField] public GameObject playerRightEye;
         [SerializeField] public Animator UIAnims;
         PlayerControls inputActions; 
 
@@ -217,6 +219,9 @@ namespace DO
             { 
                 cameraManager.fpCameraObject.SetActive(true);
                 playerModel.SetActive(false);
+                playerLeftEye.SetActive(false);
+                playerRightEye.SetActive(false); 
+
                 controller.FPRotation(lookInputDirection.x, delta);
                 cameraManager.HandleFPSTilt(lookInputDirection.y, delta); 
                 controller.isInFreeLook = true;
@@ -225,6 +230,9 @@ namespace DO
             {
                 cameraManager.fpCameraObject.SetActive(false);
                 playerModel.SetActive(true);
+                playerLeftEye.SetActive(true);
+                playerRightEye.SetActive(true); 
+
                 controller.isInFreeLook = false;
                 cameraManager.tiltAngle = 0;
             }
