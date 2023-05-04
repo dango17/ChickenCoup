@@ -6,7 +6,7 @@ using DO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-// Added to access structs within the class more easily.
+// Added for ease of access when using certain structs contained within the class.
 using static UtilityScript;
 
 /// <summary>
@@ -14,20 +14,41 @@ using static UtilityScript;
 /// an instance of their utility script for decision making purposes.
 /// </summary>
 public class Farmer : MonoBehaviour {
-	private bool destinationSet = false;
-	private bool destinationChanged = false;
+	private bool moveDestinationSet = false;
+	private bool moveDestinationChanged = false;
 	private bool canSeePlayer = false;
 	private bool seenPlayerRecently = false;
 	private bool heardPlayerRecently = false;
+	/// <summary>
+	/// True if the farmer has responded to the most recent audio cue created 
+	/// by the player, false if they haven't responded at all.
+	/// </summary>
 	private bool respondedToPlayerAudioCue = false;
-	private bool catchColliderTouchingPlayer = false;
+	private bool catchColliderIsTouchingPlayer = false;
 	private bool playingCatchAnimation = false;
-	private bool caughtPlayer = false;
+	private bool hasCaughtPlayer = false;
+	/// <summary>
+	/// True if the farmer is able to wonder to a point of interest somewhere 
+	/// around the level.
+	/// </summary>
 	private bool canVisitPointOfInterest = true;
-	private bool isBlind = false;
+	/// <summary>
+	/// True if the farmer's sensors are disabled.
+	/// </summary>
+	private bool isBlindAndDeaf = false;
+	/// <summary>
+	/// True if the farmer can't move, but might be able to still see and/or hear.
+	/// </summary>
 	private bool isStunned = false;
+	/// <summary>
+	/// Index of the current point of interest that the farmer is wondering to.
+	/// </summary>
 	private int pointOfInterestIndex = 0;
-	private float catchRange = 1.5f;
+	/// <summary>
+	/// The maximum range allowed between the farmer and player where the 
+	/// player can still be caught.
+	/// </summary>
+	private float maximumRangeToCatchPlayer = 1.5f;
 	private float containPlayerInsitence = 0.0f;
 	private float maximumContainChickenInsitence = 100.0f;
 	private float timeToSpendSearchingForPlayer = 0.0f;
@@ -40,11 +61,15 @@ public class Farmer : MonoBehaviour {
 	/// How much time should pass by before the farmer can see/hear again.
 	/// </summary>
 	private float blindAndDeafTime = 0.0f;
-	private float maximumBlindTime = 5.0f;
+	private float maximumBlindAndDeafTime = 5.0f;
 	/// <summary>
 	/// How much time should pass by before the farmer can move again.
 	/// </summary>
 	private float stunTime = 0.0f;
+	/// <summary>
+	/// The length of time that will elapse before the farmer visits their 
+	/// next point of interest.
+	/// </summary>
 	private float visitPointOfInterestTime = 0.0f;
 	private float maximumVisitPointOfInterestTime = 25.0f;
 
@@ -53,6 +78,10 @@ public class Farmer : MonoBehaviour {
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
+	/// <summary>
+	/// The trigger collider used for detecting a collision with the player 
+	/// when the farmer attempts to catch them.
+	/// </summary>
 	private BoxCollider catchCollider = null;
 	private UtilityScript utilityScript = null;
 	private NavMeshAgent navMeshAgent = null;
@@ -82,11 +111,11 @@ public class Farmer : MonoBehaviour {
 	}
 
 	public bool CanCatchPlayer() {
-		return !caughtPlayer && Vector3.Distance(transform.position, player.transform.position) < catchRange ? true : false;
+		return !hasCaughtPlayer && Vector3.Distance(transform.position, player.transform.position) < maximumRangeToCatchPlayer ? true : false;
 	}
 
 	public bool HasCaughtPlayer() {
-		return caughtPlayer;
+		return hasCaughtPlayer;
 	}
 
 	public bool ShouldSearchForPlayer() {
@@ -115,7 +144,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <param name="blindAndDeafLength"> How long (in seconds) the farmer's sensors are turned off for. </param>
 	public void BlindAndDeafenFarmer(float blindAndDeafLength) {
-		isBlind = true;
+		isBlindAndDeaf = true;
 		visualSensor.gameObject.SetActive(false);
 		audioSensor.gameObject.SetActive(false);
 		blindAndDeafTime = blindAndDeafLength;
@@ -127,13 +156,13 @@ public class Farmer : MonoBehaviour {
 	/// prevent the data being misread.
 	/// </summary>
 	public void StopAction() {
-		if (isBlind || isStunned) {
+		if (isBlindAndDeaf || isStunned) {
 			return;
 		}
 
 		animator.SetTrigger("Idling");
-		destinationSet = false;
-		destinationChanged = false;
+		moveDestinationSet = false;
+		moveDestinationChanged = false;
 		navMeshAgent.autoBraking = true;
 		navMeshAgent.ResetPath();
 		utilityScript.Reset();
@@ -152,9 +181,9 @@ public class Farmer : MonoBehaviour {
 	public void ToggleCatchCollider(bool enableCollider) {
 		catchCollider.enabled = enableCollider;
 
-		if (!enableCollider && catchColliderTouchingPlayer) {
-			caughtPlayer = true;
-			catchColliderTouchingPlayer = false;
+		if (!enableCollider && catchColliderIsTouchingPlayer) {
+			hasCaughtPlayer = true;
+			catchColliderIsTouchingPlayer = false;
 		}
 	}
 
@@ -162,7 +191,7 @@ public class Farmer : MonoBehaviour {
 		animator.SetBool("Catching", false);
 		animator.ResetTrigger("CatchingTrigger");
 		playingCatchAnimation = false;
-		catchColliderTouchingPlayer = false;
+		catchColliderIsTouchingPlayer = false;
 	}
 	#endregion
 
@@ -188,14 +217,13 @@ public class Farmer : MonoBehaviour {
 
 	private void Update() {
 		animator.ResetTrigger("Idling");
-		Blind();
+		BlindAndDeaf();
 		Stunned();
 
-		if (!isBlind) {
+		if (!isBlindAndDeaf) {
 			HandlePlayerVisibility();
+			HandlePlayerAudioCues();
 		}
-
-		HandlePlayerAudioCues();
 
 		if (isStunned) {
 			return;
@@ -217,13 +245,13 @@ public class Farmer : MonoBehaviour {
 
 	private void OnTriggerEnter(Collider other) {
 		if (catchCollider.enabled && other.transform.root.gameObject.CompareTag("Player")) {
-			catchColliderTouchingPlayer = true;
+			catchColliderIsTouchingPlayer = true;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
 		if (catchCollider.enabled && other.transform.root.gameObject.CompareTag("Player")) {
-			catchColliderTouchingPlayer = false;
+			catchColliderIsTouchingPlayer = false;
 		}
 	}
 
@@ -431,12 +459,12 @@ public class Farmer : MonoBehaviour {
 			}
 		}
 
-		if (!destinationSet) {
+		if (!moveDestinationSet) {
 			if (canVisitPointOfInterest) {
 				GoToPointOfInterest();
 
 				// Check if the farmer is walking to a point of interest.
-				if (destinationSet) {
+				if (moveDestinationSet) {
 					return false;
                 }
             }
@@ -465,7 +493,7 @@ public class Farmer : MonoBehaviour {
 				Debug.Log("Turned Around.");
 			}
 
-			destinationSet = navMeshAgent.SetDestination(wonderDestination);
+			moveDestinationSet = navMeshAgent.SetDestination(wonderDestination);
 			animator.SetBool("Walking", true);
 		}
 
@@ -481,7 +509,7 @@ public class Farmer : MonoBehaviour {
             }
 
 			Vector3 wonderDestination = pointsOfInterest[pointOfInterestIndex++].GetComponent<PointOfInterest>().StandPosition;
-			destinationSet = navMeshAgent.SetDestination(wonderDestination);
+			moveDestinationSet = navMeshAgent.SetDestination(wonderDestination);
 			animator.SetBool("Walking", true);
 			visitPointOfInterestTime = maximumVisitPointOfInterestTime;
 			canVisitPointOfInterest = false;
@@ -505,16 +533,16 @@ public class Farmer : MonoBehaviour {
 			Wonder();
 		}
 
-		if (destinationSet) {
+		if (moveDestinationSet) {
 			return false;
 		}
 
 		if (seenPlayerRecently) {
 			// Move to the player's last known position.
-			destinationSet = navMeshAgent.SetDestination(playersLastKnownPosition);
+			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownPosition);
 			animator.SetBool("Walking", true);
 		} else if (heardPlayerRecently) {
-			destinationSet = navMeshAgent.SetDestination(playersLastKnownSoundCuePosition);
+			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownSoundCuePosition);
 			animator.SetBool("Walking", true);
 		}
 
@@ -533,17 +561,17 @@ public class Farmer : MonoBehaviour {
 		}
 
 		if (navMeshAgent.destination != playersLastKnownPosition) {
-			destinationChanged = true;
+			moveDestinationChanged = true;
 		}
 
-		if (!destinationSet || destinationChanged) {
+		if (!moveDestinationSet || moveDestinationChanged) {
 			Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
 			// Must be lower than the catch range.
 			const float spaceBetweenAgentAndPlayer = 1.25f;
-			destinationSet = navMeshAgent.SetDestination(playersLastKnownPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
+			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
 			animator.SetBool("Walking", true);
 			navMeshAgent.autoBraking = false;
-			destinationChanged = false;
+			moveDestinationChanged = false;
 		}
 
 		return false;
@@ -560,14 +588,14 @@ public class Farmer : MonoBehaviour {
 			return true;
 		}
 
-		if (!caughtPlayer && !playingCatchAnimation) {
+		if (!hasCaughtPlayer && !playingCatchAnimation) {
 			// Initiate the catch animation.
 			animator.SetTrigger("CatchingTrigger");
 			animator.SetBool("Catching", true);
 			playingCatchAnimation = true;
 		}
 
-		if (catchColliderTouchingPlayer) {
+		if (catchColliderIsTouchingPlayer) {
 			// Hold onto the player while the catch collider is touching them.
 			HoldOntoPlayer(true);
 			player.transform.position = carryPosition.position;
@@ -590,21 +618,20 @@ public class Farmer : MonoBehaviour {
 			HoldOntoPlayer(false);
 			CageController cageController = GameObject.FindGameObjectWithTag("ChickenCage").GetComponent<CageController>();
 			cageController.LockPlayer(player.transform);
-			caughtPlayer = false;
+			hasCaughtPlayer = false;
 			// Set to zero so the farmer doesn't instantly chase the chicken
 			// after letting them go.
 			containPlayerInsitence = 0.0f;
-			visualSensor.ForgetObject(player.transform.root.gameObject);
-			audioSensor.ForgetObject(player.transform.root.gameObject);
-			BlindAndDeafenFarmer(maximumBlindTime);
+			ForgetAboutPlayer();
+			BlindAndDeafenFarmer(maximumBlindAndDeafTime);
 			animator.SetBool("Carrying", false);
 			return true;
 		}
 
 		player.transform.position = carryPosition.position;
 
-		if (!destinationSet) {
-			destinationSet = navMeshAgent.SetDestination(releasePosition.position);
+		if (!moveDestinationSet) {
+			moveDestinationSet = navMeshAgent.SetDestination(releasePosition.position);
 			animator.SetBool("Walking", true);
 			animator.SetBool("Carrying", true);
 		}
@@ -613,14 +640,14 @@ public class Farmer : MonoBehaviour {
 	}
 	#endregion
 
-	private void Blind() {
+	private void BlindAndDeaf() {
 		if (blindAndDeafTime > 0) {
 			blindAndDeafTime -= Time.deltaTime;
 
 			if (blindAndDeafTime <= 0) {
 				visualSensor.gameObject.SetActive(true);
 				audioSensor.gameObject.SetActive(true);
-				isBlind = false;
+				isBlindAndDeaf = false;
 			}
 		}
 	}
@@ -633,8 +660,21 @@ public class Farmer : MonoBehaviour {
 				navMeshAgent.enabled = true;
 				isStunned = false;
 				animator.SetBool("Stunned", false);
+				animator.ResetTrigger("StunnedTrigger");
 			}
 		}
+	}
+
+	/// <summary>
+	/// Causes the farmer's sensors to forget they detected the player, and 
+	/// makes the farmer completely forget about the player in every capacity.
+	/// </summary>
+	private void ForgetAboutPlayer() {
+		visualSensor.ForgetObject(player.transform.root.gameObject);
+		canSeePlayer = false;
+		seenPlayerRecently = false;
+		audioSensor.ForgetObject(player.transform.root.gameObject);
+		heardPlayerRecently = false;
 	}
 
 	/// <summary>
@@ -644,8 +684,8 @@ public class Farmer : MonoBehaviour {
 	private bool HasArrivedAtDestination() {
 		// Once a destination is reached, the path is automatically removed
 		// from the nav mesh agent.
-		if (destinationSet && !navMeshAgent.hasPath) {
-			destinationSet = false;
+		if (moveDestinationSet && !navMeshAgent.hasPath) {
+			moveDestinationSet = false;
 			return true;
 		}
 
