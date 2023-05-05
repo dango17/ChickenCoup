@@ -3,6 +3,7 @@
 // Created On: 30/01/2023
 
 using DO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -118,6 +119,7 @@ public class Farmer : MonoBehaviour {
 	private Flashlight flashlight = null;
 	private PointOfInterest[] pointsOfInterest = null;
 	private Animator animator = null;
+	private Coroutine lookAtCoroutine = null;
 
 	#region Conditions
 	public bool CanWonder() {
@@ -637,12 +639,14 @@ public class Farmer : MonoBehaviour {
 	private bool CatchPlayer() {
 		if (!CanCatchPlayer()) {
 			Debug.Log("Catch Action Stopped Early");
+			StopLookAtCoroutine();
 			StopCatchingPlayer();
 			return true;
 		}
 
 		switch (catchAnimationState) {
 			case AnimationStates.NotStarted: {
+				lookAtCoroutine = StartCoroutine(LookAtCoroutine(player.transform));
 				Debug.Log("Catch Action Started");
 				animator.SetTrigger("CatchingTrigger");
 				animator.SetBool("Catching", true);
@@ -663,17 +667,31 @@ public class Farmer : MonoBehaviour {
 			}
 			case AnimationStates.Ended: {
 				Debug.Log("Catch Action Ended");
+				StopLookAtCoroutine();
 				catchAnimationState = AnimationStates.NotStarted;
 				return true;
 			}
 			default: {
 				Debug.Log("Catch Action Stopped by Default Case");
+				StopLookAtCoroutine();
 				StopCatchingPlayer();
 				return true;
 			}
 		}
 
 		return false;
+
+		IEnumerator LookAtCoroutine(Transform transformToLookAt) {
+			transform.LookAt(transformToLookAt, Vector3.up);
+			yield return null;
+		}
+
+		void StopLookAtCoroutine() {
+			if (lookAtCoroutine != null) {
+				StopCoroutine(lookAtCoroutine);
+				lookAtCoroutine = null;
+			}
+		}
 	}
 
 	/// <summary>
