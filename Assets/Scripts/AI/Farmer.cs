@@ -456,7 +456,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private void HandlePlayerAudioCues() {
 		if ((!heardPlayerRecently || !respondedToPlayerAudioCue) &&
-			audioSensor.Contains(visualSensor.Data, playersParent)) {
+			audioSensor.Contains(audioSensor.Data, playersParent)) {
 			const float half = 0.5f;
 			containPlayerInsitence = half * maximumContainChickenInsitence;
 			heardPlayerRecently = true;
@@ -471,7 +471,7 @@ public class Farmer : MonoBehaviour {
 			}
 		}
 
-		if (respondedToPlayerAudioCue && audioSensor.Contains(visualSensor.Data, playersParent)) {
+		if (respondedToPlayerAudioCue && audioSensor.Contains(audioSensor.Data, playersParent)) {
 			// Forget about the audio cue's source now it's been handled.
 			audioSensor.ForgetObject(playersParent);
 			respondedToPlayerAudioCue = false;
@@ -591,9 +591,11 @@ public class Farmer : MonoBehaviour {
 			// Move to the player's last known position.
 			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownPosition);
 			animator.SetBool("Walking", true);
+			Debug.DrawLine(playersLastKnownPosition, playersLastKnownPosition + Vector3.up, Color.blue, Mathf.Infinity);
 		} else if (heardPlayerRecently) {
 			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownSoundCuePosition);
 			animator.SetBool("Walking", true);
+			Debug.DrawLine(playersLastKnownPosition, playersLastKnownPosition + Vector3.up, Color.magenta, Mathf.Infinity);
 		}
 
 		return false;
