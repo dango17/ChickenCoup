@@ -14,6 +14,13 @@ using static UtilityScript;
 /// an instance of their utility script for decision making purposes.
 /// </summary>
 public class Farmer : MonoBehaviour {
+	public enum AnimationStates {
+		NotStarted,
+		Started,
+		Playing,
+		Ended
+	}
+
 	private bool moveDestinationSet = false;
 	private bool moveDestinationChanged = false;
 	private bool canSeePlayer = false;
@@ -25,7 +32,6 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private bool respondedToPlayerAudioCue = false;
 	private bool catchColliderIsTouchingPlayer = false;
-	private bool playingCatchAnimation = false;
 	private bool hasCaughtPlayer = false;
 	/// <summary>
 	/// True if the farmer is able to wonder to a point of interest somewhere 
@@ -76,6 +82,8 @@ public class Farmer : MonoBehaviour {
 
 	private Vector3 playersLastKnownPosition = Vector3.zero;
 	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
+
+	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
@@ -186,13 +194,14 @@ public class Farmer : MonoBehaviour {
 		navMeshAgent.autoBraking = true;
 		navMeshAgent.ResetPath();
 		utilityScript.Reset();
+		Debug.Log("Action Stopped");
 	}
 
 	public void StopCatchingPlayer() {
 		catchCollider.enabled = false;
 		animator.SetBool("Catching", false);
 		animator.ResetTrigger("CatchingTrigger");
-		playingCatchAnimation = false;
+		catchAnimationState = AnimationStates.NotStarted;
 		StopAction();
 	}
 	#endregion
@@ -207,11 +216,16 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 
+	public void CatchAnimationStarted() {
+		Debug.Log("Catch Animation Started");
+		catchAnimationState = AnimationStates.Playing;
+	}
+
 	public void CatchAnimationEnded() {
-		animator.SetBool("Catching", false);
+		Debug.Log("Catch Animation Ended");
 		animator.ResetTrigger("CatchingTrigger");
-		playingCatchAnimation = false;
-		catchColliderIsTouchingPlayer = false;
+		animator.SetBool("Catching", false);
+		catchAnimationState = AnimationStates.Ended;
 	}
 	#endregion
 
@@ -607,27 +621,44 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True if the action has completed (successfully or unsuccessfully). </returns>
 	private bool CatchPlayer() {
-		if (!playingCatchAnimation && !CanCatchPlayer()) {
+		if (!CanCatchPlayer()) {
+			Debug.Log("Catch Action Stopped Early");
 			StopCatchingPlayer();
 			return true;
 		}
 
-		if (!hasCaughtPlayer && !playingCatchAnimation) {
-			// Initiate the catch animation.
-			animator.SetTrigger("CatchingTrigger");
-			animator.SetBool("Catching", true);
-			playingCatchAnimation = true;
-		}
+		switch (catchAnimationState) {
+			case AnimationStates.NotStarted: {
+				Debug.Log("Catch Action Started");
+				animator.SetTrigger("CatchingTrigger");
+				animator.SetBool("Catching", true);
+				catchAnimationState = AnimationStates.Started;
+				break;
+			}
+			// Executes during the frames between triggering the animation,
+			// and the first frame it plays.
+			case AnimationStates.Started: {
+				break;
+			}
+			case AnimationStates.Playing: {
+				if (hasCaughtPlayer) {
+					Debug.Log("Holding Onto Player");
+					HoldOntoPlayer(true);
+					player.transform.position = carryPosition.position;
+				}
 
-		if (catchColliderIsTouchingPlayer) {
-			// Hold onto the player while the catch collider is touching them.
-			HoldOntoPlayer(true);
-			player.transform.position = carryPosition.position;
-		}
-
-		if (!playingCatchAnimation) {
-			// Stop the action once the animation has ended.
-			return true;
+				break;
+			}
+			case AnimationStates.Ended: {
+				Debug.Log("Catch Action Ended");
+				catchAnimationState = AnimationStates.NotStarted;
+				return true;
+			}
+			default: {
+				Debug.Log("Catch Action Stopped by Default Case");
+				StopCatchingPlayer();
+				return true;
+			}
 		}
 
 		return false;
@@ -638,7 +669,10 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True when the action has completed. </returns>
 	private bool CarryPlayer() {
+		Debug.Log("Carrying Player");
+
 		if (HasArrivedAtDestination()) {
+			Debug.Log("Released Player");
 			HoldOntoPlayer(false);
 			CageController cageController = GameObject.FindGameObjectWithTag("ChickenCage").GetComponent<CageController>();
 			cageController.LockPlayer(player.transform);
