@@ -95,7 +95,7 @@ public class Farmer : MonoBehaviour {
 
 	private Vector3 playersLastKnownPosition = Vector3.zero;
 	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
-
+	
 	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
 
 	private VisualSensor visualSensor = null;
@@ -119,6 +119,9 @@ public class Farmer : MonoBehaviour {
 	private Flashlight flashlight = null;
 	private PointOfInterest[] pointsOfInterest = null;
 	private Animator animator = null;
+
+	private float rotationAmount = 0.0f;
+	private Quaternion originalRotation = Quaternion.identity;
 	private Coroutine lookAtCoroutine = null;
 
 	#region Conditions
@@ -203,6 +206,8 @@ public class Farmer : MonoBehaviour {
 		}
 
 		animator.SetTrigger("Idling");
+		StopAllCoroutines();
+		lookAtCoroutine = null;
 		moveDestinationSet = false;
 		moveDestinationChanged = false;
 		navMeshAgent.autoBraking = true;
@@ -646,7 +651,6 @@ public class Farmer : MonoBehaviour {
 
 		switch (catchAnimationState) {
 			case AnimationStates.NotStarted: {
-				lookAtCoroutine = StartCoroutine(LookAtCoroutine(player.transform));
 				Debug.Log("Catch Action Started");
 				animator.SetTrigger("CatchingTrigger");
 				animator.SetBool("Catching", true);
@@ -657,6 +661,12 @@ public class Farmer : MonoBehaviour {
 				break;
 			}
 			case AnimationStates.Playing: {
+				if (lookAtCoroutine == null) {
+					originalRotation = transform.rotation;
+					rotationAmount = 0;
+					lookAtCoroutine = StartCoroutine(LookAtCoroutine(player.transform));
+				}
+
 				if (hasCaughtPlayer) {
 					Debug.Log("Holding Onto Player");
 					HoldOntoPlayer(true);
@@ -682,11 +692,25 @@ public class Farmer : MonoBehaviour {
 		return false;
 
 		IEnumerator LookAtCoroutine(Transform transformToLookAt) {
-			transform.LookAt(transformToLookAt, Vector3.up);
+			Vector3 targetDirection = transformToLookAt.position - transform.position;
+			Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
+			while (transform.rotation != targetRotation ||
+				catchAnimationState != AnimationStates.NotStarted) {
+				const float rotationSpeed = 1.5f;
+				// Lerp from current rotation to a rotation that faces the player.
+				transform.rotation = Quaternion.Slerp(originalRotation,
+					targetRotation,
+					rotationAmount = rotationAmount + Time.deltaTime * rotationSpeed);
+				yield return null;
+			}
+
 			yield return null;
 		}
 
 		void StopLookAtCoroutine() {
+			rotationAmount = 0;
+
 			if (lookAtCoroutine != null) {
 				StopCoroutine(lookAtCoroutine);
 				lookAtCoroutine = null;
