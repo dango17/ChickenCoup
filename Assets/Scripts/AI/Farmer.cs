@@ -15,9 +15,21 @@ using static UtilityScript;
 /// </summary>
 public class Farmer : MonoBehaviour {
 	public enum AnimationStates {
+		/// <summary>
+		/// The state prior to triggering an animation.
+		/// </summary>
 		NotStarted,
+		/// <summary>
+		/// The animation has been triggered but hasn't started playing.
+		/// </summary>
 		Started,
+		/// <summary>
+		/// The animation is actively playing.
+		/// </summary>
 		Playing,
+		/// <summary>
+		/// The animation has stopped playing.
+		/// </summary>
 		Ended
 	}
 
@@ -635,8 +647,6 @@ public class Farmer : MonoBehaviour {
 				catchAnimationState = AnimationStates.Started;
 				break;
 			}
-			// Executes during the frames between triggering the animation,
-			// and the first frame it plays.
 			case AnimationStates.Started: {
 				break;
 			}

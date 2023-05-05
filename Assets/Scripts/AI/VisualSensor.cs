@@ -95,7 +95,7 @@ public class VisualSensor : Sensor {
 			raycastHits,
 			detectionRange,
 			raycastLayer);
-			raycastHits.OrderBy(hit => hit.distance);
+			raycastHits = raycastHits.OrderBy(hit => hit.distance).ToArray();
 
 			foreach (RaycastHit hit in raycastHits) {
 				Debug.DrawLine(raycastOrigin, hit.point, Color.cyan, 5.0f);
