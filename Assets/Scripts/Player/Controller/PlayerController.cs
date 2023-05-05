@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Audio;
 
 namespace DO
 {
@@ -35,9 +36,13 @@ namespace DO
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
         [Header("Jumping")]
-        [SerializeField] public float jumpForce = 5f;
+        [SerializeField] public float jumpHeight = 2f;
+        [SerializeField] public float timeToJumpApex = 0.5f;
         [SerializeField] public float fallForce = 2f;
-        [SerializeField] public float gravityStrength; 
+        [SerializeField] private float gravity;
+        [SerializeField] public AnimationCurve jumpCurve;
+        [SerializeField] public float fallMultiplier = 2.5f;
+        [SerializeField] public float lowJumpMultiplier = 2f;
         [Header("Ground-Check")]
         [SerializeField] public LayerMask groundLayer;
         [SerializeField] public float raycastDistance = 0.2f; 
@@ -53,11 +58,15 @@ namespace DO
         [SerializeField] public Transform spawnPoint;
         [SerializeField] public float cooldownTime = 1f;
         [SerializeField] public float timeSinceLastSpawn = 3f; 
+        [Header("Clucking")]
+        [SerializeField] public AudioClip[] cluckSounds;
+        [SerializeField] private AudioSource audioSource;
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
         [SerializeField] public bool isInFreeLook;
-        [SerializeField] public bool isFPMode; 
+        [SerializeField] public bool isFPMode;
+        [SerializeField] public bool objectInHand;
 
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
@@ -69,9 +78,11 @@ namespace DO
 
 		public void EnableFirstPerson(bool enableFirstPerson) {
 			inputHandler.controller.isFPMode = enableFirstPerson;
+            inputHandler.playerLeftEye.SetActive(false); 
+            inputHandler.playerRightEye.SetActive(false); 
 		}
 
-		private void Start()
+        private void Start()
         {
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
@@ -79,10 +90,19 @@ namespace DO
             inputHandler = GetComponent<InputHandler>();
 			detectionPoints = GetComponentsInChildren<DetectionPoint>();
 
+            gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+
             foreach (DetectionPoint detectionPoint in detectionPoints) {
                 detectionPoint.SetDataSource(this);
 			}
-		}
+
+            audioSource = GetComponentInChildren<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+        }
+
 
         private void Update()
         {
@@ -93,11 +113,16 @@ namespace DO
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
             {
-                isGrounded = true; 
+                isGrounded = true;
             }
             else
             {
                 isGrounded = false; 
+            }
+
+            if(isGrounded == true && isOnCover == false)
+            {
+                animator.Play("Locomotion");
             }
         }
 
@@ -248,15 +273,57 @@ namespace DO
             inputHandler.isLayingEgg = false;
         }
 
-        public void HandleJump()
+        public void Jump()
+        {
+            StartCoroutine(HandleJump());
+        }
+
+        public IEnumerator HandleJump()
         {
             inputHandler.isJumping = false;
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+
+            float jumpVelocity = Mathf.Sqrt(-2 * gravity * jumpHeight);
+            float timeToReachApex = Mathf.Sqrt(-2 * jumpHeight / gravity);
+
+            Vector3 jumpDirection = new Vector3(rigidbody.velocity.x, jumpVelocity, rigidbody.velocity.z);
+            float timeElapsed = 0f;
+
+            while (timeElapsed < timeToReachApex)
+            {
+                float t = timeElapsed / timeToReachApex;
+                float curveValue = jumpCurve.Evaluate(t);
+
+                Vector3 displacement = jumpDirection * curveValue * Time.deltaTime;
+                transform.position += displacement;
+
+                timeElapsed += Time.deltaTime;
+                yield return null;
+            } 
+
         }
 
         public void handleFalling()
         {
-            rigidbody.AddForce(Vector3.down * fallForce, ForceMode.Impulse);
+            animator.Play("Float");
+
+            rigidbody.AddForce(Vector3.down * 9.81f * rigidbody.mass);
+            if (rigidbody.velocity.y < 0)
+            {
+                rigidbody.AddForce(Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * rigidbody.mass, ForceMode.Acceleration);
+            }
+            else if (rigidbody.velocity.y > 0 && !inputHandler.isJumping)
+            {
+                rigidbody.AddForce(Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * rigidbody.mass, ForceMode.Acceleration);
+            }
+        }
+
+        public void HandleClucking()
+        {
+            int randomIndex = Random.Range(0, cluckSounds.Length);
+            audioSource.clip = cluckSounds[randomIndex];
+            audioSource.spatialBlend = 1;
+            audioSource.Play();
+            AudioSensor.NotifyNearbyAudioSensors(audioSource, transform.position);
         }
     }
 }

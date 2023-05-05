@@ -39,7 +39,7 @@ public class VisualSensor : Sensor {
 	private Visibility IsWithinLineOfSight(GameObject detectedGameObject) {
 		DetectionPoint[] detectionPoints = detectedGameObject.GetComponentsInChildren<DetectionPoint>();
 
-		if (detectionPoints.Length > 0) {
+		/*if (detectionPoints.Length > 0) {
 			float pointsDetected = 0;
 
 			// Check how many of the object's detection points are visible.
@@ -67,7 +67,7 @@ public class VisualSensor : Sensor {
 			} else {
 				return Visibility.NotVisible;
 			}
-		} else if (RaycastHit(sensorOrigin.position,
+		} else */if (RaycastHit(sensorOrigin.position,
 			visibleLayer,
 			detectedGameObject,
 			null)) {
@@ -98,7 +98,7 @@ public class VisualSensor : Sensor {
 			raycastHits.OrderBy(hit => hit.distance);
 
 			foreach (RaycastHit hit in raycastHits) {
-				Debug.DrawLine(raycastOrigin, hit.point, Color.red, 5.0f);
+				Debug.DrawLine(raycastOrigin, hit.point, Color.cyan, 5.0f);
 			}
 
 			for (int i = 0; i < raycastHits.Length; ++i) {
