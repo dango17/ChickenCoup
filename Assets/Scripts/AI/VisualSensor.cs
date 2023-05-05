@@ -18,11 +18,6 @@ public class VisualSensor : Sensor {
 	[SerializeField, Range(0, maxFieldOfView), Tooltip("The viewing angle for the agent.")]
 	private float fieldOfView = 200.0f;
 	private const float maxFieldOfView = 360.0f;
-	/// <summary>
-	/// The percentage of detection points on an object that need to be 
-	/// visible for it to be detected.
-	/// </summary>
-	private int detectionPercentage = 70;
 
 	/// <summary>
 	/// Checks if the object is visible to the detector.
@@ -39,7 +34,7 @@ public class VisualSensor : Sensor {
 	private Visibility IsWithinLineOfSight(GameObject detectedGameObject) {
 		DetectionPoint[] detectionPoints = detectedGameObject.GetComponentsInChildren<DetectionPoint>();
 
-		/*if (detectionPoints.Length > 0) {
+		if (detectionPoints.Length > 0) {
 			float pointsDetected = 0;
 
 			// Check how many of the object's detection points are visible.
@@ -59,6 +54,9 @@ public class VisualSensor : Sensor {
 
 			const int oneHundred = 100;
 			float percentOfPointsDetected = pointsDetected / detectionPoints.Length * oneHundred;
+			// The percentage of detection points on an object that need to be 
+			// visible for it to be detected.
+			int detectionPercentage = 70;
 
 			if (percentOfPointsDetected >= detectionPercentage) {
 				return Visibility.Visible;
@@ -67,7 +65,7 @@ public class VisualSensor : Sensor {
 			} else {
 				return Visibility.NotVisible;
 			}
-		} else */if (RaycastHit(sensorOrigin.position,
+		} else if (RaycastHit(sensorOrigin.position,
 			visibleLayer,
 			detectedGameObject,
 			null)) {
@@ -95,7 +93,7 @@ public class VisualSensor : Sensor {
 			raycastHits,
 			detectionRange,
 			raycastLayer);
-			raycastHits.OrderBy(hit => hit.distance);
+			raycastHits = raycastHits.OrderBy(hit => hit.distance).ToArray();
 
 			foreach (RaycastHit hit in raycastHits) {
 				Debug.DrawLine(raycastOrigin, hit.point, Color.cyan, 5.0f);

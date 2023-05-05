@@ -20,7 +20,9 @@ public class FarmerAnimator : MonoBehaviour {
 		farmerScript.ToggleCatchCollider(false);
 	}
 
-	public void CatchAnimationStarted() { }
+	public void CatchAnimationStarted() {
+		farmerScript.CatchAnimationStarted();
+	}
 
 	public void CatchAnimationEnded() {
 		farmerScript.CatchAnimationEnded();

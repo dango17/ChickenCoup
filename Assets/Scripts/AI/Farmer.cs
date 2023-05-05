@@ -3,6 +3,7 @@
 // Created On: 30/01/2023
 
 using DO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,6 +15,25 @@ using static UtilityScript;
 /// an instance of their utility script for decision making purposes.
 /// </summary>
 public class Farmer : MonoBehaviour {
+	public enum AnimationStates {
+		/// <summary>
+		/// The state prior to triggering an animation.
+		/// </summary>
+		NotStarted,
+		/// <summary>
+		/// The animation has been triggered but hasn't started playing.
+		/// </summary>
+		Started,
+		/// <summary>
+		/// The animation is actively playing.
+		/// </summary>
+		Playing,
+		/// <summary>
+		/// The animation has stopped playing.
+		/// </summary>
+		Ended
+	}
+
 	private bool moveDestinationSet = false;
 	private bool moveDestinationChanged = false;
 	private bool canSeePlayer = false;
@@ -25,7 +45,6 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private bool respondedToPlayerAudioCue = false;
 	private bool catchColliderIsTouchingPlayer = false;
-	private bool playingCatchAnimation = false;
 	private bool hasCaughtPlayer = false;
 	/// <summary>
 	/// True if the farmer is able to wonder to a point of interest somewhere 
@@ -76,6 +95,8 @@ public class Farmer : MonoBehaviour {
 
 	private Vector3 playersLastKnownPosition = Vector3.zero;
 	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
+	
+	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
 
 	private VisualSensor visualSensor = null;
 	private AudioSensor audioSensor = null;
@@ -98,6 +119,10 @@ public class Farmer : MonoBehaviour {
 	private Flashlight flashlight = null;
 	private PointOfInterest[] pointsOfInterest = null;
 	private Animator animator = null;
+
+	private float rotationAmount = 0.0f;
+	private Quaternion originalRotation = Quaternion.identity;
+	private Coroutine lookAtCoroutine = null;
 
 	#region Conditions
 	public bool CanWonder() {
@@ -181,18 +206,21 @@ public class Farmer : MonoBehaviour {
 		}
 
 		animator.SetTrigger("Idling");
+		StopAllCoroutines();
+		lookAtCoroutine = null;
 		moveDestinationSet = false;
 		moveDestinationChanged = false;
 		navMeshAgent.autoBraking = true;
 		navMeshAgent.ResetPath();
 		utilityScript.Reset();
+		Debug.Log("Action Stopped");
 	}
 
 	public void StopCatchingPlayer() {
 		catchCollider.enabled = false;
 		animator.SetBool("Catching", false);
 		animator.ResetTrigger("CatchingTrigger");
-		playingCatchAnimation = false;
+		catchAnimationState = AnimationStates.NotStarted;
 		StopAction();
 	}
 	#endregion
@@ -207,11 +235,16 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 
+	public void CatchAnimationStarted() {
+		Debug.Log("Catch Animation Started");
+		catchAnimationState = AnimationStates.Playing;
+	}
+
 	public void CatchAnimationEnded() {
-		animator.SetBool("Catching", false);
+		Debug.Log("Catch Animation Ended");
 		animator.ResetTrigger("CatchingTrigger");
-		playingCatchAnimation = false;
-		catchColliderIsTouchingPlayer = false;
+		animator.SetBool("Catching", false);
+		catchAnimationState = AnimationStates.Ended;
 	}
 	#endregion
 
@@ -430,7 +463,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private void HandlePlayerAudioCues() {
 		if ((!heardPlayerRecently || !respondedToPlayerAudioCue) &&
-			audioSensor.Contains(visualSensor.Data, playersParent)) {
+			audioSensor.Contains(audioSensor.Data, playersParent)) {
 			const float half = 0.5f;
 			containPlayerInsitence = half * maximumContainChickenInsitence;
 			heardPlayerRecently = true;
@@ -445,7 +478,7 @@ public class Farmer : MonoBehaviour {
 			}
 		}
 
-		if (respondedToPlayerAudioCue && audioSensor.Contains(visualSensor.Data, playersParent)) {
+		if (respondedToPlayerAudioCue && audioSensor.Contains(audioSensor.Data, playersParent)) {
 			// Forget about the audio cue's source now it's been handled.
 			audioSensor.ForgetObject(playersParent);
 			respondedToPlayerAudioCue = false;
@@ -565,9 +598,11 @@ public class Farmer : MonoBehaviour {
 			// Move to the player's last known position.
 			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownPosition);
 			animator.SetBool("Walking", true);
+			Debug.DrawLine(playersLastKnownPosition, playersLastKnownPosition + Vector3.up, Color.blue, Mathf.Infinity);
 		} else if (heardPlayerRecently) {
 			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownSoundCuePosition);
 			animator.SetBool("Walking", true);
+			Debug.DrawLine(playersLastKnownPosition, playersLastKnownPosition + Vector3.up, Color.magenta, Mathf.Infinity);
 		}
 
 		return false;
@@ -607,30 +642,80 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True if the action has completed (successfully or unsuccessfully). </returns>
 	private bool CatchPlayer() {
-		if (!playingCatchAnimation && !CanCatchPlayer()) {
+		if (!CanCatchPlayer()) {
+			Debug.Log("Catch Action Stopped Early");
+			StopLookAtCoroutine();
 			StopCatchingPlayer();
 			return true;
 		}
 
-		if (!hasCaughtPlayer && !playingCatchAnimation) {
-			// Initiate the catch animation.
-			animator.SetTrigger("CatchingTrigger");
-			animator.SetBool("Catching", true);
-			playingCatchAnimation = true;
-		}
+		switch (catchAnimationState) {
+			case AnimationStates.NotStarted: {
+				Debug.Log("Catch Action Started");
+				animator.SetTrigger("CatchingTrigger");
+				animator.SetBool("Catching", true);
+				catchAnimationState = AnimationStates.Started;
+				break;
+			}
+			case AnimationStates.Started: {
+				break;
+			}
+			case AnimationStates.Playing: {
+				if (lookAtCoroutine == null) {
+					originalRotation = transform.rotation;
+					rotationAmount = 0;
+					lookAtCoroutine = StartCoroutine(LookAtCoroutine(player.transform));
+				}
 
-		if (catchColliderIsTouchingPlayer) {
-			// Hold onto the player while the catch collider is touching them.
-			HoldOntoPlayer(true);
-			player.transform.position = carryPosition.position;
-		}
+				if (hasCaughtPlayer) {
+					Debug.Log("Holding Onto Player");
+					HoldOntoPlayer(true);
+					player.transform.position = carryPosition.position;
+				}
 
-		if (!playingCatchAnimation) {
-			// Stop the action once the animation has ended.
-			return true;
+				break;
+			}
+			case AnimationStates.Ended: {
+				Debug.Log("Catch Action Ended");
+				StopLookAtCoroutine();
+				catchAnimationState = AnimationStates.NotStarted;
+				return true;
+			}
+			default: {
+				Debug.Log("Catch Action Stopped by Default Case");
+				StopLookAtCoroutine();
+				StopCatchingPlayer();
+				return true;
+			}
 		}
 
 		return false;
+
+		IEnumerator LookAtCoroutine(Transform transformToLookAt) {
+			Vector3 targetDirection = transformToLookAt.position - transform.position;
+			Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
+			while (transform.rotation != targetRotation ||
+				catchAnimationState != AnimationStates.NotStarted) {
+				const float rotationSpeed = 1.5f;
+				// Lerp from current rotation to a rotation that faces the player.
+				transform.rotation = Quaternion.Slerp(originalRotation,
+					targetRotation,
+					rotationAmount = rotationAmount + Time.deltaTime * rotationSpeed);
+				yield return null;
+			}
+
+			yield return null;
+		}
+
+		void StopLookAtCoroutine() {
+			rotationAmount = 0;
+
+			if (lookAtCoroutine != null) {
+				StopCoroutine(lookAtCoroutine);
+				lookAtCoroutine = null;
+			}
+		}
 	}
 
 	/// <summary>
@@ -638,7 +723,10 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True when the action has completed. </returns>
 	private bool CarryPlayer() {
+		Debug.Log("Carrying Player");
+
 		if (HasArrivedAtDestination()) {
+			Debug.Log("Released Player");
 			HoldOntoPlayer(false);
 			CageController cageController = GameObject.FindGameObjectWithTag("ChickenCage").GetComponent<CageController>();
 			cageController.LockPlayer(player.transform);

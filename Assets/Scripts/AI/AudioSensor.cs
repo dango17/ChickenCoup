@@ -55,7 +55,7 @@ public class AudioSensor : Sensor {
 	}
 
 	private void Start() {
-		navMeshAgent = transform.parent.GetComponent<NavMeshAgent>();
+		navMeshAgent = transform.root.GetComponentInChildren<NavMeshAgent>();
 	}
 
 	private bool TracePathToSound(Vector3 soundsPosition, float maximumPathLength) {
