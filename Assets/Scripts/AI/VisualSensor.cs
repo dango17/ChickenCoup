@@ -14,7 +14,10 @@ public class VisualSensor : Sensor {
 		get { return fieldOfView; }
 		private set { fieldOfView = value; }
 	}
-	public Vector3[] FieldOfViewExtents {
+	/// <summary>
+	/// Directions are stored in order of left then right.
+	/// </summary>
+	public Vector3[] FieldOfViewExtentsDirection {
 		get { return fieldOfViewExtents; }
 		private set { fieldOfViewExtents = value; }
 	}
@@ -153,13 +156,13 @@ public class VisualSensor : Sensor {
 
 	private void DrawFieldOfViewExtents() {
 		const float half = 0.5f;
-		float rotationAmount = half * fieldOfView + transform.rotation.eulerAngles.y;
-		fieldOfViewExtents[0] = Quaternion.Euler(0, rotationAmount, 0) * Vector3.forward;
-		fieldOfViewExtents[0] = transform.position + fieldOfViewExtents[0] * detectionRange;
-		Debug.DrawLine(transform.position, fieldOfViewExtents[0]);
-		rotationAmount = half * fieldOfView - transform.rotation.eulerAngles.y;
-		fieldOfViewExtents[1] = Quaternion.Euler(0, -rotationAmount, 0) * Vector3.forward;
-		fieldOfViewExtents[1] = transform.position + fieldOfViewExtents[1] * detectionRange;
-		Debug.DrawLine(transform.position, fieldOfViewExtents[1]);
+		float rotationAmount = half * fieldOfView - transform.rotation.eulerAngles.y;
+		fieldOfViewExtents[0] = Quaternion.Euler(0, -rotationAmount, 0) * Vector3.forward;
+		Vector3 fieldOfViewExtentPosition = transform.position + fieldOfViewExtents[0] * detectionRange;
+		Debug.DrawLine(transform.position, fieldOfViewExtentPosition);
+		rotationAmount = half * fieldOfView + transform.rotation.eulerAngles.y;
+		fieldOfViewExtents[1] = Quaternion.Euler(0, rotationAmount, 0) * Vector3.forward;
+		fieldOfViewExtentPosition = transform.position + fieldOfViewExtents[1] * detectionRange;
+		Debug.DrawLine(transform.position, fieldOfViewExtentPosition);
 	}
 }

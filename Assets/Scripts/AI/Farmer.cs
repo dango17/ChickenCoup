@@ -34,14 +34,6 @@ public class Farmer : MonoBehaviour {
 		Ended
 	}
 
-	public enum DetectionRate {
-		Standard = 1,
-		Slow = 3,
-		Medium = 6,
-		Fast = 9,
-		Instant = 15
-	}
-
 	#region Sensor Variables
 	private bool canSeePlayer = false;
 	private bool seenPlayerRecently = false;
@@ -529,7 +521,8 @@ public class Farmer : MonoBehaviour {
 
 		float CalculateDistanceBonus() {
 			float maximumDistance = visualSensor.DetectionRange;
-			float playerDistance = Vector3.Distance(player.transform.position, visualSensor.transform.position);
+			float playerDistance = Vector3.Distance(player.transform.position,
+				visualSensor.transform.position);
 			// 0.5 = decreased detection rate, 1 = no effect, 1.5 = increased
 			// detection rate.
 			// Setting to 1.5 means the farmer is offered a greater bonus when
@@ -546,12 +539,37 @@ public class Farmer : MonoBehaviour {
 			return defaultDistanceBonus - playerDistance / maximumDistance;
 		}
 
+		// The farmer's visual sensor field of view extents have been drawn in
+		// the editor to help visualise what this method does.
 		float CalculateFieldOfViewBonus() {
-			// Whereabout along the farmer's field of view the player is
-			// standing.
-			float fieldOfViewBonus = 0.0f;
+			Vector3 playerDirection = player.transform.position - visualSensor.transform.position;
+			float angleBetweenFarmerAndPlayer = Vector3.Angle(visualSensor.transform.forward,
+				playerDirection);
+			const float fourtyPercent = 0.4f;
+			const float half = 0.5f;
 
-			return fieldOfViewBonus;
+			// Check if the player is further than 40% of the way between the
+			// farmer's visual sensor's forward direction and field of view extent.
+			if (angleBetweenFarmerAndPlayer > fourtyPercent * (half * visualSensor.FieldOfView)) {
+				float angleToFieldOfViewExtentLeft = Vector3.Angle(playerDirection,
+					visualSensor.FieldOfViewExtentsDirection[0]);
+				float angleToFieldOfViewExtentRight = Vector3.Angle(playerDirection,
+					visualSensor.FieldOfViewExtentsDirection[1]);
+				// Finds which field of view extent (left/right) the player is
+				// the closest to.
+				float smallestAngle = angleToFieldOfViewExtentLeft < angleToFieldOfViewExtentRight ?
+					angleToFieldOfViewExtentLeft : angleToFieldOfViewExtentRight;
+				float maximumFieldOfView = visualSensor.FieldOfView;
+				// The bonus should be decreased based on the offset from the
+				// direction to the player to the farmer's visual sensor's
+				// forward direction.
+				return smallestAngle / (half * maximumFieldOfView);
+			} else {
+				// The bonus should be substantial while the player is roughly
+				// directly in front of the farmer.
+				const float defaultBonus = 1.5f;
+				return defaultBonus;
+			}
 		}
 	}
 
@@ -724,7 +742,8 @@ public class Farmer : MonoBehaviour {
 			Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
 			// Must be lower than the catch range.
 			const float spaceBetweenAgentAndPlayer = 1.25f;
-			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownPosition - directionToPlayer * spaceBetweenAgentAndPlayer);
+			Vector3 chaseDestination = playersLastKnownPosition - directionToPlayer * spaceBetweenAgentAndPlayer;
+			moveDestinationSet = navMeshAgent.SetDestination(chaseDestination);
 			animator.SetBool("Walking", true);
 			navMeshAgent.autoBraking = false;
 			moveDestinationChanged = false;
