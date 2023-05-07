@@ -475,10 +475,13 @@ public class Farmer : MonoBehaviour {
 		if (canSeePlayer && awareness < maximumAwareness) {
 			float detectionBonusFromPlayerMovement = CalculateMovementBonus();
 			float detectionBonusFromPlayerDistance = CalculateDistanceBonus();
+			float detectionBonusFromPlayerPosition = CalculateFieldOfViewBonus();
+			float detectionBonuses = detectionBonusFromPlayerMovement *
+				detectionBonusFromPlayerDistance *
+				detectionBonusFromPlayerPosition;
 			awareness += percentageOfVisiblePlayerPoints *
 				playerDetectionRate *
-				detectionBonusFromPlayerMovement *
-				detectionBonusFromPlayerDistance *
+				detectionBonuses * 
 				Time.deltaTime;
 		}
 
@@ -541,6 +544,14 @@ public class Farmer : MonoBehaviour {
 			// Subtract from the bonus because distances should provide a
 			// greater bonus than longer distances.
 			return defaultDistanceBonus - playerDistance / maximumDistance;
+		}
+
+		float CalculateFieldOfViewBonus() {
+			// Whereabout along the farmer's field of view the player is
+			// standing.
+			float fieldOfViewBonus = 0.0f;
+
+			return fieldOfViewBonus;
 		}
 	}
 

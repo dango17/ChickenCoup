@@ -148,21 +148,21 @@ public abstract class Sensor : MonoBehaviour {
 		DisableObjectsDetectionPoints(gameObjectToForget);
 	}
 
+	protected virtual void Awake() {
+		SphereCollider sphereCollider = GetComponent<SphereCollider>();
+		sphereCollider.radius = detectionRange;
+	}
+
+    protected virtual void Update() {
+		DeleteGatheredDataThatsExpired();
+	}
+	
 	/// <summary>
 	/// Checks if the gathered data is valid and should be saved.
 	/// </summary>
 	/// <param name="gameobject"> Gathered data that needs verifying. </param>
 	/// <returns> True if the data is valid and should be saved. </returns>
 	protected abstract Visibility VerifyDetection(GameObject gameobject);
-
-	private void Awake() {
-		SphereCollider sphereCollider = GetComponent<SphereCollider>();
-		sphereCollider.radius = detectionRange;
-	}
-
-    private void Update() {
-		DeleteGatheredDataThatsExpired();
-	}
 
     private void OnTriggerEnter(Collider other) {
 		ObjectDetected(other.gameObject);

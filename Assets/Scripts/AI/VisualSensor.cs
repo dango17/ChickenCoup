@@ -14,10 +14,15 @@ public class VisualSensor : Sensor {
 		get { return fieldOfView; }
 		private set { fieldOfView = value; }
 	}
+	public Vector3[] FieldOfViewExtents {
+		get { return fieldOfViewExtents; }
+		private set { fieldOfViewExtents = value; }
+	}
 
 	[SerializeField, Range(0, maxFieldOfView), Tooltip("The viewing angle for the agent.")]
 	private float fieldOfView = 200.0f;
 	private const float maxFieldOfView = 360.0f;
+	private Vector3[] fieldOfViewExtents = new Vector3[2];
 
 	/// <summary>
 	/// Checks if the object is visible to the detector.
@@ -29,6 +34,11 @@ public class VisualSensor : Sensor {
 		}
 
 		return Visibility.NotVisible;
+	}
+
+	protected override void Update() {
+		base.Update();
+		DrawFieldOfViewExtents();
 	}
 
 	private Visibility IsWithinLineOfSight(GameObject detectedGameObject) {
@@ -139,5 +149,17 @@ public class VisualSensor : Sensor {
 		}
 
 		return false;
+	}
+
+	private void DrawFieldOfViewExtents() {
+		const float half = 0.5f;
+		float rotationAmount = half * fieldOfView + transform.rotation.eulerAngles.y;
+		fieldOfViewExtents[0] = Quaternion.Euler(0, rotationAmount, 0) * Vector3.forward;
+		fieldOfViewExtents[0] = transform.position + fieldOfViewExtents[0] * detectionRange;
+		Debug.DrawLine(transform.position, fieldOfViewExtents[0]);
+		rotationAmount = half * fieldOfView - transform.rotation.eulerAngles.y;
+		fieldOfViewExtents[1] = Quaternion.Euler(0, -rotationAmount, 0) * Vector3.forward;
+		fieldOfViewExtents[1] = transform.position + fieldOfViewExtents[1] * detectionRange;
+		Debug.DrawLine(transform.position, fieldOfViewExtents[1]);
 	}
 }
