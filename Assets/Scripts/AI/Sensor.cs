@@ -156,7 +156,13 @@ public abstract class Sensor : MonoBehaviour {
     protected virtual void Update() {
 		DeleteGatheredDataThatsExpired();
 	}
-	
+
+	protected virtual void FixedUpdate() { }
+
+	protected CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
+	}
+
 	/// <summary>
 	/// Checks if the gathered data is valid and should be saved.
 	/// </summary>
@@ -186,10 +192,6 @@ public abstract class Sensor : MonoBehaviour {
 			DisableObjectsDetectionPoints(othersRootGameObject);
 			RemoveObject(ref partiallyDiscoveredData, othersRootGameObject);
 		}
-	}
-
-	private CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
-		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
 	}
 
 	private void DeleteGatheredDataThatsExpired() {

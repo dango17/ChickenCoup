@@ -44,10 +44,16 @@ public class VisualSensor : Sensor {
 		DrawFieldOfViewExtents();
 	}
 
+	protected override void FixedUpdate() {
+		VerifyDataIsValid();
+	}
+
 	private Visibility IsWithinLineOfSight(GameObject detectedGameObject) {
 		DetectionPoint[] detectionPoints = detectedGameObject.GetComponentsInChildren<DetectionPoint>();
 
-		if (detectionPoints.Length > 0) {
+		// TODO: uncomment when detection points don't trigger a stack overflow
+		// error.
+		/*if (detectionPoints.Length > 0) {
 			float pointsDetected = 0;
 
 			// Check how many of the object's detection points are visible.
@@ -78,7 +84,8 @@ public class VisualSensor : Sensor {
 			} else {
 				return Visibility.NotVisible;
 			}
-		} else if (RaycastHit(sensorOrigin.position,
+		} else */
+		if (RaycastHit(sensorOrigin.position,
 			visibleLayer,
 			detectedGameObject,
 			null)) {
@@ -116,7 +123,9 @@ public class VisualSensor : Sensor {
 				if (raycastHits[i].collider) {
 					if (targetObject && raycastHits[i].collider.gameObject == targetObject) {
 						return true;
-					} else if (gameObjectToIgnore && raycastHits[i].collider.gameObject == gameObjectToIgnore) {
+					} else if (gameObjectToIgnore &&
+						(raycastHits[i].collider.gameObject == gameObjectToIgnore ||
+						raycastHits[i].collider.transform.root.gameObject == gameObjectToIgnore)) {
 						// Continue searching for the target game object
 						// because the current raycast hit's game object is
 						// set to be ignored.
@@ -152,6 +161,26 @@ public class VisualSensor : Sensor {
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// Checks that all the collected data is still visible to the sensor.
+	/// </summary>
+	private void VerifyDataIsValid() {
+		foreach (CollectedData collectedData in data) {
+			if (VerifyDetection(collectedData.gameobject) == Visibility.NotVisible) {
+				data.Remove(GetCollectedData(data, collectedData.gameobject));
+				break;
+			}
+
+		}
+
+		foreach (CollectedData collectedData in partiallyDiscoveredData) {
+			if (VerifyDetection(collectedData.gameobject) == Visibility.NotVisible) {
+				partiallyDiscoveredData.Remove(GetCollectedData(data, collectedData.gameobject));
+				break;
+			}
+		}
 	}
 
 	private void DrawFieldOfViewExtents() {

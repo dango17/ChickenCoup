@@ -464,6 +464,12 @@ public class Farmer : MonoBehaviour {
 			seenPlayerRecently = true;
 		}
 
+		// Handles losing sight of the player.
+		if (canSeePlayer && !visualSensor.Contains(visualSensor.Data, playersParent)) {
+			canSeePlayer = false;
+			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
+		}
+
 		if (canSeePlayer && awareness < maximumAwareness) {
 			float detectionBonusFromPlayerMovement = CalculateMovementBonus();
 			float detectionBonusFromPlayerDistance = CalculateDistanceBonus();
@@ -471,13 +477,13 @@ public class Farmer : MonoBehaviour {
 			float detectionBonuses = detectionBonusFromPlayerMovement *
 				detectionBonusFromPlayerDistance *
 				detectionBonusFromPlayerPosition;
-			awareness += percentageOfVisiblePlayerPoints *
+			// TODO: remove magic number when detection points don't trigger a
+			// stack overflow error.
+			awareness += 1/*percentageOfVisiblePlayerPoints*/ *
 				playerDetectionRate *
 				detectionBonuses * 
 				Time.deltaTime;
 		}
-
-		Debug.Log(awareness);
 
 		if (canSeePlayer && awareness >= maximumAwareness && containPlayerInsitence == 0) {
 			awareness = maximumAwareness;
@@ -485,12 +491,6 @@ public class Farmer : MonoBehaviour {
 			// Stops the current action so the AI can react to seeing the
 			// player for the first time in a while.
 			StopAction();
-		}
-
-		// Handles losing sight of the player.
-		if (canSeePlayer && !visualSensor.Contains(visualSensor.Data, playersParent)) {
-			canSeePlayer = false;
-			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
 		}
 
 		// Handles what happens whilst the player is visible to the farmer.
