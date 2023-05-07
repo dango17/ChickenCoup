@@ -5,6 +5,7 @@
 using DO;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.AI;
 // Added for ease of access when using certain structs contained within the class.
@@ -34,91 +35,124 @@ public class Farmer : MonoBehaviour {
 		Ended
 	}
 
-	private bool moveDestinationSet = false;
-	private bool moveDestinationChanged = false;
+	public enum DetectionRate {
+		Standard = 1,
+		Slow = 3,
+		Medium = 6,
+		Fast = 9,
+		Instant = 15
+	}
+
+	#region Sensor Variables
 	private bool canSeePlayer = false;
 	private bool seenPlayerRecently = false;
+	private float percentageOfVisiblePlayerPoints = 0.0f;
+	private Vector3 playersLastKnownPosition = Vector3.zero;
+	private VisualSensor visualSensor = null;
+
 	private bool heardPlayerRecently = false;
 	/// <summary>
 	/// True if the farmer has responded to the most recent audio cue created 
 	/// by the player, false if they haven't responded at all.
 	/// </summary>
 	private bool respondedToPlayerAudioCue = false;
-	private bool catchColliderIsTouchingPlayer = false;
-	private bool hasCaughtPlayer = false;
+	private float timeUntilPlayersLastSoundCudeIsForgotten = 0.0f;
+	private float maximumTimeUntilPlayersLastSoundCudeIsForgotten = 5.0f;
+	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
+	private AudioSensor audioSensor = null;
+
+	/// <summary>
+	/// True if the farmer's sensors are disabled.
+	/// </summary>
+	private bool isBlindAndDeaf = false;
+	/// <summary>
+	/// How much time should pass by before the farmer can see/hear again.
+	/// </summary>
+	private float blindAndDeafTime = 0.0f;
+	private float maximumBlindAndDeafTime = 5.0f;
+
+	/// <summary>
+	/// A measrurement from 0 to 100 of how aware the farmer is of the 
+	/// player's presence.
+	/// </summary>
+	private float awareness = 0.0f;
+	private float maximumAwareness = 100.0f;
+	/// <summary>
+	/// The speed at which the farmer will become fully aware of the player 
+	/// when they're visible.
+	/// Affected by how much of an object is visible.
+	/// </summary>
+	private float playerDetectionRate = 100.0f;
+	#endregion
+
+	#region Movement Variables
+	private bool moveDestinationSet = false;
+	private bool moveDestinationChanged = false;
+	/// <summary>
+	/// True if the farmer can't move, but might be able to still see and/or hear.
+	/// </summary>
+	private bool isStunned = false;
+	/// <summary>
+	/// How much time should pass by before the farmer can move again.
+	/// </summary>
+	private float stunTime = 0.0f;
 	/// <summary>
 	/// True if the farmer is able to wonder to a point of interest somewhere 
 	/// around the level.
 	/// </summary>
 	private bool canVisitPointOfInterest = true;
 	/// <summary>
-	/// True if the farmer's sensors are disabled.
-	/// </summary>
-	private bool isBlindAndDeaf = false;
-	/// <summary>
-	/// True if the farmer can't move, but might be able to still see and/or hear.
-	/// </summary>
-	private bool isStunned = false;
-	private bool holdingKeycard = true;
-	/// <summary>
 	/// Index of the current point of interest that the farmer is wondering to.
 	/// </summary>
 	private int pointOfInterestIndex = 0;
-	/// <summary>
-	/// The maximum range allowed between the farmer and player where the 
-	/// player can still be caught.
-	/// </summary>
-	private float maximumRangeToCatchPlayer = 1.5f;
-	private float containPlayerInsitence = 0.0f;
-	private float maximumContainChickenInsitence = 100.0f;
-	private float timeToSpendSearchingForPlayer = 0.0f;
-	[SerializeField, Tooltip("The length of time the farmer will spend " +
-		"searching for the player. Measured in seconds.")]
-	private float maximumTimeToSpendSearchingForPlayer = 15.0f;
-	private float timeUntilPlayersLastSoundCudeIsForgotten = 0.0f;
-	private float maximumTimeUntilPlayersLastSoundCudeIsForgotten = 5.0f;
-	/// <summary>
-	/// How much time should pass by before the farmer can see/hear again.
-	/// </summary>
-	private float blindAndDeafTime = 0.0f;
-	private float maximumBlindAndDeafTime = 5.0f;
-	/// <summary>
-	/// How much time should pass by before the farmer can move again.
-	/// </summary>
-	private float stunTime = 0.0f;
 	/// <summary>
 	/// The length of time that will elapse before the farmer visits their 
 	/// next point of interest.
 	/// </summary>
 	private float visitPointOfInterestTime = 0.0f;
 	private float maximumVisitPointOfInterestTime = 25.0f;
+	private float timeToSpendSearchingForPlayer = 0.0f;
+	[SerializeField, Tooltip("The length of time the farmer will spend " +
+		"searching for the player. Measured in seconds.")]
+	private float maximumTimeToSpendSearchingForPlayer = 15.0f;
+	private NavMeshAgent navMeshAgent = null;
+	private PointOfInterest[] pointsOfInterest = null;
+	#endregion
 
-	private Vector3 playersLastKnownPosition = Vector3.zero;
-	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
-	
+	#region Catch Variables
+	private bool catchColliderIsTouchingPlayer = false;
+	private bool hasCaughtPlayer = false;
+	/// <summary>
+	/// The maximum range allowed between the farmer and player where the 
+	/// player can still be caught.
+	/// </summary>
+	private float maximumRangeToCatchPlayer = 1.5f;
 	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
-
-	private VisualSensor visualSensor = null;
-	private AudioSensor audioSensor = null;
 	/// <summary>
 	/// The trigger collider used for detecting a collision with the player 
 	/// when the farmer attempts to catch them.
 	/// </summary>
 	private BoxCollider catchCollider = null;
-	private UtilityScript utilityScript = null;
-	private NavMeshAgent navMeshAgent = null;
-	private GameObject playersParent = null;
-	private PlayerController player = null;
-	private InputHandler inputHandler = null;
 	private Transform carryPosition = null;
 	/// <summary>
 	/// The position where the farmer will attempt the place the player after 
 	/// they've been caught.
 	/// </summary>
 	private Transform releasePosition = null;
+	#endregion
+
+	private float containPlayerInsitence = 0.0f;
+	private float maximumContainChickenInsitence = 100.0f;
+	private UtilityScript utilityScript = null;
+	
+	private bool holdingKeycard = true;
+
 	private Flashlight flashlight = null;
-	private PointOfInterest[] pointsOfInterest = null;
 	private Animator animator = null;
+
+	private GameObject playersParent = null;
+	private PlayerController player = null;
+	private InputHandler inputHandler = null;
 
 	private float rotationAmount = 0.0f;
 	private Quaternion originalRotation = Quaternion.identity;
@@ -278,6 +312,10 @@ public class Farmer : MonoBehaviour {
 			HandlePlayerAudioCues();
 		}
 
+		if (awareness > 0 && !canSeePlayer && !seenPlayerRecently && !heardPlayerRecently) {
+			awareness = 0;
+		}
+
 		if (isStunned) {
 			return;
 		}
@@ -286,14 +324,10 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void FixedUpdate() {
-		// Check if detection points are enabled to avoid potentially dividing
-		// 0 by 0.
-		float percentageOfVisiblePoints = player.NumberOfDetectionPoints == 0 ?
-			0.0f : (!canSeePlayer ?
-			0.0f : (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints);
-		const float oneQuarter = 0.25f;
+		float awarenessPercentage = awareness / maximumAwareness;
+		const float oneQuarter = 0.2f;
 		float canHearPlayer = heardPlayerRecently ? oneQuarter : 0.0f;
-		flashlight.ChangeColour(Mathf.Clamp(percentageOfVisiblePoints + canHearPlayer, 0.0f, 1.0f));
+		flashlight.ChangeColour(Mathf.Clamp(awarenessPercentage + canHearPlayer, 0.0f, 1.0f));
 	}
 
 	private void OnTriggerEnter(Collider other) {
@@ -422,14 +456,28 @@ public class Farmer : MonoBehaviour {
 
 	#region Handling Player Sight & Sound
 	private void HandlePlayerVisibility() {
+		// Check if detection points are enabled to avoid potentially dividing
+		// 0 by 0.
+		percentageOfVisiblePlayerPoints = player.NumberOfDetectionPoints == 0 ?
+			0.0f : (!canSeePlayer ?
+			0.0f : (float)player.VisibleDetectionPoints / (float)player.NumberOfDetectionPoints);
+
 		// Handles seeing the player.
 		if (!canSeePlayer &&
 			!player.IsHiding &&
 			!inputHandler.isConcealed &&
 			visualSensor.Contains(visualSensor.Data, playersParent)) {
-			containPlayerInsitence = maximumContainChickenInsitence;
 			canSeePlayer = true;
 			seenPlayerRecently = true;
+		}
+
+		if (canSeePlayer && awareness < maximumAwareness) {
+			awareness += percentageOfVisiblePlayerPoints * playerDetectionRate * Time.deltaTime;
+		}
+
+		if (canSeePlayer && awareness >= maximumAwareness && containPlayerInsitence == 0) {
+			awareness = maximumAwareness;
+			containPlayerInsitence = awareness;
 			// Stops the current action so the AI can react to seeing the
 			// player for the first time in a while.
 			StopAction();
