@@ -153,6 +153,7 @@ public class Farmer : MonoBehaviour {
 	private GameObject playersParent = null;
 	private PlayerController player = null;
 	private InputHandler inputHandler = null;
+	private Rigidbody playerRigidbody = null;
 
 	private float rotationAmount = 0.0f;
 	private Quaternion originalRotation = Quaternion.identity;
@@ -361,6 +362,7 @@ public class Farmer : MonoBehaviour {
 		playersParent = GameObject.FindGameObjectWithTag("Player").transform.root.gameObject;
 		player = playersParent.GetComponentInChildren<PlayerController>();
 		inputHandler = playersParent.GetComponentInChildren<InputHandler>();
+		playerRigidbody = player.GetComponent<Rigidbody>();
 		catchCollider = GameObject.FindGameObjectWithTag("Catch Collider").GetComponent<BoxCollider>();
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
@@ -472,8 +474,11 @@ public class Farmer : MonoBehaviour {
 		}
 
 		if (canSeePlayer && awareness < maximumAwareness) {
-			float movementBonus = player.GetComponent<Rigidbody>().velocity != Vector3.zero ? 5.0f : 0.8f;
-			awareness += percentageOfVisiblePlayerPoints * playerDetectionRate * movementBonus * Time.deltaTime;
+			float detectionBonusFromPlayerMovement = CalculateMovementBonus();
+			awareness += ((percentageOfVisiblePlayerPoints *
+				playerDetectionRate) *
+				detectionBonusFromPlayerMovement) *
+				Time.deltaTime;
 		}
 
 		Debug.Log(awareness);
@@ -506,6 +511,16 @@ public class Farmer : MonoBehaviour {
 				containPlayerInsitence = 0.0f;
 				seenPlayerRecently = false;
 			}
+		}
+
+		float CalculateMovementBonus() {
+			const float maximumVelocity = 3.0f;
+			float playerVelocity = playerRigidbody.velocity.magnitude;
+			// Scale the increased detection bonus from player movement based
+			// on how fast the player is moving, up to a peak value.
+			float increasedBonus = 1.0f + playerVelocity / maximumVelocity;
+			const float decreasedBonus = 0.7f;
+			return playerVelocity > 0 ? increasedBonus : decreasedBonus;
 		}
 	}
 
