@@ -26,6 +26,10 @@ public abstract class Sensor : MonoBehaviour {
 		NotVisible
 	}
 
+	public int DetectionRange {
+		get { return detectionRange; }
+		private set { detectionRange = value; }
+	}
 	public LinkedList<CollectedData> Data {
 		get {
 			return data;

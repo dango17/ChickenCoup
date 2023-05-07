@@ -474,9 +474,11 @@ public class Farmer : MonoBehaviour {
 
 		if (canSeePlayer && awareness < maximumAwareness) {
 			float detectionBonusFromPlayerMovement = CalculateMovementBonus();
+			float detectionBonusFromPlayerDistance = CalculateDistanceBonus();
 			awareness += percentageOfVisiblePlayerPoints *
 				playerDetectionRate *
 				detectionBonusFromPlayerMovement *
+				detectionBonusFromPlayerDistance *
 				Time.deltaTime;
 		}
 
@@ -520,6 +522,25 @@ public class Farmer : MonoBehaviour {
 			float increasedBonus = 1.0f + playerVelocity / maximumVelocity;
 			const float decreasedBonus = 0.7f;
 			return playerVelocity > 0 ? increasedBonus : decreasedBonus;
+		}
+
+		float CalculateDistanceBonus() {
+			float maximumDistance = visualSensor.DetectionRange;
+			float playerDistance = Vector3.Distance(player.transform.position, visualSensor.transform.position);
+			// 0.5 = decreased detection rate, 1 = no effect, 1.5 = increased
+			// detection rate.
+			// Setting to 1.5 means the farmer is offered a greater bonus when
+			// the player is within half their visual sensor's detection range;
+			// no bonus when the player is at half their visual sensor's
+			// detection range;
+			// a decreased bonus when the player is beyond half their visual
+			// sensor's detection range.
+			const float defaultDistanceBonus = 1.5f;
+			// Scale the increased detection bonus from player distance based
+			// on how far they are from the farmer.
+			// Subtract from the bonus because distances should provide a
+			// greater bonus than longer distances.
+			return defaultDistanceBonus - playerDistance / maximumDistance;
 		}
 	}
 
