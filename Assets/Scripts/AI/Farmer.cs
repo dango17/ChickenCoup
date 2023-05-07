@@ -82,7 +82,7 @@ public class Farmer : MonoBehaviour {
 	/// when they're visible.
 	/// Affected by how much of an object is visible.
 	/// </summary>
-	private float playerDetectionRate = 100.0f;
+	private float playerDetectionRate = 50.0f;
 	#endregion
 
 	#region Movement Variables
@@ -472,8 +472,11 @@ public class Farmer : MonoBehaviour {
 		}
 
 		if (canSeePlayer && awareness < maximumAwareness) {
-			awareness += percentageOfVisiblePlayerPoints * playerDetectionRate * Time.deltaTime;
+			float movementBonus = player.GetComponent<Rigidbody>().velocity != Vector3.zero ? 5.0f : 0.8f;
+			awareness += percentageOfVisiblePlayerPoints * playerDetectionRate * movementBonus * Time.deltaTime;
 		}
+
+		Debug.Log(awareness);
 
 		if (canSeePlayer && awareness >= maximumAwareness && containPlayerInsitence == 0) {
 			awareness = maximumAwareness;
