@@ -29,6 +29,12 @@ namespace DO
             get { return detectionPoints.Length; }
             private set { }
         }
+        public float MaximumMovementSpeed {
+            // Add the player's move speed because it reflects the increase in
+            // speed from eating foods.
+            get { return maximumSprintSpeed + moveSpeed; }
+            private set { }
+        }
 
 		[Header("Speeds")]
         [SerializeField] public float moveSpeed = 0.4f;
@@ -74,6 +80,11 @@ namespace DO
         [HideInInspector] public SkinnedMeshRenderer meshRenderer;
         [HideInInspector] public InputHandler inputHandler;
 
+        /// <summary>
+        /// Use the property for this variable when getting it's value,
+        /// so the maximum speed factors in the speed boost from foods.
+        /// </summary>
+		private readonly float maximumSprintSpeed = 5.0f;
 		private DetectionPoint[] detectionPoints = null;
 
 		public void EnableFirstPerson(bool enableFirstPerson) {

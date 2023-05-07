@@ -186,6 +186,11 @@ namespace DO
             if (isTired == false && isSprinting == true)
             {
                 controller.moveSpeed += 0.01f;
+
+                if (controller.moveSpeed > controller.MaximumMovementSpeed) {
+                    controller.moveSpeed = controller.MaximumMovementSpeed;
+				}
+
                 isSprinting = true;
                 isTired = false; 
                 StartCoroutine(RunTimer()); 

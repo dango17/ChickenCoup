@@ -5,7 +5,6 @@
 using DO;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.AI;
 // Added for ease of access when using certain structs contained within the class.
@@ -475,9 +474,9 @@ public class Farmer : MonoBehaviour {
 
 		if (canSeePlayer && awareness < maximumAwareness) {
 			float detectionBonusFromPlayerMovement = CalculateMovementBonus();
-			awareness += ((percentageOfVisiblePlayerPoints *
-				playerDetectionRate) *
-				detectionBonusFromPlayerMovement) *
+			awareness += percentageOfVisiblePlayerPoints *
+				playerDetectionRate *
+				detectionBonusFromPlayerMovement *
 				Time.deltaTime;
 		}
 
@@ -514,7 +513,7 @@ public class Farmer : MonoBehaviour {
 		}
 
 		float CalculateMovementBonus() {
-			const float maximumVelocity = 3.0f;
+			float maximumVelocity = player.MaximumMovementSpeed;
 			float playerVelocity = playerRigidbody.velocity.magnitude;
 			// Scale the increased detection bonus from player movement based
 			// on how fast the player is moving, up to a peak value.
