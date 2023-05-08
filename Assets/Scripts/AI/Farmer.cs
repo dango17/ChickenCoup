@@ -489,7 +489,6 @@ public class Farmer : MonoBehaviour {
 		// Handles seeing the player.
 		if (!canSeePlayer &&
 			!player.IsHiding &&
-			!inputHandler.isConcealed &&
 			visualSensor.Contains(visualSensor.Data, playersParent)) {
 			canSeePlayer = true;
 			seenPlayerRecently = true;
@@ -505,9 +504,11 @@ public class Farmer : MonoBehaviour {
 			float detectionBonusFromPlayerMovement = CalculateMovementBonus();
 			float detectionBonusFromPlayerDistance = CalculateDistanceBonus();
 			float detectionBonusFromPlayerPosition = CalculateFieldOfViewBonus();
+			float detectionBonusFromPlayerConcealment = inputHandler.isConcealed ? 0.4f : 1.0f;
 			float detectionBonuses = detectionBonusFromPlayerMovement *
 				detectionBonusFromPlayerDistance *
-				detectionBonusFromPlayerPosition;
+				detectionBonusFromPlayerPosition *
+				detectionBonusFromPlayerConcealment;
 			awareness += percentageOfVisiblePlayerPoints *
 				playerDetectionRate *
 				detectionBonuses * 
