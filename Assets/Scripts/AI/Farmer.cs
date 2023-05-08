@@ -240,10 +240,6 @@ public class Farmer : MonoBehaviour {
 	/// prevent the data being misread.
 	/// </summary>
 	public void StopAction() {
-		if (isBlindAndDeaf || isStunned) {
-			return;
-		}
-
 		animator.SetTrigger("Idling");
 		StopAllCoroutines();
 		lookAtCoroutine = null;
@@ -260,18 +256,18 @@ public class Farmer : MonoBehaviour {
 		animator.SetBool("Catching", false);
 		animator.ResetTrigger("CatchingTrigger");
 		catchAnimationState = AnimationStates.NotStarted;
+		StopLookAtCoroutine();
 		StopAction();
 	}
 	#endregion
 
 	#region Animation Events
 	public void ToggleCatchCollider(bool enableCollider) {
-		catchCollider.enabled = enableCollider;
-
 		if (!enableCollider && catchColliderIsTouchingPlayer) {
 			hasCaughtPlayer = true;
-			catchColliderIsTouchingPlayer = false;
 		}
+
+		catchCollider.enabled = enableCollider;
 	}
 
 	public void CatchAnimationStarted() {
@@ -808,10 +804,8 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True if the action has completed (successfully or unsuccessfully). </returns>
 	private bool CatchPlayer() {
-		if (!CanCatchPlayer()) {
-			Debug.Log("Catch Action Stopped Early");
-			StopLookAtCoroutine();
-			StopCatchingPlayer();
+		if (!CanCatchPlayer() && catchAnimationState == AnimationStates.NotStarted) {
+			Debug.Log("Catch Action Cancelled");
 			return true;
 		}
 
@@ -849,7 +843,6 @@ public class Farmer : MonoBehaviour {
 			}
 			default: {
 				Debug.Log("Catch Action Stopped by Default Case");
-				StopLookAtCoroutine();
 				StopCatchingPlayer();
 				return true;
 			}
@@ -873,14 +866,14 @@ public class Farmer : MonoBehaviour {
 
 			yield return null;
 		}
+	}
 
-		void StopLookAtCoroutine() {
-			rotationAmount = 0;
+	private void StopLookAtCoroutine() {
+		rotationAmount = 0;
 
-			if (lookAtCoroutine != null) {
-				StopCoroutine(lookAtCoroutine);
-				lookAtCoroutine = null;
-			}
+		if (lookAtCoroutine != null) {
+			StopCoroutine(lookAtCoroutine);
+			lookAtCoroutine = null;
 		}
 	}
 
@@ -889,10 +882,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <returns> True when the action has completed. </returns>
 	private bool CarryPlayer() {
-		Debug.Log("Carrying Player");
-
 		if (HasArrivedAtDestination()) {
-			Debug.Log("Released Player");
 			HoldOntoPlayer(false);
 			CageController cageController = GameObject.FindGameObjectWithTag("ChickenCage").GetComponent<CageController>();
 			cageController.LockPlayer(player.transform);
@@ -963,8 +953,11 @@ public class Farmer : MonoBehaviour {
 	/// <returns> True if the agent is standing close enough to their destination. </returns>
 	private bool HasArrivedAtDestination() {
 		// Once a destination is reached, the path is automatically removed
-		// from the nav mesh agent.
-		if (moveDestinationSet && !navMeshAgent.hasPath) {
+		// from the nav mesh agent, but a pending path means the agent hasn't
+		// reached their destination yet.
+		if (moveDestinationSet &&
+			!navMeshAgent.hasPath &&
+			!navMeshAgent.pathPending) {
 			moveDestinationSet = false;
 			return true;
 		}
