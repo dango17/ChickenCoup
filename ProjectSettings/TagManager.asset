@@ -10,6 +10,8 @@ TagManager:
   - Crates
   - Pullable
   - Pushable
+  - CoverForHiding
+  - ChickenCage
   layers:
   - Default
   - TransparentFX

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using TMPro;
 /// <summary>
 /// 
 /// </summary>
@@ -18,6 +19,7 @@ public class Scenemanager : MonoBehaviour
     public GameObject backBtn;
     public GameObject ResMenu;
     public GameObject selectfirstBtn, optionsfirstBtn, optionsclosedBtn;
+    public TextMeshProUGUI valueText;
 
     // Start is called before the first frame update
     void Start()
@@ -63,6 +65,11 @@ public class Scenemanager : MonoBehaviour
         backBtn.SetActive(false);
         ResMenu.SetActive(false);
         EventSystem.current.SetSelectedGameObject(optionsclosedBtn);
+    }
+
+    public void OnSliderChanged(float value)
+    {
+        valueText.text = value.ToString();
     }
 
     public void Quit()

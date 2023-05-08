@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Audio;
 
 namespace DO
 {
@@ -26,6 +27,12 @@ namespace DO
         /// </summary>
         public int NumberOfDetectionPoints {
             get { return detectionPoints.Length; }
+            private set { }
+        }
+        public float MaximumMovementSpeed {
+            // Add the player's move speed because it reflects the increase in
+            // speed from eating foods.
+            get { return maximumSprintSpeed + moveSpeed; }
             private set { }
         }
 
@@ -57,11 +64,15 @@ namespace DO
         [SerializeField] public Transform spawnPoint;
         [SerializeField] public float cooldownTime = 1f;
         [SerializeField] public float timeSinceLastSpawn = 3f; 
+        [Header("Clucking")]
+        [SerializeField] public AudioClip[] cluckSounds;
+        [SerializeField] private AudioSource audioSource;
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
         [SerializeField] public bool isInFreeLook;
-        [SerializeField] public bool isFPMode; 
+        [SerializeField] public bool isFPMode;
+        [SerializeField] public bool objectInHand;
 
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
@@ -69,13 +80,20 @@ namespace DO
         [HideInInspector] public SkinnedMeshRenderer meshRenderer;
         [HideInInspector] public InputHandler inputHandler;
 
+        /// <summary>
+        /// Use the property for this variable when getting it's value,
+        /// so the maximum speed factors in the speed boost from foods.
+        /// </summary>
+		private readonly float maximumSprintSpeed = 5.0f;
 		private DetectionPoint[] detectionPoints = null;
 
 		public void EnableFirstPerson(bool enableFirstPerson) {
 			inputHandler.controller.isFPMode = enableFirstPerson;
+            inputHandler.playerLeftEye.SetActive(false); 
+            inputHandler.playerRightEye.SetActive(false); 
 		}
 
-		private void Start()
+        private void Start()
         {
             mTransform = this.transform;
             rigidbody = GetComponent<Rigidbody>();
@@ -88,7 +106,14 @@ namespace DO
             foreach (DetectionPoint detectionPoint in detectionPoints) {
                 detectionPoint.SetDataSource(this);
 			}
-		}
+
+            audioSource = GetComponentInChildren<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+        }
+
 
         private void Update()
         {
@@ -301,6 +326,15 @@ namespace DO
             {
                 rigidbody.AddForce(Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * rigidbody.mass, ForceMode.Acceleration);
             }
+        }
+
+        public void HandleClucking()
+        {
+            int randomIndex = Random.Range(0, cluckSounds.Length);
+            audioSource.clip = cluckSounds[randomIndex];
+            audioSource.spatialBlend = 1;
+            audioSource.Play();
+            AudioSensor.NotifyNearbyAudioSensors(audioSource, transform.position);
         }
     }
 }

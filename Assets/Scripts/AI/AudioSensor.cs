@@ -19,14 +19,17 @@ public class AudioSensor : Sensor {
 	/// Notifies all nearby audio sensors that a sound was played.
 	/// Always call anytime a sound is played!
 	/// </summary>
-	public static void NotifyNearbyAudioSensors(AudioSource audioSource, Vector3 soundPosition) {
+	/// <param name="audioSource"> The audio component that played the sound. </param>
+	/// <param name="soundPosition"> The position where the sound was played. </param>
+	public static void NotifyNearbyAudioSensors(AudioSource audioSource,
+		Vector3 soundPosition) {
 		if (!audioSource) {
 			return;
 		}
 
 		const float half = 0.5f;
 		float sphereRadius = audioSource.maxDistance * half;
-		int farmerLayer = 1 << LayerMask.NameToLayer("Farmer");
+		int farmerLayer = 1 << LayerMask.NameToLayer("FarmerAudioSensor");
 		Collider[] intersectingColliders = Physics.OverlapSphere(soundPosition,
 			sphereRadius,
 			farmerLayer,
@@ -52,7 +55,7 @@ public class AudioSensor : Sensor {
 	}
 
 	private void Start() {
-		navMeshAgent = transform.parent.GetComponent<NavMeshAgent>();
+		navMeshAgent = transform.root.GetComponentInChildren<NavMeshAgent>();
 	}
 
 	private bool TracePathToSound(Vector3 soundsPosition, float maximumPathLength) {

@@ -16,8 +16,24 @@ namespace DO
         public GameObject fpCameraObject;
         public Transform camTransform;
 
+        public float raycastDistance = 10f;
+        public float cameraSpeed = 5f;
+        public LayerMask obstacleLayer;
+
         public float tiltAngle;
-        public float tileRotation = 5f; 
+        public float tileRotation = 5f;
+
+
+        public void FixedUpdate()
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(mainCameraObject.transform.position, mainCameraObject.transform.forward, out hit, raycastDistance, obstacleLayer))
+            {
+                // Move the camera along the wall's surface
+                Vector3 newPosition = hit.point + hit.normal * 0.2f; // Add a small offset to avoid clipping
+                mainCameraObject.transform.position = Vector3.Lerp(mainCameraObject.transform.position, newPosition, Time.fixedDeltaTime * cameraSpeed);
+            }
+        }
 
         public void HandleFPSTilt(float vertical, float delta)
         {

@@ -17,12 +17,15 @@ namespace DO
         [SerializeField] public ExecutionOrder movementOrder;
         [SerializeField] public PlayerController controller;
         [SerializeField] public CameraManager cameraManager;
-        [SerializeField] public GameObject playerModel; 
+        [SerializeField] public GameObject playerModel;
+        [SerializeField] public GameObject playerLeftEye;
+        [SerializeField] public GameObject playerRightEye;
+        [SerializeField] public Animator UIAnims;
         PlayerControls inputActions; 
 
         [Header("Components")]
-        [SerializeField] Vector3 moveDirection;
-        [SerializeField] Vector3 lookInputDirection;
+        [SerializeField] public Vector3 moveDirection;
+        [SerializeField] public Vector3 lookInputDirection;
         [SerializeField] public float wallDetectionDistance = 0.2f;
         [SerializeField] public float wallDetectionDistanceOnWall = 1.2f;
 
@@ -90,8 +93,8 @@ namespace DO
             inputActions.Player.Grab.canceled += i => isGrabbing = false;
 
             //Clucking Input (Need to set up properly)
-            inputActions.Player.Cluck.performed += i => isClucking = true;
-            //inputActions.Player.Cluck.canceled += i => isClucking = false; 
+            inputActions.Player.Cluck.started += i => isClucking = true;
+            inputActions.Player.Cluck.canceled += i => isClucking = false; 
 
             //LayEgg Input
             inputActions.Player.LayEgg.started += i => isLayingEgg = true;
@@ -183,6 +186,11 @@ namespace DO
             if (isTired == false && isSprinting == true)
             {
                 controller.moveSpeed += 0.01f;
+
+                if (controller.moveSpeed > controller.MaximumMovementSpeed) {
+                    controller.moveSpeed = controller.MaximumMovementSpeed;
+				}
+
                 isSprinting = true;
                 isTired = false; 
                 StartCoroutine(RunTimer()); 
@@ -216,6 +224,9 @@ namespace DO
             { 
                 cameraManager.fpCameraObject.SetActive(true);
                 playerModel.SetActive(false);
+                playerLeftEye.SetActive(false);
+                playerRightEye.SetActive(false); 
+
                 controller.FPRotation(lookInputDirection.x, delta);
                 cameraManager.HandleFPSTilt(lookInputDirection.y, delta); 
                 controller.isInFreeLook = true;
@@ -224,6 +235,9 @@ namespace DO
             {
                 cameraManager.fpCameraObject.SetActive(false);
                 playerModel.SetActive(true);
+                playerLeftEye.SetActive(true);
+                playerRightEye.SetActive(true); 
+
                 controller.isInFreeLook = false;
                 cameraManager.tiltAngle = 0;
             }
@@ -238,6 +252,22 @@ namespace DO
             else
             {
                 controller.HandleEggCoolDown(); 
+            }
+
+            #endregion
+
+            #region Clucking
+            if(isClucking == true)
+            {
+                controller.HandleClucking();
+
+                //Play UI cluck element 
+                UIAnims.SetBool("isClucking", true);
+            }
+            if(isClucking == false)
+            {
+                //Play UI cluck element 
+                UIAnims.SetBool("isClucking", false);
             }
 
             #endregion

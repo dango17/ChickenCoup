@@ -3,19 +3,34 @@
 // Created On: 30/01/2023
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
 /// Uses a trigger collider to detect game-objects of a certain type.
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
+	public struct CollectedData {
+		public float lifespan;
+		public GameObject gameobject;
+
+		public CollectedData (GameObject gameobject, float lifespan) {
+			this.gameobject = gameobject;
+			this.lifespan = lifespan;
+        }
+	}
+
 	public enum Visibility {
 		Visible,
 		PartiallyVisible,
 		NotVisible
 	}
 
-	public LinkedList<GameObject> Data {
+	public int DetectionRange {
+		get { return detectionRange; }
+		private set { detectionRange = value; }
+	}
+	public LinkedList<CollectedData> Data {
 		get {
 			return data;
 		}
@@ -24,66 +39,101 @@ public abstract class Sensor : MonoBehaviour {
 		}
 	}
 
-	[SerializeField, Tooltip("Data will only be gathered within this range " +
-		"i.e. it's the view distance, hearing range etc.")]
+    [SerializeField, Tooltip("Toggle true if the gathered data should " +
+        "be forgotten after 10 seconds.")]
+	protected bool deleteDataAfterDelay = false;
+	[SerializeField, Tooltip("The length of time data will be saved for, " +
+		"before being forgotten.")]
+	protected float defaultDataLifespan = 10.0f;
+	[SerializeField, Tooltip("Data will only be gathered within this radius" +
+		"of the sensors origin.")]
 	protected int detectionRange = 5;
-	[SerializeField, Tooltip("The AI can only see objects on this layer.")]
+	[SerializeField, Tooltip("The sensor will only 'see' data that exists " +
+		"on this layer.")]
 	protected LayerMask visibleLayer = default;
-	[SerializeField, Tooltip("The AI will only remember objects on this layer.")]
+	[SerializeField, Tooltip("The sensor will only remember data that exists " +
+		"on this layer.")]
 	protected LayerMask detectionLayer = default;
 	/// <summary>
 	/// Stores references to the game objects the agent has gathered data about.
 	/// </summary>
-	protected LinkedList<GameObject> data = new LinkedList<GameObject>();
-	protected LinkedList<GameObject> partiallyDiscoveredData = new LinkedList<GameObject>();
-	[SerializeField, Tooltip("The location where raycasts will originate from, " +
-		"when checking for line of sight on objects.")]
+	protected LinkedList<CollectedData> data = new LinkedList<CollectedData>();
+	protected LinkedList<CollectedData> partiallyDiscoveredData = new LinkedList<CollectedData>();
+	[SerializeField, Tooltip("The central point of the sensor bounds.")]
 	protected Transform sensorOrigin = null;
+
+    #region Helper Methods
+    public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+		return collection.Count == 0 ? false : collection.Select(element => element.gameobject == gameobjectToSelect).First();
+	}
+
+	public void AddObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
+		if (!Contains(collection, objectToAdd)) {
+			collection.AddLast(new CollectedData(objectToAdd, defaultDataLifespan));
+		}
+	}
+
+	public void RemoveObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
+		if (Contains(collection, objectToAdd)) {
+			collection.Remove(GetCollectedData(collection, objectToAdd));
+		}
+	}
+	#endregion
 
 	/// <summary>
 	/// Notifies the sensor that a game-object was detected.
 	/// </summary>
 	/// <param name="detectedGameObject"> The detected game-object. </param>
 	public void ObjectDetected(GameObject detectedGameObject) {
-		int detectedGameObjectsLayer = 1 << detectedGameObject.gameObject.layer;
+		int detectedGameObjectsLayer = 1 << detectedGameObject.layer;
 
-		// Check if the object exists on a layer which the AI should save data
-		// about.
-		if ((detectionLayer & detectedGameObjectsLayer) != 0) {
-			bool discovered = data.Contains(detectedGameObject.transform.root.gameObject);
-			bool partiallyDiscovered = partiallyDiscoveredData.Contains(detectedGameObject.transform.root.gameObject);
+		// A result of 0 means both layers do not share any of the same
+		// flipped bits.
+		if (((detectionLayer & detectedGameObjectsLayer) == 0) ||
+			// Data that doesn't exist on the visible layer should also be
+			// ignored, only if it's also not on the memorable layer.
+			(((visibleLayer & detectedGameObjectsLayer) == 0) &&
+			((detectionLayer & detectedGameObjectsLayer) == 0))) {
+			return;
+		}
 
-			// Only verify detection if the data is not already discovered or
-			// is only partilly discovered.
-			if (!discovered || (!discovered && !partiallyDiscovered)) {
-				switch (VerifyDetection(detectedGameObject.gameObject)) {
-					case Visibility.Visible: {
-						if (!discovered) {
-							data.AddLast(detectedGameObject.transform.root.gameObject);
-						}
+		bool discovered = Contains(data, detectedGameObject.transform.root.gameObject);
+		bool partiallyDiscovered = Contains(partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
 
-						if (partiallyDiscovered) {
-							partiallyDiscoveredData.Remove(detectedGameObject.transform.root.gameObject);
-						}
+		// Don't verify detection if the data is already discovered or
+		// partially discovered. Include "discovered &&" because the data
+		// first needs to change to fully discovered before being ignored, and
+		// using "partiallyDiscovered" by itself doesn't work.
+		if (discovered || (discovered && partiallyDiscovered)) {
+			return;
+		}
 
-						break;
-					}
-					case Visibility.PartiallyVisible: {
-						if (!partiallyDiscovered) {
-							partiallyDiscoveredData.AddLast(detectedGameObject.transform.root.gameObject);
-						}
-
-						break;
-					}
-					case Visibility.NotVisible: {
-						ForgetObject(detectedGameObject.transform.root.gameObject);
-						return;
-					}
-					default: {
-						ForgetObject(detectedGameObject.transform.root.gameObject);
-						return;
-					}
+		switch (VerifyDetection(detectedGameObject)) {
+			case Visibility.Visible: {
+				if (!discovered) {
+					AddObject(ref data, detectedGameObject.transform.root.gameObject);
 				}
+
+				if (partiallyDiscovered) {
+					RemoveObject(ref partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
+				}
+
+				break;
+			}
+			case Visibility.PartiallyVisible: {
+				if (!partiallyDiscovered) {
+					AddObject(ref partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
+				}
+
+				break;
+			}
+			case Visibility.NotVisible: {
+				ForgetObject(detectedGameObject.transform.root.gameObject);
+				return;
+			}
+			default: {
+				ForgetObject(detectedGameObject.transform.root.gameObject);
+				return;
 			}
 		}
 	}
@@ -93,15 +143,24 @@ public abstract class Sensor : MonoBehaviour {
 	/// </summary>
 	/// <param name="gameObjectToForget"> The game-object to forget. Must be the root game-object. </param>
 	public void ForgetObject(GameObject gameObjectToForget) {
-		if (data.Contains(gameObjectToForget)) {
-			data.Remove(gameObjectToForget);
-		}
-
-		if (partiallyDiscoveredData.Contains(gameObjectToForget)) {
-			partiallyDiscoveredData.Remove(gameObjectToForget);
-		}
-
+		RemoveObject(ref data, gameObjectToForget);
+		RemoveObject(ref partiallyDiscoveredData, gameObjectToForget);
 		DisableObjectsDetectionPoints(gameObjectToForget);
+	}
+
+	protected virtual void Awake() {
+		SphereCollider sphereCollider = GetComponent<SphereCollider>();
+		sphereCollider.radius = detectionRange;
+	}
+
+    protected virtual void Update() {
+		DeleteGatheredDataThatsExpired();
+	}
+
+	protected virtual void FixedUpdate() { }
+
+	protected CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
 	}
 
 	/// <summary>
@@ -111,12 +170,7 @@ public abstract class Sensor : MonoBehaviour {
 	/// <returns> True if the data is valid and should be saved. </returns>
 	protected abstract Visibility VerifyDetection(GameObject gameobject);
 
-	private void Awake() {
-		SphereCollider sphereCollider = GetComponent<SphereCollider>();
-		sphereCollider.radius = detectionRange;
-	}
-
-	private void OnTriggerEnter(Collider other) {
+    private void OnTriggerEnter(Collider other) {
 		ObjectDetected(other.gameObject);
 	}
 
@@ -129,14 +183,52 @@ public abstract class Sensor : MonoBehaviour {
 
 		// Check the root game-object because that's what the sensor saves a
 		// reference to.
-		if (data.Contains(othersRootGameObject)) {
+		if (Contains(data, othersRootGameObject)) {
 			DisableObjectsDetectionPoints(othersRootGameObject);
-			data.Remove(othersRootGameObject);
+			RemoveObject(ref data, othersRootGameObject);
 		}
 
-		if (partiallyDiscoveredData.Contains(othersRootGameObject)) {
+		if (Contains(partiallyDiscoveredData, othersRootGameObject)) {
 			DisableObjectsDetectionPoints(othersRootGameObject);
-			partiallyDiscoveredData.Remove(othersRootGameObject);
+			RemoveObject(ref partiallyDiscoveredData, othersRootGameObject);
+		}
+	}
+
+	private void DeleteGatheredDataThatsExpired() {
+		if (!deleteDataAfterDelay) {
+			return;
+		}
+
+		SearchCollectionForExpiredData(ref data);
+		SearchCollectionForExpiredData(ref partiallyDiscoveredData);
+
+		void SearchCollectionForExpiredData(ref LinkedList<CollectedData> collection) {
+			if (collection.Count == 0) {
+				return;
+			}
+
+			LinkedListNode<CollectedData> iterator = null;
+
+			for (iterator = collection.First;
+				iterator.Next != null;
+				iterator = iterator.Next) {
+				RemoveExpiredData(ref collection, ref iterator);
+			}
+
+			RemoveExpiredData(ref collection, ref iterator);
+		}
+
+		void RemoveExpiredData(ref LinkedList<CollectedData> collection, ref LinkedListNode<CollectedData> iterator) {
+			CollectedData collectedData = iterator.Value;
+			collectedData.lifespan -= Time.deltaTime;
+
+			if (collectedData.lifespan <= 0) {
+				LinkedListNode<CollectedData> previousValue = iterator.Previous != null ? iterator.Previous : default;
+				collection.Remove(iterator);
+				iterator = previousValue;
+			} else {
+				iterator.Value = collectedData;
+			}
 		}
 	}
 
