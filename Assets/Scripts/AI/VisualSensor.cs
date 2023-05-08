@@ -51,9 +51,7 @@ public class VisualSensor : Sensor {
 	private Visibility IsWithinLineOfSight(GameObject detectedGameObject) {
 		DetectionPoint[] detectionPoints = detectedGameObject.GetComponentsInChildren<DetectionPoint>();
 
-		// TODO: uncomment when detection points don't trigger a stack overflow
-		// error.
-		/*if (detectionPoints.Length > 0) {
+		if (detectionPoints.Length > 0) {
 			float pointsDetected = 0;
 
 			// Check how many of the object's detection points are visible.
@@ -84,8 +82,7 @@ public class VisualSensor : Sensor {
 			} else {
 				return Visibility.NotVisible;
 			}
-		} else */
-		if (RaycastHit(sensorOrigin.position,
+		} else if (RaycastHit(sensorOrigin.position,
 			visibleLayer,
 			detectedGameObject,
 			null)) {
@@ -107,10 +104,8 @@ public class VisualSensor : Sensor {
 			LayerMask raycastLayer,
 			GameObject targetObject,
 			GameObject gameObjectToIgnore) {
-			RaycastHit[] raycastHits = new RaycastHit[5];
-			Physics.RaycastNonAlloc(raycastOrigin,
+			RaycastHit[] raycastHits = Physics.RaycastAll(raycastOrigin,
 			targetObject.transform.position - sensorOrigin.position,
-			raycastHits,
 			detectionRange,
 			raycastLayer);
 			raycastHits = raycastHits.OrderBy(hit => hit.distance).ToArray();
@@ -131,14 +126,7 @@ public class VisualSensor : Sensor {
 						// set to be ignored.
 						continue;
 					} else if (raycastHits[i].collider.gameObject.GetComponent<DetectionPoint>()) {
-						// Continue raycasting for the target game object from the
-						// intersected detection point's position because
-						// detection points shouldn't prevent raycasts from
-						// passing through.
-						return RaycastHit(raycastHits[i].point,
-							raycastLayer,
-							targetObject,
-							gameObjectToIgnore);
+						continue;
 					} else {
 						// Return false because an object that is not see through was hit.
 						return false;
@@ -177,7 +165,7 @@ public class VisualSensor : Sensor {
 
 		foreach (CollectedData collectedData in partiallyDiscoveredData) {
 			if (VerifyDetection(collectedData.gameobject) == Visibility.NotVisible) {
-				partiallyDiscoveredData.Remove(GetCollectedData(data, collectedData.gameobject));
+				partiallyDiscoveredData.Remove(GetCollectedData(partiallyDiscoveredData, collectedData.gameobject));
 				break;
 			}
 		}

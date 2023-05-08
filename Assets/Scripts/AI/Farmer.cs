@@ -477,9 +477,7 @@ public class Farmer : MonoBehaviour {
 			float detectionBonuses = detectionBonusFromPlayerMovement *
 				detectionBonusFromPlayerDistance *
 				detectionBonusFromPlayerPosition;
-			// TODO: remove magic number when detection points don't trigger a
-			// stack overflow error.
-			awareness += 1/*percentageOfVisiblePlayerPoints*/ *
+			awareness += percentageOfVisiblePlayerPoints *
 				playerDetectionRate *
 				detectionBonuses * 
 				Time.deltaTime;
