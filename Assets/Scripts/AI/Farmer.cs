@@ -69,14 +69,27 @@ public class Farmer : MonoBehaviour {
 	private float awareness = 0.0f;
 	private float maximumAwareness = 100.0f;
 	/// <summary>
-	/// The speed at which the farmer will become fully aware of the player 
-	/// when they're visible.
-	/// Affected by how much of an object is visible.
+	/// 
 	/// </summary>
-	private float playerDetectionRate = 50.0f;
+	[SerializeField, Range(1, 100), Tooltip("The speed at which the farmer will become fully " +
+		"aware of the player when they're visible.")]
+	private float playerDetectionRate = 80.0f;
 	#endregion
 
 	#region Movement Variables
+	[SerializeField, Tooltip("Controls how fast the farmer moves when walking.")]
+	private float walkSpeed = 2.25f;
+	/// <summary>
+	/// A multiplier for the walk animation's playback speed.
+	/// </summary>
+	private float walkPlaybackSpeedMultiplier = 0.75f;
+	[SerializeField, Tooltip("Controls how fast the farmer moves when chasing " +
+		"the player.")]
+	private float chaseSpeed = 4.25f;
+	/// <summary>
+	/// A multiplier for the chase animation's playback speed.
+	/// </summary>
+	private float chasePlaybackSpeedMultiplier = 1.4f;
 	private bool moveDestinationSet = false;
 	private bool moveDestinationChanged = false;
 	/// <summary>
@@ -292,6 +305,7 @@ public class Farmer : MonoBehaviour {
 
 	private void Start() {
 		FindComponents();
+		SetVariables();
 	}
 
 	private void Update() {
@@ -358,6 +372,23 @@ public class Farmer : MonoBehaviour {
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
 		pointsOfInterest = FindObjectsOfType<PointOfInterest>();
+	}
+
+	/// <summary>
+	/// Sets any variables that need changing as soon as the game starts.
+	/// </summary>
+	private void SetVariables() {
+		// If the nav mesh agent move speed is 0.75...
+		const float speed = 0.75f;
+		// ...0.25 would be a good animation playback speed multiplier.
+		const float multiplier = 0.25f;
+		// This equation mostly produces a believable playback speed for the
+		// walk/chase animation.
+		// Every other speed can use these base values to automatically
+		// calculate any new multipliers, rather than manually doing it within
+		// the inspector.
+		walkPlaybackSpeedMultiplier = walkSpeed / speed * multiplier;
+		chasePlaybackSpeedMultiplier = chaseSpeed / speed * multiplier;
 	}
 
 	/// <summary>
@@ -665,6 +696,8 @@ public class Farmer : MonoBehaviour {
 
 			moveDestinationSet = navMeshAgent.SetDestination(wonderDestination);
 			animator.SetBool("Walking", true);
+			navMeshAgent.speed = walkSpeed;
+			animator.SetFloat("MoveMultiplier", walkPlaybackSpeedMultiplier);
 		}
 
 		return false;
@@ -681,6 +714,8 @@ public class Farmer : MonoBehaviour {
 			Vector3 wonderDestination = pointsOfInterest[pointOfInterestIndex++].GetComponent<PointOfInterest>().StandPosition;
 			moveDestinationSet = navMeshAgent.SetDestination(wonderDestination);
 			animator.SetBool("Walking", true);
+			navMeshAgent.speed = walkSpeed;
+			animator.SetFloat("MoveMultiplier", walkPlaybackSpeedMultiplier);
 			visitPointOfInterestTime = maximumVisitPointOfInterestTime;
 			canVisitPointOfInterest = false;
 		}
@@ -707,17 +742,21 @@ public class Farmer : MonoBehaviour {
 			return false;
 		}
 
+		Vector3 moveDestination = transform.position;
+
 		if (seenPlayerRecently) {
-			// Move to the player's last known position.
-			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownPosition);
-			animator.SetBool("Walking", true);
+			moveDestination = playersLastKnownPosition;
 			Debug.DrawLine(playersLastKnownPosition, playersLastKnownPosition + Vector3.up, Color.blue, Mathf.Infinity);
 		} else if (heardPlayerRecently) {
-			moveDestinationSet = navMeshAgent.SetDestination(playersLastKnownSoundCuePosition);
-			animator.SetBool("Walking", true);
+			moveDestination = playersLastKnownSoundCuePosition;
 			Debug.DrawLine(playersLastKnownPosition, playersLastKnownPosition + Vector3.up, Color.magenta, Mathf.Infinity);
 		}
-
+		
+		// Move to the player's last known position.
+		moveDestinationSet = navMeshAgent.SetDestination(moveDestination);
+		animator.SetBool("Walking", true);
+		navMeshAgent.speed = walkSpeed;
+		animator.SetFloat("MoveMultiplier", walkPlaybackSpeedMultiplier);
 		return false;
 	}
 
@@ -743,6 +782,8 @@ public class Farmer : MonoBehaviour {
 			Vector3 chaseDestination = playersLastKnownPosition - directionToPlayer * spaceBetweenAgentAndPlayer;
 			moveDestinationSet = navMeshAgent.SetDestination(chaseDestination);
 			animator.SetBool("Walking", true);
+			navMeshAgent.speed = chaseSpeed;
+			animator.SetFloat("MoveMultiplier", chasePlaybackSpeedMultiplier);
 			navMeshAgent.autoBraking = false;
 			moveDestinationChanged = false;
 		}
@@ -859,6 +900,8 @@ public class Farmer : MonoBehaviour {
 		if (!moveDestinationSet) {
 			moveDestinationSet = navMeshAgent.SetDestination(releasePosition.position);
 			animator.SetBool("Walking", true);
+			navMeshAgent.speed = chaseSpeed;
+			animator.SetFloat("MoveMultiplier", chasePlaybackSpeedMultiplier);
 			animator.SetBool("Carrying", true);
 		}
 
