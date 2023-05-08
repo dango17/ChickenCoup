@@ -152,6 +152,8 @@ public class Farmer : MonoBehaviour {
 	private bool holdingKeycard = true;
 
 	private Flashlight flashlight = null;
+	private GameObject keycard = null;
+	private Transform keycardHoldTransform = null;
 	private Animator animator = null;
 
 	private GameObject playersParent = null;
@@ -201,7 +203,6 @@ public class Farmer : MonoBehaviour {
 		navMeshAgent.enabled = false;
 		BlindAndDeafenFarmer(stunLength);
 		stunTime = stunLength;
-		animator.SetBool("Stunned", true);
 		animator.SetTrigger("StunnedTrigger");
 	}
 
@@ -225,9 +226,8 @@ public class Farmer : MonoBehaviour {
 			return;
         }
 
-		GameObject keycard = GameObject.FindGameObjectWithTag("Keycard");
-
-		if (keycard.transform.parent.gameObject == gameObject) {
+		if (keycard.transform.parent != null &&
+			keycard.transform.parent.gameObject == gameObject) {
 			keycard.transform.parent = null;
         }
 		
@@ -285,6 +285,10 @@ public class Farmer : MonoBehaviour {
 		animator.SetBool("Catching", false);
 		catchAnimationState = AnimationStates.Ended;
 	}
+
+	public void StunAnimationStarted() {
+		animator.SetBool("Stunned", true);
+	}
 	#endregion
 
 	public static float PathLength(NavMeshPath path) {
@@ -324,6 +328,10 @@ public class Farmer : MonoBehaviour {
 
 		if (isStunned) {
 			return;
+		}
+
+		if (holdingKeycard) {
+			keycard.transform.position = keycardHoldTransform.position;
 		}
 
 		utilityScript.Update();
@@ -372,6 +380,8 @@ public class Farmer : MonoBehaviour {
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
 		pointsOfInterest = FindObjectsOfType<PointOfInterest>();
+		keycard = GameObject.FindGameObjectWithTag("Keycard");
+		keycardHoldTransform = GameObject.FindGameObjectWithTag("Keycard Hold Position").transform;
 	}
 
 	/// <summary>

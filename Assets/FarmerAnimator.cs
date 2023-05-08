@@ -28,6 +28,10 @@ public class FarmerAnimator : MonoBehaviour {
 		farmerScript.CatchAnimationEnded();
 	}
 
+	public void StunAnimationStarted() {
+		farmerScript.StunAnimationStarted();
+	}
+
 	private void Start() {
 		farmerScript = GameObject.FindGameObjectWithTag("Farmer").GetComponent<Farmer>();
 	}

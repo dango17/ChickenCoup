@@ -50,10 +50,11 @@ namespace DO
         //If farmer steps on egg crack open
         public void OnTriggerEnter(Collider other)
         {
-            if(other.tag == "Farmer")
-            {
-                //I'd imagine the logic to stun the farmer would go here somewhere?
-                CrackOpen(); 
+            if (!isCracked && other.tag == "Farmer") {
+                CrackOpen();
+                Farmer farmerScript = other.GetComponent<Farmer>();
+                const float stunLength = 2.0f;
+                farmerScript.StunFarmer(stunLength);
             }
         }
     }
