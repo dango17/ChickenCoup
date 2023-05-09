@@ -73,12 +73,14 @@ namespace DO
         [SerializeField] public bool isInFreeLook;
         [SerializeField] public bool isFPMode;
         [SerializeField] public bool objectInHand;
+        [SerializeField] public bool isArrested; 
 
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
         [HideInInspector] new Rigidbody rigidbody = null;
         [HideInInspector] public SkinnedMeshRenderer meshRenderer;
         [HideInInspector] public InputHandler inputHandler;
+        [HideInInspector] CageController cageController; 
 
         /// <summary>
         /// Use the property for this variable when getting it's value,

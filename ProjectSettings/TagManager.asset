@@ -12,6 +12,10 @@ TagManager:
   - Pushable
   - CoverForHiding
   - ChickenCage
+  - Catch Collider
+  - Keycard Hold Position
+  - Keycard
+  - Fuse
   layers:
   - Default
   - TransparentFX
@@ -29,7 +33,7 @@ TagManager:
   - DetectionPoints
   - Pushable
   - Pullable
-  - 
+  - Wonder Point
   - 
   - 
   - 

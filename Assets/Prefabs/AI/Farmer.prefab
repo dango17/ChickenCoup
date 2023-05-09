@@ -1203,6 +1203,58 @@ Transform:
   m_Father: {fileID: 3411084042142193382}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2257242534079123222
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 750160161421911266}
+  - component: {fileID: 4156711745535715149}
+  m_Layer: 0
+  m_Name: Wonder Point Manager
+  m_TagString: Wonder Point Manager
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &750160161421911266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2257242534079123222}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 645050449587148314}
+  - {fileID: 7282785467671641310}
+  - {fileID: 4461021790995784300}
+  - {fileID: 3564036324485879446}
+  - {fileID: 9014461557479821200}
+  - {fileID: 4695145304004385458}
+  - {fileID: 3559642908667153407}
+  - {fileID: 5364661555894549274}
+  m_Father: {fileID: 3941516469279204357}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4156711745535715149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2257242534079123222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7719ad0a8a08c284cbcec47ab71e6043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2279093279087820218
 GameObject:
   m_ObjectHideFlags: 0
@@ -1626,6 +1678,7 @@ Transform:
   - {fileID: 3247846441059557325}
   - {fileID: 1903464381488219286}
   - {fileID: 4156757215326848509}
+  - {fileID: 750160161421911266}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3677,3 +3730,531 @@ Transform:
   m_Father: {fileID: 7032541297713660406}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &244357135990086290
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 750160161421911266}
+    m_Modifications:
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463700924164989413, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_Name
+      value: Wonder Point (North)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+--- !u!4 &645050449587148314 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+  m_PrefabInstance: {fileID: 244357135990086290}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3926918822137229028
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 750160161421911266}
+    m_Modifications:
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463700924164989413, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_Name
+      value: Wonder Point (East)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+--- !u!4 &4461021790995784300 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+  m_PrefabInstance: {fileID: 3926918822137229028}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4242826622594292254
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 750160161421911266}
+    m_Modifications:
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463700924164989413, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_Name
+      value: Wonder Point (SE)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7286919204611956644, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: displacement
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+--- !u!4 &3564036324485879446 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+  m_PrefabInstance: {fileID: 4242826622594292254}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4247431214405011319
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 750160161421911266}
+    m_Modifications:
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463700924164989413, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_Name
+      value: Wonder Point (West)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+--- !u!4 &3559642908667153407 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+  m_PrefabInstance: {fileID: 4247431214405011319}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4748086144260224914
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 750160161421911266}
+    m_Modifications:
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463700924164989413, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_Name
+      value: Wonder Point (NW)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7286919204611956644, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: displacement
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+--- !u!4 &5364661555894549274 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+  m_PrefabInstance: {fileID: 4748086144260224914}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5386038751251797562
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 750160161421911266}
+    m_Modifications:
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463700924164989413, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_Name
+      value: Wonder Point (SW)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7286919204611956644, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: displacement
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+--- !u!4 &4695145304004385458 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+  m_PrefabInstance: {fileID: 5386038751251797562}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7964099987039432790
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 750160161421911266}
+    m_Modifications:
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463700924164989413, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_Name
+      value: Wonder Point (NE)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7286919204611956644, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: displacement
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+--- !u!4 &7282785467671641310 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+  m_PrefabInstance: {fileID: 7964099987039432790}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8542837511823786776
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 750160161421911266}
+    m_Modifications:
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463700924164989413, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+      propertyPath: m_Name
+      value: Wonder Point (South)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+--- !u!4 &9014461557479821200 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 835290677638876296, guid: 8d5359d3a38f0ba46a3090766361b046, type: 3}
+  m_PrefabInstance: {fileID: 8542837511823786776}
+  m_PrefabAsset: {fileID: 0}

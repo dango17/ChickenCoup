@@ -34,6 +34,11 @@ public class Farmer : MonoBehaviour {
 		Ended
 	}
 
+	public bool HasCaughtPlayer {
+		get { return hasCaughtPlayer; }
+		private set { hasCaughtPlayer = value; }
+    }
+
 	#region Sensor Variables
 	private bool canSeePlayer = false;
 	private bool seenPlayerRecently = false;
@@ -182,7 +187,7 @@ public class Farmer : MonoBehaviour {
 		return !hasCaughtPlayer && Vector3.Distance(transform.position, player.transform.position) < maximumRangeToCatchPlayer ? true : false;
 	}
 
-	public bool HasCaughtPlayer() {
+	public bool IsHoldingPlayer() {
 		return hasCaughtPlayer;
 	}
 
@@ -454,7 +459,7 @@ public class Farmer : MonoBehaviour {
 			satisfactionAmount = 75;
 			Action carryPlayerAction = new Action(new KeyValuePair<string, Action.Bool>[] {
 				new KeyValuePair<string, Action.Bool>("Can See Player", CanSeePlayer),
-				new KeyValuePair<string, Action.Bool>("Can Carry Player", HasCaughtPlayer)
+				new KeyValuePair<string, Action.Bool>("Can Carry Player", IsHoldingPlayer)
 			},
 			new KeyValuePair<Motive, float>[] {
 				new KeyValuePair<Motive, float>(containPlayerMotive, satisfactionAmount)
