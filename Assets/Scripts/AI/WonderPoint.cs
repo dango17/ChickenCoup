@@ -29,21 +29,52 @@ public class WonderPoint : MonoBehaviour {
     [SerializeField, Tooltip("Mark any layers that should trigger collisions " +
         "with this game-object.")]
     private LayerMask collisionLayers = default;
-    private Rigidbody rigidBody = null;
     private BoxCollider boxCollider = null;
     private Farmer farmer = null;
+    private GameObject wonderPointManager = null;
 
     private void Awake() {
-        rigidBody = GetComponent<Rigidbody>();
-        boxCollider = GetComponent<BoxCollider>();
-        verticalOffset = Vector3.up * boxCollider.bounds.size.y;
+        GetComponents();
     }
 
     private void Start() {
+        FindComponents();
+        SetVariables();
+    }
+
+    private void Update() {
+        UpdatePosition();
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        TriggeredCollision(other, true);
+    }
+
+    private void OnTriggerStay(Collider other) {
+        TriggeredCollision(other, true);
+    }
+
+    private void OnTriggerExit(Collider other) {
+        TriggeredCollision(other, false);
+    }
+
+    private void GetComponents() {
+        boxCollider = GetComponent<BoxCollider>();
+    }
+
+    private void FindComponents() {
         farmer = GameObject.FindGameObjectWithTag("Farmer").GetComponent<Farmer>();
+        wonderPointManager = GameObject.FindGameObjectWithTag("Wonder Point Manager");
+    }
+
+    /// <summary>
+    /// Sets any variables that can't be initialised with the correct value.
+    /// </summary>
+    private void SetVariables() {
         moveDirection = new Vector3(transform.position.x - farmer.transform.position.x,
             0,
             transform.position.z - farmer.transform.position.z).normalized;
+        verticalOffset = Vector3.up * wonderPointManager.transform.localPosition.y;
         furthestPosition = farmer.transform.position + moveDirection * displacement + verticalOffset;
         distanceFromFarmerToFurthestPoint = Mathf.Clamp(Vector3.Distance(farmer.transform.position + verticalOffset, furthestPosition),
             0.0f,
@@ -54,7 +85,25 @@ public class WonderPoint : MonoBehaviour {
             displacement);
     }
 
-    private void Update() {
+    private void TriggeredCollision(Collider collision, bool enteringCollision) {
+        int bitshiftedLayerValue = 1 << collision.gameObject.layer;
+
+        if ((bitshiftedLayerValue & collisionLayers) == 0) {
+            return;
+        }
+
+        if (enteringCollision) {
+            isTouching = true;
+        } else {
+            isTouching = false;
+        }
+    }
+
+    /// <summary>
+    /// Makes the wonder point move between the farmer and destination based 
+    /// on whether or not the point is triggering a collision.
+    /// </summary>
+    private void UpdatePosition() {
         furthestPosition = farmer.transform.position + moveDirection * displacement + verticalOffset;
         distanceFromFarmerToFurthestPoint = Mathf.Clamp(Vector3.Distance(farmer.transform.position + verticalOffset, furthestPosition),
             0.0f,
@@ -70,7 +119,7 @@ public class WonderPoint : MonoBehaviour {
             transform.position = new Vector3(Mathf.Lerp(farmer.transform.position.x,
                     furthestPosition.x,
                     moveDistance),
-                farmer.transform.position.y + boxCollider.bounds.size.y,
+                farmer.transform.position.y + verticalOffset.y,
                 Mathf.Lerp(farmer.transform.position.z,
                     furthestPosition.z,
                     moveDistance));
@@ -80,7 +129,7 @@ public class WonderPoint : MonoBehaviour {
             transform.position = new Vector3(Mathf.Lerp(farmer.transform.position.x,
                     furthestPosition.x,
                     moveDistance),
-                farmer.transform.position.y + boxCollider.bounds.size.y,
+                farmer.transform.position.y + verticalOffset.y,
                 Mathf.Lerp(farmer.transform.position.z,
                     furthestPosition.z,
                     moveDistance));
@@ -89,31 +138,5 @@ public class WonderPoint : MonoBehaviour {
         distanceToFurthestPoint = Mathf.Clamp(Vector3.Distance(transform.position, furthestPosition),
             0.0f,
             displacement);
-    }
-
-    private void OnTriggerEnter(Collider other) {
-        TriggeredCollision(other, true);
-    }
-
-    private void OnTriggerStay(Collider other) {
-        TriggeredCollision(other, true);
-    }
-
-    private void OnTriggerExit(Collider other) {
-        TriggeredCollision(other, false);
-    }
-
-    private void TriggeredCollision(Collider collision, bool enteringCollision) {
-        int bitshiftedLayerValue = 1 << collision.gameObject.layer;
-
-        if ((bitshiftedLayerValue & collisionLayers) == 0) {
-            return;
-        }
-
-        if (enteringCollision) {
-            isTouching = true;
-        } else {
-            isTouching = false;
-        }
     }
 }

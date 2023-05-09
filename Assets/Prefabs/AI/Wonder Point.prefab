@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7286919204611956644}
   m_Layer: 16
   m_Name: Wonder Point
-  m_TagString: Untagged
+  m_TagString: Wonder Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
