@@ -108,7 +108,8 @@ namespace DO
             cameraManager.mainCameraObject.SetActive(true);
             cameraManager.fpCameraObject.SetActive(false); 
 
-            cageController = FindObjectOfType<CageController>(); 
+            cageController = FindObjectOfType<CageController>();
+            farmer = FindObjectOfType<Farmer>(); 
         }
 
         private void OnEnable() {
