@@ -61,8 +61,8 @@ public class UtilityScript {
 			FindOptimalAction();
 		}
 
-		// A completed action will be the previously executed action.
-		if (currentAction.action == null || currentAction.completed) {
+		if (currentAction.completed || currentAction.action == null) {
+			// Return until a new action has been assigned.
 			return;
 		}
 
@@ -98,6 +98,7 @@ public class UtilityScript {
 	/// <summary>
 	/// Sets the next action to execute based on which one is executable and
 	/// reduces the agent's discontent the most.
+	/// Only assigns an action if there's one available.
 	/// </summary>
 	private void FindOptimalAction() {
 		// Set to a high value to force at least one selection.

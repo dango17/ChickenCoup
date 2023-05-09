@@ -196,6 +196,7 @@ namespace DO
         {
             currentObject.transform.parent = null;
             currentObject.GetComponent<Rigidbody>().isKinematic = false;
+            currentObject.GetComponent<Rigidbody>().useGravity = true;
             currentObject.GetComponent<BoxCollider>().enabled = true;
 
             inputHandler.isConcealed = false; 

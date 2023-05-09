@@ -14,10 +14,18 @@ public class VisualSensor : Sensor {
 		get { return fieldOfView; }
 		private set { fieldOfView = value; }
 	}
+	/// <summary>
+	/// Directions are stored in order of left then right.
+	/// </summary>
+	public Vector3[] FieldOfViewExtentsDirection {
+		get { return fieldOfViewExtents; }
+		private set { fieldOfViewExtents = value; }
+	}
 
 	[SerializeField, Range(0, maxFieldOfView), Tooltip("The viewing angle for the agent.")]
 	private float fieldOfView = 200.0f;
 	private const float maxFieldOfView = 360.0f;
+	private Vector3[] fieldOfViewExtents = new Vector3[2];
 
 	/// <summary>
 	/// Checks if the object is visible to the detector.
@@ -29,6 +37,15 @@ public class VisualSensor : Sensor {
 		}
 
 		return Visibility.NotVisible;
+	}
+
+	protected override void Update() {
+		base.Update();
+		DrawFieldOfViewExtents();
+	}
+
+	protected override void FixedUpdate() {
+		VerifyDataIsValid();
 	}
 
 	private Visibility IsWithinLineOfSight(GameObject detectedGameObject) {
@@ -87,10 +104,8 @@ public class VisualSensor : Sensor {
 			LayerMask raycastLayer,
 			GameObject targetObject,
 			GameObject gameObjectToIgnore) {
-			RaycastHit[] raycastHits = new RaycastHit[5];
-			Physics.RaycastNonAlloc(raycastOrigin,
+			RaycastHit[] raycastHits = Physics.RaycastAll(raycastOrigin,
 			targetObject.transform.position - sensorOrigin.position,
-			raycastHits,
 			detectionRange,
 			raycastLayer);
 			raycastHits = raycastHits.OrderBy(hit => hit.distance).ToArray();
@@ -103,20 +118,15 @@ public class VisualSensor : Sensor {
 				if (raycastHits[i].collider) {
 					if (targetObject && raycastHits[i].collider.gameObject == targetObject) {
 						return true;
-					} else if (gameObjectToIgnore && raycastHits[i].collider.gameObject == gameObjectToIgnore) {
+					} else if (gameObjectToIgnore &&
+						(raycastHits[i].collider.gameObject == gameObjectToIgnore ||
+						raycastHits[i].collider.transform.root.gameObject == gameObjectToIgnore)) {
 						// Continue searching for the target game object
 						// because the current raycast hit's game object is
 						// set to be ignored.
 						continue;
 					} else if (raycastHits[i].collider.gameObject.GetComponent<DetectionPoint>()) {
-						// Continue raycasting for the target game object from the
-						// intersected detection point's position because
-						// detection points shouldn't prevent raycasts from
-						// passing through.
-						return RaycastHit(raycastHits[i].point,
-							raycastLayer,
-							targetObject,
-							gameObjectToIgnore);
+						continue;
 					} else {
 						// Return false because an object that is not see through was hit.
 						return false;
@@ -139,5 +149,37 @@ public class VisualSensor : Sensor {
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// Checks that all the collected data is still visible to the sensor.
+	/// </summary>
+	private void VerifyDataIsValid() {
+		foreach (CollectedData collectedData in data) {
+			if (VerifyDetection(collectedData.gameobject) == Visibility.NotVisible) {
+				data.Remove(GetCollectedData(data, collectedData.gameobject));
+				break;
+			}
+
+		}
+
+		foreach (CollectedData collectedData in partiallyDiscoveredData) {
+			if (VerifyDetection(collectedData.gameobject) == Visibility.NotVisible) {
+				partiallyDiscoveredData.Remove(GetCollectedData(partiallyDiscoveredData, collectedData.gameobject));
+				break;
+			}
+		}
+	}
+
+	private void DrawFieldOfViewExtents() {
+		const float half = 0.5f;
+		float rotationAmount = half * fieldOfView - transform.rotation.eulerAngles.y;
+		fieldOfViewExtents[0] = Quaternion.Euler(0, -rotationAmount, 0) * Vector3.forward;
+		Vector3 fieldOfViewExtentPosition = transform.position + fieldOfViewExtents[0] * detectionRange;
+		Debug.DrawLine(transform.position, fieldOfViewExtentPosition);
+		rotationAmount = half * fieldOfView + transform.rotation.eulerAngles.y;
+		fieldOfViewExtents[1] = Quaternion.Euler(0, rotationAmount, 0) * Vector3.forward;
+		fieldOfViewExtentPosition = transform.position + fieldOfViewExtents[1] * detectionRange;
+		Debug.DrawLine(transform.position, fieldOfViewExtentPosition);
 	}
 }

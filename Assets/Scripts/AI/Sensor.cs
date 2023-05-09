@@ -26,6 +26,10 @@ public abstract class Sensor : MonoBehaviour {
 		NotVisible
 	}
 
+	public int DetectionRange {
+		get { return detectionRange; }
+		private set { detectionRange = value; }
+	}
 	public LinkedList<CollectedData> Data {
 		get {
 			return data;
@@ -144,21 +148,29 @@ public abstract class Sensor : MonoBehaviour {
 		DisableObjectsDetectionPoints(gameObjectToForget);
 	}
 
+	protected virtual void Awake() {
+		SphereCollider sphereCollider = GetComponent<SphereCollider>();
+		sphereCollider.radius = detectionRange;
+	}
+
+	protected virtual void Start() { }
+
+    protected virtual void Update() {
+		DeleteGatheredDataThatsExpired();
+	}
+
+	protected virtual void FixedUpdate() { }
+
+	protected CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
+	}
+
 	/// <summary>
 	/// Checks if the gathered data is valid and should be saved.
 	/// </summary>
 	/// <param name="gameobject"> Gathered data that needs verifying. </param>
 	/// <returns> True if the data is valid and should be saved. </returns>
 	protected abstract Visibility VerifyDetection(GameObject gameobject);
-
-	private void Awake() {
-		SphereCollider sphereCollider = GetComponent<SphereCollider>();
-		sphereCollider.radius = detectionRange;
-	}
-
-    private void Update() {
-		DeleteGatheredDataThatsExpired();
-	}
 
     private void OnTriggerEnter(Collider other) {
 		ObjectDetected(other.gameObject);
@@ -182,10 +194,6 @@ public abstract class Sensor : MonoBehaviour {
 			DisableObjectsDetectionPoints(othersRootGameObject);
 			RemoveObject(ref partiallyDiscoveredData, othersRootGameObject);
 		}
-	}
-
-	private CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
-		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
 	}
 
 	private void DeleteGatheredDataThatsExpired() {
