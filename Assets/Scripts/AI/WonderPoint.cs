@@ -63,16 +63,29 @@ public class WonderPoint : MonoBehaviour {
             0.0f,
             displacement);
         float moveDistance = distanceToFurthestPoint / distanceFromFarmerToFurthestPoint;
-        moveDistance = Mathf.Clamp(moveDistance, 0.0f, 1.0f);
-
-        transform.position = new Vector3(Mathf.Lerp(farmer.transform.position.x,
-                furthestPosition.x,
-                moveDistance),
-            farmer.transform.position.y + boxCollider.bounds.size.y,
-            Mathf.Lerp(farmer.transform.position.z,
-                furthestPosition.z,
-                moveDistance));
         
+        if (isTouching) {
+            moveDistance = 1 - moveDistance - Time.deltaTime * moveSpeed;
+            moveDistance = Mathf.Clamp(moveDistance, 0.0f, 1.0f);
+            transform.position = new Vector3(Mathf.Lerp(farmer.transform.position.x,
+                    furthestPosition.x,
+                    moveDistance),
+                farmer.transform.position.y + boxCollider.bounds.size.y,
+                Mathf.Lerp(farmer.transform.position.z,
+                    furthestPosition.z,
+                    moveDistance));
+        } else {
+            moveDistance = 1 - moveDistance + Time.deltaTime * moveSpeed;
+            moveDistance = Mathf.Clamp(moveDistance, 0.0f, 1.0f);
+            transform.position = new Vector3(Mathf.Lerp(farmer.transform.position.x,
+                    furthestPosition.x,
+                    moveDistance),
+                farmer.transform.position.y + boxCollider.bounds.size.y,
+                Mathf.Lerp(farmer.transform.position.z,
+                    furthestPosition.z,
+                    moveDistance));
+        }
+
         distanceToFurthestPoint = Mathf.Clamp(Vector3.Distance(transform.position, furthestPosition),
             0.0f,
             displacement);
