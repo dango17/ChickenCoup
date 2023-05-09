@@ -17,10 +17,12 @@ namespace DO
         public float lockTime = 10f;
         public float lockCooldown = 2f;
 
-        private bool isLocked = false;
+        public bool isLocked = false;
         private float lockStartTime;
 
         private Transform playerOriginalTransform;
+
+        PlayerController controller; 
 
         private void Update()
         {
@@ -37,6 +39,7 @@ namespace DO
             playerTransform.position = playerTransformPoint.position;
 
             isLocked = true;
+
             //Record the time player was locked
             lockStartTime = Time.time;
 
