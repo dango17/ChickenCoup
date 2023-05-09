@@ -73,6 +73,8 @@ namespace DO
         [SerializeField] public bool isInFreeLook;
         [SerializeField] public bool isFPMode;
         [SerializeField] public bool objectInHand;
+        [SerializeField] public bool playerisArrested; 
+
 
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
@@ -291,7 +293,9 @@ namespace DO
 
         public IEnumerator HandleJump()
         {
-            inputHandler.isJumping = false;
+            if(playerisArrested = true)
+            { 
+                 inputHandler.isJumping = false;
 
             float jumpVelocity = Mathf.Sqrt(-2 * gravity * jumpHeight);
             float timeToReachApex = Mathf.Sqrt(-2 * jumpHeight / gravity);
@@ -299,8 +303,8 @@ namespace DO
             Vector3 jumpDirection = new Vector3(rigidbody.velocity.x, jumpVelocity, rigidbody.velocity.z);
             float timeElapsed = 0f;
 
-            while (timeElapsed < timeToReachApex)
-            {
+               while (timeElapsed < timeToReachApex)
+              {
                 float t = timeElapsed / timeToReachApex;
                 float curveValue = jumpCurve.Evaluate(t);
 
@@ -309,8 +313,8 @@ namespace DO
 
                 timeElapsed += Time.deltaTime;
                 yield return null;
-            } 
-
+               } 
+            }
         }
 
         public void handleFalling()

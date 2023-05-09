@@ -22,6 +22,8 @@ namespace DO
 
         private Transform playerOriginalTransform;
 
+        PlayerController playerController; 
+
         private void Update()
         {
             if (isLocked && Time.time - lockStartTime >= lockTime)
@@ -37,6 +39,8 @@ namespace DO
             playerTransform.position = playerTransformPoint.position;
 
             isLocked = true;
+            playerController.playerisArrested = true; 
+            
             //Record the time player was locked
             lockStartTime = Time.time;
 
