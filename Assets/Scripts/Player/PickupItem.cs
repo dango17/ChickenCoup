@@ -18,6 +18,8 @@ namespace DO
         [SerializeField] public Transform concealmentPoint;
         [SerializeField] public MeshRenderer meshRenderer;
         [Header("ItemType")]
+
+        public bool isHoldingItem;
         [SerializeField] public bool canMove;
         [SerializeField] public bool canConceal;
         [SerializeField] public bool isFood;
@@ -49,13 +51,35 @@ namespace DO
 
         public void Update()
         {
-       
+            if(isHoldingItem == true)
+            {
+                //Get all instances of this script in the scene
+                PickupItem[] pickupItems = FindObjectsOfType<PickupItem>();
+
+                //Disable the script on each of the gameObjects
+                foreach (PickupItem pickupItem in pickupItems)
+                {
+                    pickupItem.enabled = false;
+                    this.enabled = true; 
+                }
+            }
+            else if (!isHoldingItem == false)
+            {
+                // Get all instances of this script in the scene
+                PickupItem[] pickupItems = FindObjectsOfType<PickupItem>();
+
+                // Disable the script on each of the gameObjects
+                foreach (PickupItem pickupItem in pickupItems)
+                {
+                    pickupItem.enabled = true;
+                }
+            }
         }
 
         //OTE && OTS Functions are identically to eachother 
         public void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Player")
+            if (other.tag == "Player" && this.enabled)
             {
                 //Turn on outline shader here
                 Material[] materials = meshRenderer.materials;
@@ -103,7 +127,7 @@ namespace DO
 
         public void OnTriggerStay(Collider other)
         {
-            if (other.tag == "Player")
+            if (other.tag == "Player" && this.enabled)
             {
                 //Turn on outline shader here
                 Material[] materials = meshRenderer.materials;
@@ -146,7 +170,7 @@ namespace DO
             materials[1] = originalMaterials[0];
             meshRenderer.materials = materials;
 
-            controller.objectInHand = true;          
+            isHoldingItem = true;          
         }
 
         public void EatNormalFood()
@@ -199,7 +223,16 @@ namespace DO
             currentObject.GetComponent<Rigidbody>().useGravity = true;
             currentObject.GetComponent<BoxCollider>().enabled = true;
 
-            inputHandler.isConcealed = false; 
+            isHoldingItem = false;
+
+            //Get all instances of this script in the scene
+            PickupItem[] pickupItems = FindObjectsOfType<PickupItem>();
+
+            //Disable the script on each of the gameObjects
+            foreach (PickupItem pickupItem in pickupItems)
+            {
+                pickupItem.enabled = true;
+            }
         }
 
         public void DestroyCurrentObject()

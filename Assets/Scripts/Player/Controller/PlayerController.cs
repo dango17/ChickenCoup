@@ -73,8 +73,9 @@ namespace DO
         [SerializeField] public bool isInFreeLook;
         [SerializeField] public bool isFPMode;
         [SerializeField] public bool objectInHand;
-        [SerializeField] public bool isArrested; 
+        [SerializeField] public bool isArrested;
 
+        [SerializeField] public BoxCollider playersDetectionCol;
         [HideInInspector] public Transform mTransform;
         [HideInInspector] public Animator animator;
         [HideInInspector] new Rigidbody rigidbody = null;
