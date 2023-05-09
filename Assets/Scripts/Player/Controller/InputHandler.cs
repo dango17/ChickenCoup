@@ -18,6 +18,7 @@ namespace DO
         [SerializeField] public PlayerController controller;
         [SerializeField] public CageController cageController; 
         [SerializeField] public CameraManager cameraManager;
+        [SerializeField] public Farmer farmer; 
         [SerializeField] public GameObject playerModel;
         [SerializeField] public GameObject playerLeftEye;
         [SerializeField] public GameObject playerRightEye;
@@ -176,7 +177,7 @@ namespace DO
             #region Jumping & Running
             //Jumping
             if (isJumping && controller.isInFreeLook == false && controller.isGrounded == true 
-                && cageController.isLocked == false)
+                && cageController.isLocked == false && farmer.HasCaughtPlayer == false)
             {
                 controller.animator.Play("Jump");
                 controller.Jump();
