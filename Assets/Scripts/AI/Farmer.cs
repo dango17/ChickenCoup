@@ -34,6 +34,11 @@ public class Farmer : MonoBehaviour {
 		Ended
 	}
 
+	public bool HasCaughtPlayer {
+		get { return hasCaughtPlayer; }
+		private set { hasCaughtPlayer = value; }
+    }
+
 	#region Sensor Variables
 	private bool canSeePlayer = false;
 	private bool seenPlayerRecently = false;

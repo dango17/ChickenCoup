@@ -153,6 +153,8 @@ public abstract class Sensor : MonoBehaviour {
 		sphereCollider.radius = detectionRange;
 	}
 
+	protected virtual void Start() { }
+
     protected virtual void Update() {
 		DeleteGatheredDataThatsExpired();
 	}

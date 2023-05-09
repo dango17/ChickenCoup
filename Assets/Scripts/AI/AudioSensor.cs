@@ -44,18 +44,20 @@ public class AudioSensor : Sensor {
 		}
 	}
 
+	protected override void Awake() {
+		base.Awake();
+		pathToSound = new NavMeshPath();
+	}
+
+	protected override void Start() {
+		base.Start();
+		navMeshAgent = transform.root.GetComponentInChildren<NavMeshAgent>();
+	}
+
 	protected override Visibility VerifyDetection(GameObject gameobject) {
 		AudioSource soundSource = gameobject.GetComponent<AudioSource>();
 		return soundSource && TracePathToSound(gameobject.transform.position,
 			soundSource.maxDistance) ? Visibility.Visible : Visibility.NotVisible;
-	}
-
-	private void Awake() {
-		pathToSound = new NavMeshPath();
-	}
-
-	private void Start() {
-		navMeshAgent = transform.root.GetComponentInChildren<NavMeshAgent>();
 	}
 
 	private bool TracePathToSound(Vector3 soundsPosition, float maximumPathLength) {
