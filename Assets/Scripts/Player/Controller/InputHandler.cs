@@ -16,6 +16,7 @@ namespace DO
         [Header("Components")]
         [SerializeField] public ExecutionOrder movementOrder;
         [SerializeField] public PlayerController controller;
+        [SerializeField] public CageController cageController; 
         [SerializeField] public CameraManager cameraManager;
         [SerializeField] public GameObject playerModel;
         [SerializeField] public GameObject playerLeftEye;
@@ -105,6 +106,8 @@ namespace DO
             cameraManager.wallCameraObject.SetActive(false);
             cameraManager.mainCameraObject.SetActive(true);
             cameraManager.fpCameraObject.SetActive(false); 
+
+            cageController = FindObjectOfType<CageController>(); 
         }
 
         private void OnEnable() {
@@ -172,7 +175,8 @@ namespace DO
 
             #region Jumping & Running
             //Jumping
-            if (isJumping && controller.isInFreeLook == false && controller.isGrounded == true)
+            if (isJumping && controller.isInFreeLook == false && controller.isGrounded == true 
+                && cageController.isLocked == false)
             {
                 controller.animator.Play("Jump");
                 controller.Jump();
