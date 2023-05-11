@@ -32,7 +32,7 @@ public class FarmerFoVvisualEditor : Editor
         // Gets the desired angle to relative to target's y axis.
         float rotationAmount = half * fov.viewAngle - fov.transform.rotation.eulerAngles.y;
         Vector3[] fieldOfViewExtents = new Vector3[2];
-        // Creates a quaternion rotation to rotate by and angles it to point forward.
+        // Gets the forward direction of the quaternion to rotate by.
         fieldOfViewExtents[0] = Quaternion.Euler(0, -rotationAmount, 0) * Vector3.forward;
         // Finds the direction, relative to the target position, where the FOV extents will be drawn along.
         // View radius controls how far out the extents will be drawn.

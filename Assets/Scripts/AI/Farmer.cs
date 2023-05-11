@@ -126,6 +126,7 @@ public class Farmer : MonoBehaviour {
 	private float maximumTimeToSpendSearchingForPlayer = 15.0f;
 	private NavMeshAgent navMeshAgent = null;
 	private PointOfInterest[] pointsOfInterest = null;
+	private WonderPointManager wonderPointManager = null;
 	#endregion
 
 	#region Catch Variables
@@ -383,6 +384,7 @@ public class Farmer : MonoBehaviour {
 		pointsOfInterest = FindObjectsOfType<PointOfInterest>();
 		keycard = GameObject.FindGameObjectWithTag("Keycard");
 		keycardHoldTransform = GameObject.FindGameObjectWithTag("Keycard Hold Position").transform;
+		wonderPointManager = GameObject.FindGameObjectWithTag("Wonder Point Manager").GetComponent<WonderPointManager>();
 	}
 
 	/// <summary>
@@ -682,15 +684,17 @@ public class Farmer : MonoBehaviour {
                 }
             }
 
-			const int maxRotation = 60;
+			const int maxRotation = 5;
 			int rotationAroundYAxis = Random.Range(-maxRotation, maxRotation);
 			// Gets a new direction to move in.
-			Quaternion newMoveDirection = Quaternion.Euler(transform.rotation.eulerAngles.x,
+			Quaternion moveRotation = Quaternion.Euler(transform.rotation.eulerAngles.x,
 				transform.rotation.eulerAngles.y + rotationAroundYAxis,
 				transform.rotation.eulerAngles.z);
+			Vector3 newMoveDirection = moveRotation * wonderPointManager.DirectionToFurthestPointInOpenSpace;
+			Debug.DrawLine(transform.position, transform.position + newMoveDirection, Color.green);
 			const int moveDistance = 3;
 			// Get a position ahead of the agent.
-			Vector3 wonderDestination = transform.position + newMoveDirection * Vector3.forward * moveDistance;
+			Vector3 wonderDestination = transform.position + newMoveDirection * moveDistance;
 			NavMesh.SamplePosition(wonderDestination, out NavMeshHit navMeshHit, moveDistance, NavMesh.AllAreas);
 			const float turnAroundThreshold = 2.8f;
 
@@ -701,8 +705,8 @@ public class Farmer : MonoBehaviour {
 			// Check if the farmer is at the edge of the nav mesh.
 			if (navMeshHit.hit && Vector3.Distance(wonderDestination, navMeshHit.position) >= turnAroundThreshold) {
 				Debug.DrawLine(wonderDestination, wonderDestination + Vector3.up, Color.red, 5);
-				// Set the farmer's destination behind them.
-				wonderDestination = transform.position + newMoveDirection * Vector3.back * moveDistance;
+				Vector3 reverseMoveDirection = moveRotation * transform.position - wonderDestination;
+				wonderDestination = transform.position + reverseMoveDirection * moveDistance;
 				Debug.Log("Turned Around.");
 			}
 

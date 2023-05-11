@@ -173,8 +173,13 @@ public class VisualSensor : Sensor {
 
 	private void DrawFieldOfViewExtents() {
 		const float half = 0.5f;
+		// Gets the desired angle to relative to the sensor's y axis.
 		float rotationAmount = half * fieldOfView - transform.rotation.eulerAngles.y;
+		// Gets the forward direction of the quaternion to rotate by.
 		fieldOfViewExtents[0] = Quaternion.Euler(0, -rotationAmount, 0) * Vector3.forward;
+		// Finds the direction, relative to the sensor's position, where the
+		// field of view extents will be drawn along.
+		// The detection range controls how far out the extents will be drawn.
 		Vector3 fieldOfViewExtentPosition = transform.position + fieldOfViewExtents[0] * detectionRange;
 		Debug.DrawLine(transform.position, fieldOfViewExtentPosition);
 		rotationAmount = half * fieldOfView + transform.rotation.eulerAngles.y;
