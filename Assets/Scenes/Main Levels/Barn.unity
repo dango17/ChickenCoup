@@ -131,9 +131,21 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 2091801397}
     m_Modifications:
+    - target: {fileID: 2136913548494282453, guid: cde23fe6b09c898429d2c40ed0ce109d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2979033721026392127, guid: cde23fe6b09c898429d2c40ed0ce109d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 6097533138492816616, guid: cde23fe6b09c898429d2c40ed0ce109d, type: 3}
       propertyPath: m_Name
       value: Hay Bails_HighBand (11)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6097533138492816616, guid: cde23fe6b09c898429d2c40ed0ce109d, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6905454988948481618, guid: cde23fe6b09c898429d2c40ed0ce109d, type: 3}
       propertyPath: m_RootOrder
@@ -182,6 +194,10 @@ PrefabInstance:
     - target: {fileID: 6905454988948481618, guid: cde23fe6b09c898429d2c40ed0ce109d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 7536009472431593974, guid: cde23fe6b09c898429d2c40ed0ce109d, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -5133,6 +5149,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chair
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 65e09c5d319c59b44aed61fa445f793c, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 65e09c5d319c59b44aed61fa445f793c, type: 3}
@@ -5149,7 +5169,7 @@ GameObject:
   - component: {fileID: 543304592}
   - component: {fileID: 543304591}
   - component: {fileID: 543304590}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Barrel Low (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6546,6 +6566,33 @@ Transform:
   m_Father: {fileID: 543450652535653081}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &667529118 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3941516469279204361, guid: 8897445697ed5d7439fe670853b184da, type: 3}
+  m_PrefabInstance: {fileID: 1081987500}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &667529124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667529118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 622249091db8f5642a28ccb3e5605f0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewRadius: 4
+  viewAngle: 93
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 256
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 128
+  visibleTargets: []
+  meshResolution: 5.95
 --- !u!1001 &676104131
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6782,7 +6829,7 @@ GameObject:
   - component: {fileID: 704573035}
   - component: {fileID: 704573034}
   - component: {fileID: 704573033}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Barrel Low (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7022,7 +7069,7 @@ GameObject:
   - component: {fileID: 749111018}
   - component: {fileID: 749111017}
   - component: {fileID: 749111016}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Barrel Low (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10594,19 +10641,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204357, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9999978
+      value: 0.999905
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204357, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204357, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.0021114259
+      value: -0.013787414
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204357, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204357, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -10614,7 +10661,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204357, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -1439.758
+      value: -1441.58
       objectReference: {fileID: 0}
     - target: {fileID: 3941516469279204357, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -11478,6 +11525,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bookshelf Type 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 08d995ddc85df014582e9eccf4943dfa, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 08d995ddc85df014582e9eccf4943dfa, type: 3}
@@ -11917,7 +11968,7 @@ GameObject:
   - component: {fileID: 1210764513}
   - component: {fileID: 1210764512}
   - component: {fileID: 1210764511}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Barrel Low (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16028,7 +16079,7 @@ GameObject:
   - component: {fileID: 1630308475}
   - component: {fileID: 1630308474}
   - component: {fileID: 1630308473}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Barrel Low (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19958,7 +20009,7 @@ GameObject:
   - component: {fileID: 2040903704}
   - component: {fileID: 2040903703}
   - component: {fileID: 2040903702}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Barrel Low (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21071,11 +21122,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalPosition.x
@@ -21099,11 +21150,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1625199134304804731, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: jumpHeight
@@ -23598,7 +23649,7 @@ GameObject:
   - component: {fileID: 4174239429409543315}
   - component: {fileID: 5605572276892419552}
   - component: {fileID: 5605572276892419559}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Box276 (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26457,7 +26508,7 @@ GameObject:
   - component: {fileID: 312989139110987322}
   - component: {fileID: 8102234230514636617}
   - component: {fileID: 8102234230514636622}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Box276 (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30431,7 +30482,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5656077036031589353}
   - component: {fileID: 5656077036031589354}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cart_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31746,7 +31797,7 @@ GameObject:
   - component: {fileID: 8250384946440603671}
   - component: {fileID: 6168724417171061981}
   - component: {fileID: 8250384946440603672}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Barrel Low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37057,7 +37108,7 @@ GameObject:
   - component: {fileID: 4815941095881906894}
   - component: {fileID: 3959427157095009213}
   - component: {fileID: 3959427157095009210}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Box276 (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39051,7 +39102,7 @@ GameObject:
   - component: {fileID: 3350056791460406336}
   - component: {fileID: 6435555740311250686}
   - component: {fileID: 2383420335217257330}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40806,7 +40857,7 @@ GameObject:
   - component: {fileID: 5765719659893058221}
   - component: {fileID: 2604467720845573086}
   - component: {fileID: 2604467720845573081}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Box276 (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40841,7 +40892,7 @@ GameObject:
   - component: {fileID: 5830138647804406318}
   - component: {fileID: 2652566139870755677}
   - component: {fileID: 2652566139870755674}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Box276 (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
