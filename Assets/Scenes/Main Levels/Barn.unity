@@ -353,6 +353,7 @@ MonoBehaviour:
   pickupPoint: {fileID: 978821680222278380}
   concealmentPoint: {fileID: 5464034371155990289}
   meshRenderer: {fileID: 13361417}
+  isHoldingItem: 0
   canMove: 1
   canConceal: 0
   isFood: 0
@@ -758,6 +759,7 @@ MonoBehaviour:
   pickupPoint: {fileID: 978821680222278380}
   concealmentPoint: {fileID: 5464034371155990289}
   meshRenderer: {fileID: 68657318}
+  isHoldingItem: 0
   canMove: 1
   canConceal: 0
   isFood: 0
@@ -9392,6 +9394,7 @@ MonoBehaviour:
   pickupPoint: {fileID: 978821680222278380}
   concealmentPoint: {fileID: 5464034371155990289}
   meshRenderer: {fileID: 993847074}
+  isHoldingItem: 0
   canMove: 1
   canConceal: 0
   isFood: 0
@@ -9871,6 +9874,7 @@ MonoBehaviour:
   pickupPoint: {fileID: 978821680222278380}
   concealmentPoint: {fileID: 5464034371155990289}
   meshRenderer: {fileID: 1019691837}
+  isHoldingItem: 0
   canMove: 1
   canConceal: 0
   isFood: 0
@@ -16432,6 +16436,7 @@ MonoBehaviour:
   pickupPoint: {fileID: 978821680222278380}
   concealmentPoint: {fileID: 0}
   meshRenderer: {fileID: 5248710607270142600}
+  isHoldingItem: 0
   canMove: 1
   canConceal: 0
   isFood: 0
@@ -21062,6 +21067,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 64916243361406464, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -21118,6 +21127,18 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.000000023714733
       objectReference: {fileID: 0}
+    - target: {fileID: 1625199134304804731, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
+      propertyPath: jumpHeight
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1625199134304804731, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
+      propertyPath: raycastDistance
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1625199134304804731, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
+      propertyPath: playersDetectionCol
+      value: 
+      objectReference: {fileID: 1615524505623889720}
     - target: {fileID: 1780577084151133951, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -23581,6 +23602,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da02dd9dd0d07e409b1f02f52b8ed07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &1615524505623889720 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 64916243361406464, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
+  m_PrefabInstance: {fileID: 64916244442388558}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1633228937380476821
 GameObject:
   m_ObjectHideFlags: 0
@@ -24822,6 +24848,7 @@ MonoBehaviour:
   pickupPoint: {fileID: 978821680222278380}
   concealmentPoint: {fileID: 5464034371155990289}
   meshRenderer: {fileID: 3421516476195204711}
+  isHoldingItem: 0
   canMove: 0
   canConceal: 1
   isFood: 0
