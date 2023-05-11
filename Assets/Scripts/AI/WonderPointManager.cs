@@ -19,12 +19,13 @@ public class WonderPointManager : MonoBehaviour {
 
 	[SerializeField, Tooltip("Set the order of wonder points starting with " +
 		"North and going clockwise.")]
-    private WonderPoint[] wonderPoints = new WonderPoint[16];
+    private WonderPoint[] wonderPoints = new WonderPoint[8];
 
     private GameObject farmer = null;
 
     private void Awake() {
         wonderPoints = GetComponentsInChildren<WonderPoint>();
+        DuplicateWonderPoints();
     }
 
 	private void Start() {
@@ -64,6 +65,16 @@ public class WonderPointManager : MonoBehaviour {
 			}
         }
 
-        Debug.DrawLine(transform.position, transform.position + AverageDirectionToOpenSpace * 2, Color.red, 2.0f);
+        Debug.DrawLine(transform.position, transform.position + AverageDirectionToOpenSpace * 2);
+    }
+
+    /// <summary>
+    /// Duplicates all elements contained within the wonder points array.
+    /// </summary>
+    private void DuplicateWonderPoints() {
+        WonderPoint[] wonderPointsCopy = wonderPoints;
+        wonderPoints = new WonderPoint[wonderPoints.Length * 2];
+        wonderPointsCopy.CopyTo(wonderPoints, 0);
+        wonderPointsCopy.CopyTo(wonderPoints, wonderPointsCopy.Length);
     }
 }
