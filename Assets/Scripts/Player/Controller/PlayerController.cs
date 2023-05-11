@@ -290,10 +290,13 @@ namespace DO
         public void Jump()
         {
             StartCoroutine(HandleJump());
+            
         }
 
         public IEnumerator HandleJump()
         {
+            //yield return new WaitForSeconds(1f);
+
             inputHandler.isJumping = false;
 
             float jumpVelocity = Mathf.Sqrt(-2 * gravity * jumpHeight);
