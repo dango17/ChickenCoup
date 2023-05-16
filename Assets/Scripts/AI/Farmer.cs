@@ -262,8 +262,13 @@ public class Farmer : MonoBehaviour {
 	/// related variables.
 	/// </summary>
 	public void StopCatchingPlayer() {
-		ToggleCatchCollider(false);
+		if (hasCaughtPlayer) {
+			HoldOntoPlayer(false);
+		}
+
+		hasCaughtPlayer = false;
 		catchColliderIsTouchingPlayer = false;
+		ToggleCatchCollider(false);
 		animator.SetBool("Catching", false);
 		animator.ResetTrigger("CatchingTrigger");
 		catchAnimationState = AnimationStates.NotStarted;
@@ -274,10 +279,6 @@ public class Farmer : MonoBehaviour {
 
 	#region Animation Events
 	public void ToggleCatchCollider(bool enableCollider) {
-		if (!enableCollider && catchColliderIsTouchingPlayer) {
-			hasCaughtPlayer = true;
-		}
-
 		catchCollidersEnabled = enableCollider;
 		catchColliders[0].enabled = enableCollider;
 		catchColliders[1].enabled = enableCollider;
@@ -848,10 +849,16 @@ public class Farmer : MonoBehaviour {
 					lookAtCoroutine = StartCoroutine(LookAtCoroutine(player.transform));
 				}
 
+				if (catchCollidersEnabled && catchColliderIsTouchingPlayer) {
+					hasCaughtPlayer = true;
+				}
+
 				if (hasCaughtPlayer) {
 					Debug.Log("Holding Onto Player");
 					HoldOntoPlayer(true);
 					player.transform.position = carryPosition.position;
+				} else {
+					HoldOntoPlayer(false);
 				}
 
 				break;
@@ -987,8 +994,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Restricts the players movement and keeps them in place in front of the 
-	/// farmer.
+	/// Disables the processing of player input and movement.
 	/// </summary>
 	/// <param name="holdOntoPlayer"> True if the farmer should hold the player 
 	/// in place. </param>
