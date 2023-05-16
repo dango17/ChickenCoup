@@ -130,6 +130,7 @@ public class Farmer : MonoBehaviour {
 	#endregion
 
 	#region Catch Variables
+	private bool catchCollidersEnabled = false;
 	private bool catchColliderIsTouchingPlayer = false;
 	private bool hasCaughtPlayer = false;
 	/// <summary>
@@ -138,11 +139,9 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private float maximumRangeToCatchPlayer = 1.5f;
 	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
-	/// <summary>
-	/// The trigger collider used for detecting a collision with the player 
-	/// when the farmer attempts to catch them.
-	/// </summary>
-	private BoxCollider catchCollider = null;
+	[SerializeField, Tooltip("The trigger colliders used for detecting a " +
+		"collision with the player when the farmer attempts to catch them.")]
+	private BoxCollider[] catchColliders = null;
 	private Transform carryPosition = null;
 	/// <summary>
 	/// The position where the farmer will attempt the place the player after 
@@ -246,6 +245,7 @@ public class Farmer : MonoBehaviour {
 	/// prevent the data being misread.
 	/// </summary>
 	public void StopAction() {
+		ResetAnimatorParameters();
 		animator.SetTrigger("Idling");
 		StopAllCoroutines();
 		lookAtCoroutine = null;
@@ -257,8 +257,13 @@ public class Farmer : MonoBehaviour {
 		Debug.Log("Action Stopped");
 	}
 
+	/// <summary>
+	/// Used to completely stop/cancel the catch action, and resets the catch 
+	/// related variables.
+	/// </summary>
 	public void StopCatchingPlayer() {
-		catchCollider.enabled = false;
+		ToggleCatchCollider(false);
+		catchColliderIsTouchingPlayer = false;
 		animator.SetBool("Catching", false);
 		animator.ResetTrigger("CatchingTrigger");
 		catchAnimationState = AnimationStates.NotStarted;
@@ -273,7 +278,9 @@ public class Farmer : MonoBehaviour {
 			hasCaughtPlayer = true;
 		}
 
-		catchCollider.enabled = enableCollider;
+		catchCollidersEnabled = enableCollider;
+		catchColliders[0].enabled = enableCollider;
+		catchColliders[1].enabled = enableCollider;
 	}
 
 	public void CatchAnimationStarted() {
@@ -347,13 +354,19 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		if (catchCollider.enabled && other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
+			catchColliderIsTouchingPlayer = true;
+		}
+	}
+
+	private void OnTriggerStay(Collider other) {
+		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
 			catchColliderIsTouchingPlayer = true;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
-		if (catchCollider.enabled && other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
 			catchColliderIsTouchingPlayer = false;
 		}
 	}
@@ -378,7 +391,6 @@ public class Farmer : MonoBehaviour {
 		player = playersParent.GetComponentInChildren<PlayerController>();
 		inputHandler = playersParent.GetComponentInChildren<InputHandler>();
 		playerRigidbody = player.GetComponent<Rigidbody>();
-		catchCollider = GameObject.FindGameObjectWithTag("Catch Collider").GetComponent<BoxCollider>();
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
 		pointsOfInterest = FindObjectsOfType<PointOfInterest>();
@@ -985,5 +997,19 @@ public class Farmer : MonoBehaviour {
 		player.enabled = holdOntoPlayer;
 		playersParent.GetComponentInChildren<InputHandler>().enabled = holdOntoPlayer;
 		playersParent.GetComponentInChildren<Rigidbody>().useGravity = holdOntoPlayer;
+	}
+
+	/// <summary>
+	/// Resets most of the attached animator's parameters to their default 
+	/// values.
+	/// </summary>
+	private void ResetAnimatorParameters() {
+		animator.ResetTrigger("Idling");
+		animator.SetBool("Walking", false);
+		animator.SetBool("Carrying", false);
+		animator.SetBool("Catching", false);
+		animator.ResetTrigger("CatchingTrigger");
+		animator.SetBool("Stunned", false);
+		animator.ResetTrigger("StunnedTrigger");
 	}
 }
