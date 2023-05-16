@@ -126,9 +126,11 @@ public class Farmer : MonoBehaviour {
 	private float maximumTimeToSpendSearchingForPlayer = 15.0f;
 	private NavMeshAgent navMeshAgent = null;
 	private PointOfInterest[] pointsOfInterest = null;
+	private WonderPointManager wonderPointManager = null;
 	#endregion
 
 	#region Catch Variables
+	private bool catchCollidersEnabled = false;
 	private bool catchColliderIsTouchingPlayer = false;
 	private bool hasCaughtPlayer = false;
 	/// <summary>
@@ -137,11 +139,9 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private float maximumRangeToCatchPlayer = 1.5f;
 	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
-	/// <summary>
-	/// The trigger collider used for detecting a collision with the player 
-	/// when the farmer attempts to catch them.
-	/// </summary>
-	private BoxCollider catchCollider = null;
+	[SerializeField, Tooltip("The trigger colliders used for detecting a " +
+		"collision with the player when the farmer attempts to catch them.")]
+	private BoxCollider[] catchColliders = null;
 	private Transform carryPosition = null;
 	/// <summary>
 	/// The position where the farmer will attempt the place the player after 
@@ -245,6 +245,7 @@ public class Farmer : MonoBehaviour {
 	/// prevent the data being misread.
 	/// </summary>
 	public void StopAction() {
+		ResetAnimatorParameters();
 		animator.SetTrigger("Idling");
 		StopAllCoroutines();
 		lookAtCoroutine = null;
@@ -256,8 +257,18 @@ public class Farmer : MonoBehaviour {
 		Debug.Log("Action Stopped");
 	}
 
+	/// <summary>
+	/// Used to completely stop/cancel the catch action, and resets the catch 
+	/// related variables.
+	/// </summary>
 	public void StopCatchingPlayer() {
-		catchCollider.enabled = false;
+		if (hasCaughtPlayer) {
+			HoldOntoPlayer(false);
+		}
+
+		hasCaughtPlayer = false;
+		catchColliderIsTouchingPlayer = false;
+		ToggleCatchCollider(false);
 		animator.SetBool("Catching", false);
 		animator.ResetTrigger("CatchingTrigger");
 		catchAnimationState = AnimationStates.NotStarted;
@@ -268,11 +279,9 @@ public class Farmer : MonoBehaviour {
 
 	#region Animation Events
 	public void ToggleCatchCollider(bool enableCollider) {
-		if (!enableCollider && catchColliderIsTouchingPlayer) {
-			hasCaughtPlayer = true;
-		}
-
-		catchCollider.enabled = enableCollider;
+		catchCollidersEnabled = enableCollider;
+		catchColliders[0].enabled = enableCollider;
+		catchColliders[1].enabled = enableCollider;
 	}
 
 	public void CatchAnimationStarted() {
@@ -346,13 +355,19 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		if (catchCollider.enabled && other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
+			catchColliderIsTouchingPlayer = true;
+		}
+	}
+
+	private void OnTriggerStay(Collider other) {
+		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
 			catchColliderIsTouchingPlayer = true;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
-		if (catchCollider.enabled && other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
 			catchColliderIsTouchingPlayer = false;
 		}
 	}
@@ -377,12 +392,12 @@ public class Farmer : MonoBehaviour {
 		player = playersParent.GetComponentInChildren<PlayerController>();
 		inputHandler = playersParent.GetComponentInChildren<InputHandler>();
 		playerRigidbody = player.GetComponent<Rigidbody>();
-		catchCollider = GameObject.FindGameObjectWithTag("Catch Collider").GetComponent<BoxCollider>();
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
 		pointsOfInterest = FindObjectsOfType<PointOfInterest>();
 		keycard = GameObject.FindGameObjectWithTag("Keycard");
 		keycardHoldTransform = GameObject.FindGameObjectWithTag("Keycard Hold Position").transform;
+		wonderPointManager = GameObject.FindGameObjectWithTag("Wonder Point Manager").GetComponent<WonderPointManager>();
 	}
 
 	/// <summary>
@@ -682,15 +697,17 @@ public class Farmer : MonoBehaviour {
                 }
             }
 
-			const int maxRotation = 60;
+			const int maxRotation = 5;
 			int rotationAroundYAxis = Random.Range(-maxRotation, maxRotation);
 			// Gets a new direction to move in.
-			Quaternion newMoveDirection = Quaternion.Euler(transform.rotation.eulerAngles.x,
+			Quaternion moveRotation = Quaternion.Euler(transform.rotation.eulerAngles.x,
 				transform.rotation.eulerAngles.y + rotationAroundYAxis,
 				transform.rotation.eulerAngles.z);
+			Vector3 newMoveDirection = moveRotation * wonderPointManager.DirectionToFurthestPointInOpenSpace;
+			Debug.DrawLine(transform.position, transform.position + newMoveDirection, Color.green);
 			const int moveDistance = 3;
 			// Get a position ahead of the agent.
-			Vector3 wonderDestination = transform.position + newMoveDirection * Vector3.forward * moveDistance;
+			Vector3 wonderDestination = transform.position + newMoveDirection * moveDistance;
 			NavMesh.SamplePosition(wonderDestination, out NavMeshHit navMeshHit, moveDistance, NavMesh.AllAreas);
 			const float turnAroundThreshold = 2.8f;
 
@@ -701,8 +718,8 @@ public class Farmer : MonoBehaviour {
 			// Check if the farmer is at the edge of the nav mesh.
 			if (navMeshHit.hit && Vector3.Distance(wonderDestination, navMeshHit.position) >= turnAroundThreshold) {
 				Debug.DrawLine(wonderDestination, wonderDestination + Vector3.up, Color.red, 5);
-				// Set the farmer's destination behind them.
-				wonderDestination = transform.position + newMoveDirection * Vector3.back * moveDistance;
+				Vector3 reverseMoveDirection = moveRotation * transform.position - wonderDestination;
+				wonderDestination = transform.position + reverseMoveDirection * moveDistance;
 				Debug.Log("Turned Around.");
 			}
 
@@ -832,10 +849,16 @@ public class Farmer : MonoBehaviour {
 					lookAtCoroutine = StartCoroutine(LookAtCoroutine(player.transform));
 				}
 
+				if (catchCollidersEnabled && catchColliderIsTouchingPlayer) {
+					hasCaughtPlayer = true;
+				}
+
 				if (hasCaughtPlayer) {
 					Debug.Log("Holding Onto Player");
 					HoldOntoPlayer(true);
 					player.transform.position = carryPosition.position;
+				} else {
+					HoldOntoPlayer(false);
 				}
 
 				break;
@@ -971,8 +994,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Restricts the players movement and keeps them in place in front of the 
-	/// farmer.
+	/// Disables the processing of player input and movement.
 	/// </summary>
 	/// <param name="holdOntoPlayer"> True if the farmer should hold the player 
 	/// in place. </param>
@@ -981,5 +1003,19 @@ public class Farmer : MonoBehaviour {
 		player.enabled = holdOntoPlayer;
 		playersParent.GetComponentInChildren<InputHandler>().enabled = holdOntoPlayer;
 		playersParent.GetComponentInChildren<Rigidbody>().useGravity = holdOntoPlayer;
+	}
+
+	/// <summary>
+	/// Resets most of the attached animator's parameters to their default 
+	/// values.
+	/// </summary>
+	private void ResetAnimatorParameters() {
+		animator.ResetTrigger("Idling");
+		animator.SetBool("Walking", false);
+		animator.SetBool("Carrying", false);
+		animator.SetBool("Catching", false);
+		animator.ResetTrigger("CatchingTrigger");
+		animator.SetBool("Stunned", false);
+		animator.ResetTrigger("StunnedTrigger");
 	}
 }
