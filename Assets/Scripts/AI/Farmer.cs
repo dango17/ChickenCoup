@@ -131,6 +131,9 @@ public class Farmer : MonoBehaviour {
 
 	#region Catch Variables
 	private bool catchCollidersEnabled = false;
+	/// <summary>
+	/// True if at least one of the colliders is touching the player.
+	/// </summary>
 	private bool catchColliderIsTouchingPlayer = false;
 	private bool hasCaughtPlayer = false;
 	/// <summary>
