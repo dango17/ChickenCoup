@@ -19,6 +19,7 @@ namespace DO
 
         public bool isLocked = false;
         private float lockStartTime;
+        public Animator animator; 
 
         private Transform playerOriginalTransform;
 
@@ -39,6 +40,7 @@ namespace DO
             playerTransform.position = playerTransformPoint.position;
 
             isLocked = true;
+            animator.Play("cagedoorClose");
 
             //Record the time player was locked
             lockStartTime = Time.time;
@@ -61,6 +63,8 @@ namespace DO
             //Move the player back to their original transform
             playerOriginalTransform.position = playerTransformPoint.position;
             isLocked = false;
+
+            animator.Play("cagedoorOpen");
 
             //Re-enable player movement and physics
             Rigidbody playerRigidbody = playerOriginalTransform.GetComponent<Rigidbody>();
