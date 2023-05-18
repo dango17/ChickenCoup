@@ -257,7 +257,6 @@ public class Farmer : MonoBehaviour {
 		navMeshAgent.autoBraking = true;
 		navMeshAgent.ResetPath();
 		utilityScript.Reset();
-		Debug.Log("Action Stopped");
 	}
 
 	/// <summary>
@@ -288,12 +287,10 @@ public class Farmer : MonoBehaviour {
 	}
 
 	public void CatchAnimationStarted() {
-		Debug.Log("Catch Animation Started");
 		catchAnimationState = AnimationStates.Playing;
 	}
 
 	public void CatchAnimationEnded() {
-		Debug.Log("Catch Animation Ended");
 		animator.ResetTrigger("CatchingTrigger");
 		animator.SetBool("Catching", false);
 		catchAnimationState = AnimationStates.Ended;
@@ -720,7 +717,6 @@ public class Farmer : MonoBehaviour {
 				newMoveDirection = transform.forward;
 			}
 
-			Debug.DrawLine(transform.position, transform.position + newMoveDirection, Color.cyan, 5);
 			const int moveDistance = 3;
 			// Get a position ahead of the agent.
 			Vector3 wonderDestination = transform.position + newMoveDirection * moveDistance;
@@ -737,7 +733,6 @@ public class Farmer : MonoBehaviour {
 			animator.SetBool("Walking", true);
 			navMeshAgent.speed = walkSpeed;
 			animator.SetFloat("MoveMultiplier", walkPlaybackSpeedMultiplier);
-			Debug.DrawLine(wonderDestination, wonderDestination + Vector3.up, Color.cyan, 5);
 		}
 
 		return false;
@@ -786,10 +781,8 @@ public class Farmer : MonoBehaviour {
 
 		if (seenPlayerRecently) {
 			moveDestination = playersLastKnownPosition;
-			Debug.DrawLine(playersLastKnownPosition, playersLastKnownPosition + Vector3.up, Color.blue, Mathf.Infinity);
 		} else if (heardPlayerRecently) {
 			moveDestination = playersLastKnownSoundCuePosition;
-			Debug.DrawLine(playersLastKnownPosition, playersLastKnownPosition + Vector3.up, Color.magenta, Mathf.Infinity);
 		}
 		
 		// Move to the player's last known position.
@@ -838,13 +831,11 @@ public class Farmer : MonoBehaviour {
 	/// <returns> True if the action has completed (successfully or unsuccessfully). </returns>
 	private bool CatchPlayer() {
 		if (!CanCatchPlayer() && catchAnimationState == AnimationStates.NotStarted) {
-			Debug.Log("Catch Action Cancelled");
 			return true;
 		}
 
 		switch (catchAnimationState) {
 			case AnimationStates.NotStarted: {
-				Debug.Log("Catch Action Started");
 				animator.SetTrigger("CatchingTrigger");
 				animator.SetBool("Catching", true);
 				catchAnimationState = AnimationStates.Started;
@@ -865,7 +856,6 @@ public class Farmer : MonoBehaviour {
 				}
 
 				if (hasCaughtPlayer) {
-					Debug.Log("Holding Onto Player");
 					HoldOntoPlayer(true);
 					player.transform.position = carryPosition.position;
 				} else {
@@ -875,13 +865,11 @@ public class Farmer : MonoBehaviour {
 				break;
 			}
 			case AnimationStates.Ended: {
-				Debug.Log("Catch Action Ended");
 				StopLookAtCoroutine();
 				catchAnimationState = AnimationStates.NotStarted;
 				return true;
 			}
 			default: {
-				Debug.Log("Catch Action Stopped by Default Case");
 				StopCatchingPlayer();
 				return true;
 			}
