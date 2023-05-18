@@ -691,31 +691,35 @@ public class Farmer : MonoBehaviour {
 		}
 
 		if (!moveDestinationSet) {
-			//if (canVisitPointOfInterest) {
-			//	GoToPointOfInterest();
+			if (canVisitPointOfInterest) {
+				GoToPointOfInterest();
 
-			//	// Check if the farmer is walking to a point of interest.
-			//	if (moveDestinationSet) {
-			//		return false;
-			//	}
-			//}
+				// Check if the farmer is walking to a point of interest.
+				if (moveDestinationSet) {
+					return false;
+				}
+			}
 
-			const int maxRotation = 12;
+			const int maxRotation = 40;
 			int rotationAroundYAxis = Random.Range(-maxRotation, maxRotation);
 			// Creates a rotation to offset the move direction by.
-			// Helps add some unpredictabilityd to the farmer's wonder action.
+			// Helps add some unpredictability to the farmer's wonder action.
 			Quaternion moveRotation = Quaternion.Euler(0, rotationAroundYAxis, 0);
 			Vector3 newMoveDirection = Vector3.zero;
+			// A direction towards the wonder point that most closely matches
+			// this game-object's forward direction.
+			Vector3 directionToAlignedPoint = wonderPointManager.GetDirectionToClosestAlignedPoint(transform.forward);
 
-			if (wonderPointManager.AverageDirectionToOpenSpace != Vector3.zero) {
-				// The average direction should be chosen first when wondering to open space.
+			if (directionToAlignedPoint != Vector3.zero) {
+				newMoveDirection = moveRotation * directionToAlignedPoint;
+			} else if (wonderPointManager.AverageDirectionToOpenSpace != Vector3.zero) {
 				newMoveDirection = moveRotation * wonderPointManager.AverageDirectionToOpenSpace;
 			} else if (wonderPointManager.DirectionToFurthestPointInOpenSpace != Vector3.zero) {
 				newMoveDirection = moveRotation * wonderPointManager.DirectionToFurthestPointInOpenSpace;
 			} else {
 				newMoveDirection = transform.forward;
 			}
-			
+
 			Debug.DrawLine(transform.position, transform.position + newMoveDirection, Color.cyan, 5);
 			const int moveDistance = 3;
 			// Get a position ahead of the agent.
@@ -723,16 +727,10 @@ public class Farmer : MonoBehaviour {
 			NavMesh.SamplePosition(wonderDestination, out NavMeshHit navMeshHit, moveDistance, NavMesh.AllAreas);
 			const float turnAroundThreshold = 2.8f;
 
-			if (navMeshHit.hit) {
-				Debug.DrawLine(navMeshHit.position, navMeshHit.position + Vector3.up, Color.green, 5);
-			}
-
 			// Check if the farmer is at the edge of the nav mesh.
 			if (navMeshHit.hit && Vector3.Distance(wonderDestination, navMeshHit.position) >= turnAroundThreshold) {
-				Debug.DrawLine(wonderDestination, wonderDestination + Vector3.up, Color.red, 5);
 				Vector3 reverseMoveDirection = moveRotation * transform.position - wonderDestination;
 				wonderDestination = transform.position + reverseMoveDirection * moveDistance;
-				Debug.Log("Turned Around.");
 			}
 
 			moveDestinationSet = navMeshAgent.SetDestination(wonderDestination);

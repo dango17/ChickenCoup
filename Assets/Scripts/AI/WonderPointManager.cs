@@ -3,6 +3,7 @@
 // Created On: 9/5/2023
 
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// Collects data about the wonder points.
@@ -32,7 +33,40 @@ public class WonderPointManager : MonoBehaviour {
     private WonderPoint[] wonderPoints = new WonderPoint[8];
     private GameObject farmer = null;
 
-    private void Awake() {
+	/// <summary>
+	/// Gets a direction to the wonder point in open space that's the most 
+	/// aligned with the parameter direction.
+	/// </summary>
+	/// <param name="targetDirection"> The method finds the wonder point that has the best alignment with this direction. </param>
+	/// <returns> Direction to the best aligned wonder point. </returns>
+	public Vector3 GetDirectionToClosestAlignedPoint(Vector3 targetDirection) {
+        Vector3 mostAlignedDirection = Vector3.zero;
+        float alignedDirectionsDotProduct = 0.0f;
+
+        foreach (WonderPoint wonderPoint in wonderPoints) {
+            float searchRange = 0.7f;
+            // Check if the wonder point is above the nav mesh because the
+            // returned direction should point towards open space that an
+            // agent can reach.
+            NavMesh.SamplePosition(wonderPoint.transform.position, out NavMeshHit hit, searchRange, NavMesh.AllAreas);
+
+			if (wonderPoint.IsTouching || hit.distance > searchRange) {
+                continue;
+            }
+
+            Vector3 directionToWonderPoint = (wonderPoint.transform.position - transform.position).normalized;
+            float wonderPointsDotProduct = Vector3.Dot(directionToWonderPoint, targetDirection);
+
+			if (wonderPointsDotProduct > alignedDirectionsDotProduct) {
+				mostAlignedDirection = directionToWonderPoint;
+                alignedDirectionsDotProduct = wonderPointsDotProduct;
+			}
+        }
+
+        return mostAlignedDirection;
+	}
+
+	private void Awake() {
         wonderPoints = GetComponentsInChildren<WonderPoint>();
         DuplicateWonderPoints();
     }
