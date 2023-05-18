@@ -888,25 +888,34 @@ public class Farmer : MonoBehaviour {
 		}
 
 		return false;
-
-		IEnumerator LookAtCoroutine(Transform transformToLookAt) {
-			Vector3 targetDirection = transformToLookAt.position - transform.position;
-			Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
-
-			while (transform.rotation != targetRotation ||
-				catchAnimationState != AnimationStates.NotStarted) {
-				const float rotationSpeed = 1.5f;
-				// Lerp from current rotation to a rotation that faces the player.
-				transform.rotation = Quaternion.Slerp(originalRotation,
-					targetRotation,
-					rotationAmount = rotationAmount + Time.deltaTime * rotationSpeed);
-				yield return null;
-			}
-
-			yield return null;
-		}
 	}
 
+	/// <summary>
+	/// Makes the farmer look at a transform by rotating them over time until 
+	/// they're looking the correct direction.
+	/// </summary>
+	/// <param name="transformToLookAt"> The transform to look at. </param>
+	/// <returns> IEnumerator for the coroutine. </returns>
+	private IEnumerator LookAtCoroutine(Transform transformToLookAt) {
+		Vector3 targetDirection = transformToLookAt.position - transform.position;
+		Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
+		while (transform.rotation != targetRotation ||
+			catchAnimationState != AnimationStates.NotStarted) {
+			const float rotationSpeed = 1.5f;
+			// Lerp from current rotation to a rotation that faces the player.
+			transform.rotation = Quaternion.Slerp(originalRotation,
+				targetRotation,
+				rotationAmount = rotationAmount + Time.deltaTime * rotationSpeed);
+			yield return null;
+		}
+
+		yield return null;
+	}
+
+	/// <summary>
+	/// Stops the coroutine that makes the farmer look at a target transform.
+	/// </summary>
 	private void StopLookAtCoroutine() {
 		rotationAmount = 0;
 
