@@ -88,9 +88,6 @@ public class WonderPointManager : MonoBehaviour {
 			}
         }
 
-        Debug.DrawLine(transform.position, transform.position + AverageDirectionToOpenSpace * 2);
-        Debug.DrawLine(transform.position, transform.position + DirectionToFurthestPointInOpenSpace * 2);
-
         void GetFurthestPoint(GameObject point) {
             float distanceToPoint = Vector3.Distance(transform.position, point.transform.position);
 

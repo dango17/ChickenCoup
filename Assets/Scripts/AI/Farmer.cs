@@ -691,23 +691,32 @@ public class Farmer : MonoBehaviour {
 		}
 
 		if (!moveDestinationSet) {
-			if (canVisitPointOfInterest) {
-				GoToPointOfInterest();
+			//if (canVisitPointOfInterest) {
+			//	GoToPointOfInterest();
 
-				// Check if the farmer is walking to a point of interest.
-				if (moveDestinationSet) {
-					return false;
-                }
-            }
+			//	// Check if the farmer is walking to a point of interest.
+			//	if (moveDestinationSet) {
+			//		return false;
+			//	}
+			//}
 
-			const int maxRotation = 5;
+			const int maxRotation = 12;
 			int rotationAroundYAxis = Random.Range(-maxRotation, maxRotation);
-			// Gets a new direction to move in.
-			Quaternion moveRotation = Quaternion.Euler(transform.rotation.eulerAngles.x,
-				transform.rotation.eulerAngles.y + rotationAroundYAxis,
-				transform.rotation.eulerAngles.z);
-			Vector3 newMoveDirection = moveRotation * wonderPointManager.DirectionToFurthestPointInOpenSpace;
-			Debug.DrawLine(transform.position, transform.position + newMoveDirection, Color.green);
+			// Creates a rotation to offset the move direction by.
+			// Helps add some unpredictabilityd to the farmer's wonder action.
+			Quaternion moveRotation = Quaternion.Euler(0, rotationAroundYAxis, 0);
+			Vector3 newMoveDirection = Vector3.zero;
+
+			if (wonderPointManager.AverageDirectionToOpenSpace != Vector3.zero) {
+				// The average direction should be chosen first when wondering to open space.
+				newMoveDirection = moveRotation * wonderPointManager.AverageDirectionToOpenSpace;
+			} else if (wonderPointManager.DirectionToFurthestPointInOpenSpace != Vector3.zero) {
+				newMoveDirection = moveRotation * wonderPointManager.DirectionToFurthestPointInOpenSpace;
+			} else {
+				newMoveDirection = transform.forward;
+			}
+			
+			Debug.DrawLine(transform.position, transform.position + newMoveDirection, Color.cyan, 5);
 			const int moveDistance = 3;
 			// Get a position ahead of the agent.
 			Vector3 wonderDestination = transform.position + newMoveDirection * moveDistance;
@@ -730,6 +739,7 @@ public class Farmer : MonoBehaviour {
 			animator.SetBool("Walking", true);
 			navMeshAgent.speed = walkSpeed;
 			animator.SetFloat("MoveMultiplier", walkPlaybackSpeedMultiplier);
+			Debug.DrawLine(wonderDestination, wonderDestination + Vector3.up, Color.cyan, 5);
 		}
 
 		return false;
