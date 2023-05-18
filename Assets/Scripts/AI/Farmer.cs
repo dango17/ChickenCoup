@@ -53,7 +53,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private bool respondedToPlayerAudioCue = false;
 	private float timeUntilPlayersLastSoundCudeIsForgotten = 0.0f;
-	private float maximumTimeUntilPlayersLastSoundCudeIsForgotten = 5.0f;
+	private const float maximumTimeUntilPlayersLastSoundCudeIsForgotten = 5.0f;
 	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
 	private AudioSensor audioSensor = null;
 
@@ -110,6 +110,7 @@ public class Farmer : MonoBehaviour {
 	/// around the level.
 	/// </summary>
 	private bool canVisitPointOfInterest = true;
+	private bool isVisitingPointOfInterest = false;
 	/// <summary>
 	/// Index of the current point of interest that the farmer is wondering to.
 	/// </summary>
@@ -119,11 +120,13 @@ public class Farmer : MonoBehaviour {
 	/// next point of interest.
 	/// </summary>
 	private float visitPointOfInterestTime = 0.0f;
-	private float maximumVisitPointOfInterestTime = 25.0f;
+	private const float maximumVisitPointOfInterestTime = 25.0f;
+	private float inspectPointOfInterestTime = 0.0f;
+	private const float maximumInspectPointOfInterestTime = 5.0f;
 	private float timeToSpendSearchingForPlayer = 0.0f;
 	[SerializeField, Tooltip("The length of time the farmer will spend " +
 		"searching for the player. Measured in seconds.")]
-	private float maximumTimeToSpendSearchingForPlayer = 15.0f;
+	private const float maximumTimeToSpendSearchingForPlayer = 15.0f;
 	private NavMeshAgent navMeshAgent = null;
 	private PointOfInterest[] pointsOfInterest = null;
 	private WonderPointManager wonderPointManager = null;
@@ -140,7 +143,7 @@ public class Farmer : MonoBehaviour {
 	/// The maximum range allowed between the farmer and player where the 
 	/// player can still be caught.
 	/// </summary>
-	private float maximumRangeToCatchPlayer = 1.5f;
+	private const float maximumRangeToCatchPlayer = 1.5f;
 	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
 	[SerializeField, Tooltip("The trigger colliders used for detecting a " +
 		"collision with the player when the farmer attempts to catch them.")]
@@ -154,7 +157,7 @@ public class Farmer : MonoBehaviour {
 	#endregion
 
 	private float containPlayerInsitence = 0.0f;
-	private float maximumContainChickenInsitence = 100.0f;
+	private const float maximumContainChickenInsitence = 100.0f;
 	private UtilityScript utilityScript = null;
 	
 	private bool holdingKeycard = true;
@@ -254,6 +257,7 @@ public class Farmer : MonoBehaviour {
 		lookAtCoroutine = null;
 		moveDestinationSet = false;
 		moveDestinationChanged = false;
+		isVisitingPointOfInterest = false;
 		navMeshAgent.autoBraking = true;
 		navMeshAgent.ResetPath();
 		utilityScript.Reset();
@@ -324,8 +328,7 @@ public class Farmer : MonoBehaviour {
 
 	private void Update() {
 		animator.ResetTrigger("Idling");
-		BlindAndDeaf();
-		Stunned();
+		UpdateTimers();
 
 		if (!isBlindAndDeaf) {
 			HandlePlayerVisibility();
@@ -670,24 +673,27 @@ public class Farmer : MonoBehaviour {
 
 	#region Farmer's Actions
 	/// <summary>
-	/// Makes the farmer wonder around the environment.
+	/// Makes the farmer wonder around the environment and occasionally visit 
+	/// points of interest.
 	/// </summary>
-	/// <returns> True if Ai has completed the action. </returns>
+	/// <returns> True if the farmer has completed the action (successfully or unsuccessfully). </returns>
 	private bool Wonder() {
 		if (HasArrivedAtDestination()) {
 			animator.SetBool("Walking", false);
+
+			if (isVisitingPointOfInterest) {
+				inspectPointOfInterestTime = maximumInspectPointOfInterestTime;
+				animator.SetBool("Inspecting", true);
+				return false;
+			}
+
 			return true;
 		}
 
-		if (visitPointOfInterestTime > 0) {
-			visitPointOfInterestTime -= Time.deltaTime;
-
-			if (visitPointOfInterestTime <= 0) {
-				canVisitPointOfInterest = true;
-			}
-		}
-
-		if (!moveDestinationSet) {
+		// Check if the farmer isn't visiting a point of interest as well
+		// because their destination shouldn't be changed when their moving to
+		// it.
+		if (!moveDestinationSet && !isVisitingPointOfInterest) {
 			if (canVisitPointOfInterest) {
 				GoToPointOfInterest();
 
@@ -695,8 +701,14 @@ public class Farmer : MonoBehaviour {
 				if (moveDestinationSet) {
 					return false;
 				}
+			} else {
+				SetRandomWonderPoint();
 			}
+		}
 
+		return false;
+
+		void SetRandomWonderPoint() {
 			const int maxRotation = 40;
 			int rotationAroundYAxis = Random.Range(-maxRotation, maxRotation);
 			// Creates a rotation to offset the move direction by.
@@ -735,8 +747,6 @@ public class Farmer : MonoBehaviour {
 			animator.SetFloat("MoveMultiplier", walkPlaybackSpeedMultiplier);
 		}
 
-		return false;
-
 		void GoToPointOfInterest() {
 			if (pointsOfInterest.Length == 0) {
 				return;
@@ -753,6 +763,7 @@ public class Farmer : MonoBehaviour {
 			animator.SetFloat("MoveMultiplier", walkPlaybackSpeedMultiplier);
 			visitPointOfInterestTime = maximumVisitPointOfInterestTime;
 			canVisitPointOfInterest = false;
+			isVisitingPointOfInterest = true;
 		}
 	}
 
@@ -946,6 +957,28 @@ public class Farmer : MonoBehaviour {
 	}
 	#endregion
 
+	private void UpdateTimers() {
+		BlindAndDeaf();
+		Stunned();
+
+		if (visitPointOfInterestTime > 0) {
+			visitPointOfInterestTime -= Time.deltaTime;
+
+			if (visitPointOfInterestTime <= 0) {
+				canVisitPointOfInterest = true;
+			}
+		}
+
+		if (inspectPointOfInterestTime > 0) {
+			inspectPointOfInterestTime -= Time.deltaTime;
+
+			if (inspectPointOfInterestTime <= 0) {
+				animator.SetBool("Inspecting", false);
+				isVisitingPointOfInterest = false;
+			}
+		}
+	}
+
 	private void BlindAndDeaf() {
 		if (blindAndDeafTime > 0) {
 			blindAndDeafTime -= Time.deltaTime;
@@ -1025,5 +1058,6 @@ public class Farmer : MonoBehaviour {
 		animator.ResetTrigger("CatchingTrigger");
 		animator.SetBool("Stunned", false);
 		animator.ResetTrigger("StunnedTrigger");
+		animator.SetBool("Inspecting", false);
 	}
 }
