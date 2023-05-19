@@ -74,36 +74,37 @@ public abstract class Sensor : MonoBehaviour {
 	[SerializeField, Tooltip("The central point of the sensor bounds.")]
 	protected Transform sensorOrigin = null;
 
-    #region Helper Methods
-    /// <summary>
-	/// Returns true if the parameter game-object exists within the parameter 
-	/// collection.
+	#region Helper Methods
+	/// <summary>
+	/// Returns data about the parameter game-object if it exists within the 
+	/// parameter collection.
 	/// </summary>
 	/// <param name="collection"> The collection to search. </param>
 	/// <param name="gameobjectToSelect"> The game-object to search for. </param>
-	/// <returns> True if the game-object exists within the collection. </returns>
-	public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+	/// <returns> A struct of data which a sensor has gathered about the 
+	/// parameter game-object. </returns>
+	public CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
 		if (collection.Count == 0) {
-			return false;
+			return default;
 		}
 
 		IEnumerable<CollectedData> filteredCollection = collection.Where(element => element.gameobject == gameobjectToSelect);
 
 		if (filteredCollection.Count() == 0) {
-			return false;
+			return default;
 		}
 
-		return filteredCollection.First().gameobject;
+		return filteredCollection.First();
 	}
 
 	public void AddObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
-		if (!Contains(collection, objectToAdd)) {
+		if (!GetCollectedData(collection, objectToAdd).gameobject) {
 			collection.AddLast(new CollectedData(objectToAdd, defaultDataLifespan));
 		}
 	}
 
 	public void RemoveObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
-		if (Contains(collection, objectToAdd)) {
+		if (GetCollectedData(collection, objectToAdd).gameobject) {
 			collection.Remove(GetCollectedData(collection, objectToAdd));
 		}
 	}
@@ -126,8 +127,8 @@ public abstract class Sensor : MonoBehaviour {
 			return;
 		}
 
-		bool discovered = Contains(data, detectedGameObject);
-		bool partiallyDiscovered = Contains(partiallyDiscoveredData, detectedGameObject);
+		bool discovered = GetCollectedData(data, detectedGameObject).gameobject;
+		bool partiallyDiscovered = GetCollectedData(partiallyDiscoveredData, detectedGameObject).gameobject;
 
 		// Don't verify detection if the data is already discovered or
 		// partially discovered. Include "discovered &&" because the data
@@ -190,10 +191,6 @@ public abstract class Sensor : MonoBehaviour {
 
 	protected virtual void FixedUpdate() { }
 
-	protected CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
-		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
-	}
-
 	/// <summary>
 	/// Checks if the gathered data is valid and should be saved.
 	/// </summary>
@@ -212,12 +209,12 @@ public abstract class Sensor : MonoBehaviour {
 	private void OnTriggerExit(Collider other) {
 		GameObject othersGameObject = other.gameObject;
 
-		if (Contains(data, othersGameObject)) {
+		if (GetCollectedData(data, othersGameObject).gameobject) {
 			DisableObjectsDetectionPoints(othersGameObject);
 			RemoveObject(ref data, othersGameObject);
 		}
 
-		if (Contains(partiallyDiscoveredData, othersGameObject)) {
+		if (GetCollectedData(partiallyDiscoveredData, othersGameObject).gameobject) {
 			DisableObjectsDetectionPoints(othersGameObject);
 			RemoveObject(ref partiallyDiscoveredData, othersGameObject);
 		}
