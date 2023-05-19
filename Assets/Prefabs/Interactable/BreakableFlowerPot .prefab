@@ -127,7 +127,7 @@ GameObject:
   - component: {fileID: 8635830967158738907}
   - component: {fileID: 8635830967158738904}
   - component: {fileID: 8635830967158738905}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: 'BreakableFlowerPot '
   m_TagString: Untagged
   m_Icon: {fileID: 0}

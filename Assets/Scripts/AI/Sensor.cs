@@ -122,8 +122,8 @@ public abstract class Sensor : MonoBehaviour {
 			return;
 		}
 
-		bool discovered = Contains(data, detectedGameObject.transform.root.gameObject);
-		bool partiallyDiscovered = Contains(partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
+		bool discovered = Contains(data, detectedGameObject);
+		bool partiallyDiscovered = Contains(partiallyDiscoveredData, detectedGameObject);
 
 		// Don't verify detection if the data is already discovered or
 		// partially discovered. Include "discovered &&" because the data
@@ -136,28 +136,28 @@ public abstract class Sensor : MonoBehaviour {
 		switch (VerifyDetection(detectedGameObject)) {
 			case Visibility.Visible: {
 				if (!discovered) {
-					AddObject(ref data, detectedGameObject.transform.root.gameObject);
+					AddObject(ref data, detectedGameObject);
 				}
 
 				if (partiallyDiscovered) {
-					RemoveObject(ref partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
+					RemoveObject(ref partiallyDiscoveredData, detectedGameObject);
 				}
 
 				break;
 			}
 			case Visibility.PartiallyVisible: {
 				if (!partiallyDiscovered) {
-					AddObject(ref partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
+					AddObject(ref partiallyDiscoveredData, detectedGameObject);
 				}
 
 				break;
 			}
 			case Visibility.NotVisible: {
-				ForgetObject(detectedGameObject.transform.root.gameObject);
+				ForgetObject(detectedGameObject);
 				return;
 			}
 			default: {
-				ForgetObject(detectedGameObject.transform.root.gameObject);
+				ForgetObject(detectedGameObject);
 				return;
 			}
 		}
@@ -166,7 +166,7 @@ public abstract class Sensor : MonoBehaviour {
 	/// <summary>
 	/// Makes the sensor forget about a specific bit of data.
 	/// </summary>
-	/// <param name="gameObjectToForget"> The game-object to forget. Must be the root game-object. </param>
+	/// <param name="gameObjectToForget"> The game-object to forget. </param>
 	public void ForgetObject(GameObject gameObjectToForget) {
 		RemoveObject(ref data, gameObjectToForget);
 		RemoveObject(ref partiallyDiscoveredData, gameObjectToForget);
@@ -206,18 +206,16 @@ public abstract class Sensor : MonoBehaviour {
 	}
 
 	private void OnTriggerExit(Collider other) {
-		GameObject othersRootGameObject = other.transform.root.gameObject;
+		GameObject othersGameObject = other.gameObject;
 
-		// Check the root game-object because that's what the sensor saves a
-		// reference to.
-		if (Contains(data, othersRootGameObject)) {
-			DisableObjectsDetectionPoints(othersRootGameObject);
-			RemoveObject(ref data, othersRootGameObject);
+		if (Contains(data, othersGameObject)) {
+			DisableObjectsDetectionPoints(othersGameObject);
+			RemoveObject(ref data, othersGameObject);
 		}
 
-		if (Contains(partiallyDiscoveredData, othersRootGameObject)) {
-			DisableObjectsDetectionPoints(othersRootGameObject);
-			RemoveObject(ref partiallyDiscoveredData, othersRootGameObject);
+		if (Contains(partiallyDiscoveredData, othersGameObject)) {
+			DisableObjectsDetectionPoints(othersGameObject);
+			RemoveObject(ref partiallyDiscoveredData, othersGameObject);
 		}
 	}
 
@@ -259,10 +257,6 @@ public abstract class Sensor : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="gameobject"> ...Must be the root game-object. </param>
 	private void DisableObjectsDetectionPoints(GameObject gameobject) {
 		DetectionPoint[] detectionPoints = gameobject.GetComponentsInChildren<DetectionPoint>();
 

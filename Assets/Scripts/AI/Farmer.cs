@@ -181,7 +181,6 @@ public class Farmer : MonoBehaviour {
 	private Transform keycardHoldTransform = null;
 	private Animator animator = null;
 
-	private GameObject playersParent = null;
 	private PlayerController player = null;
 	private InputHandler inputHandler = null;
 	private Rigidbody playerRigidbody = null;
@@ -212,7 +211,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	public bool ShouldSearchForPlayer() {
-		return seenPlayerRecently || heardPlayerRecently || noticedPlayerClue ? true : false;
+		return seenPlayerRecently || heardPlayerRecently || noticedPlayerClue || noticedBrokenObject ? true : false;
 	}
 	#endregion
 
@@ -390,19 +389,19 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollidersEnabled && other.gameObject.CompareTag("Player")) {
 			catchColliderIsTouchingPlayer = true;
 		}
 	}
 
 	private void OnTriggerStay(Collider other) {
-		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollidersEnabled && other.gameObject.CompareTag("Player")) {
 			catchColliderIsTouchingPlayer = true;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
-		if (catchCollidersEnabled && other.transform.root.gameObject.CompareTag("Player")) {
+		if (catchCollidersEnabled && other.gameObject.CompareTag("Player")) {
 			catchColliderIsTouchingPlayer = false;
 		}
 	}
@@ -423,9 +422,8 @@ public class Farmer : MonoBehaviour {
 	/// Searches other game-objects for necessary components.
 	/// </summary>
 	private void FindComponents() {
-		playersParent = GameObject.FindGameObjectWithTag("Player").transform.root.gameObject;
-		player = playersParent.GetComponentInChildren<PlayerController>();
-		inputHandler = playersParent.GetComponentInChildren<InputHandler>();
+		player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+		inputHandler = player.GetComponent<InputHandler>();
 		playerRigidbody = player.GetComponent<Rigidbody>();
 		carryPosition = GameObject.FindGameObjectWithTag("Carry Position").transform;
 		releasePosition = GameObject.FindGameObjectWithTag("Release Position").transform;
@@ -550,13 +548,13 @@ public class Farmer : MonoBehaviour {
 		// Handles seeing the player.
 		if (!canSeePlayer &&
 			!player.IsHiding &&
-			visualSensor.Contains(visualSensor.Data, playersParent)) {
+			visualSensor.Contains(visualSensor.Data, player.gameObject)) {
 			canSeePlayer = true;
 			seenPlayerRecently = true;
 		}
 
 		// Handles losing sight of the player.
-		if (canSeePlayer && !visualSensor.Contains(visualSensor.Data, playersParent)) {
+		if (canSeePlayer && !visualSensor.Contains(visualSensor.Data, player.gameObject)) {
 			canSeePlayer = false;
 			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
 		}
@@ -670,7 +668,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private void HandlePlayerAudioCues() {
 		if ((!heardPlayerRecently || !respondedToPlayerAudioCue) &&
-			audioSensor.Contains(audioSensor.Data, playersParent)) {
+			audioSensor.Contains(audioSensor.Data, player.gameObject)) {
 			const float half = 0.5f;
 			containPlayerInsitence = half * maximumContainChickenInsitence;
 			heardPlayerRecently = true;
@@ -685,9 +683,9 @@ public class Farmer : MonoBehaviour {
 			}
 		}
 
-		if (respondedToPlayerAudioCue && audioSensor.Contains(audioSensor.Data, playersParent)) {
+		if (respondedToPlayerAudioCue && audioSensor.Contains(audioSensor.Data, player.gameObject)) {
 			// Forget about the audio cue's source now it's been handled.
-			audioSensor.ForgetObject(playersParent);
+			audioSensor.ForgetObject(player.gameObject);
 			respondedToPlayerAudioCue = false;
 		}
 
@@ -712,20 +710,21 @@ public class Farmer : MonoBehaviour {
 
 		HandleInteractableObjects();
 
-		if (noticedPlayerClue || noticedBrokenObject) {
-			StopAction(false);
-		}
-
 		void HandleInteractableObjects() {
 			int interactableLayerMask = LayerMask.GetMask("Interactable");
 			Sensor.CollectedData spottedObject = visualSensor.GetData(visualSensor.Data, interactableLayerMask);
 
 			if (spottedObject.gameobject && !spottedObject.acknowledged) {
-				PotBreak potBreakScript = spottedObject.gameobject.GetComponent<PotBreak>();
+				// The script for breaking pots is two levels up from the
+				// detected object.
+				PotBreak potBreakScript = spottedObject.gameobject.transform.parent.parent.GetComponent<PotBreak>();
 
 				if (potBreakScript && potBreakScript.isBroken) {
 					noticedBrokenObject = true;
 					brokenObjectPosition = potBreakScript.gameObject.transform.position;
+				}
+
+				if (noticedBrokenObject) {
 					spottedObject.acknowledged = true;
 					// Stop the sensor from forgetting about this broken object.
 					// So it's no surprise when the farmer sees it again.
@@ -735,6 +734,10 @@ public class Farmer : MonoBehaviour {
 				if (noticedBrokenObject) {
 					noticedPlayerClue = true;
 					playersCluePosition = spottedObject.gameobject.transform.position;
+				}
+
+				if (noticedPlayerClue || noticedBrokenObject) {
+					StopAction(false);
 				}
 			}
 		}
@@ -1100,10 +1103,10 @@ public class Farmer : MonoBehaviour {
 	/// makes the farmer completely forget about the player in every capacity.
 	/// </summary>
 	private void ForgetAboutPlayer() {
-		visualSensor.ForgetObject(player.transform.root.gameObject);
+		visualSensor.ForgetObject(player.gameObject);
 		canSeePlayer = false;
 		seenPlayerRecently = false;
-		audioSensor.ForgetObject(player.transform.root.gameObject);
+		audioSensor.ForgetObject(player.gameObject);
 		heardPlayerRecently = false;
 	}
 
@@ -1133,8 +1136,8 @@ public class Farmer : MonoBehaviour {
 	private void HoldOntoPlayer(bool holdOntoPlayer) {
 		holdOntoPlayer = !holdOntoPlayer;
 		player.enabled = holdOntoPlayer;
-		playersParent.GetComponentInChildren<InputHandler>().enabled = holdOntoPlayer;
-		playersParent.GetComponentInChildren<Rigidbody>().useGravity = holdOntoPlayer;
+		player.gameObject.GetComponent<InputHandler>().enabled = holdOntoPlayer;
+		player.gameObject.GetComponent<Rigidbody>().useGravity = holdOntoPlayer;
 	}
 
 	/// <summary>
