@@ -149,6 +149,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private const float maximumRangeToCatchPlayer = 1.5f;
 	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
+	private GameObject heldObject = null;
 	[SerializeField, Tooltip("The trigger colliders used for detecting a " +
 		"collision with the player when the farmer attempts to catch them.")]
 	private BoxCollider[] catchColliders = null;
@@ -288,6 +289,7 @@ public class Farmer : MonoBehaviour {
 		}
 
 		hasCaughtPlayer = false;
+		heldObject = null;
 		catchColliderIsTouchingPlayer = false;
 		ToggleCatchCollider(false);
 		animator.SetBool("Catching", false);
@@ -883,7 +885,21 @@ public class Farmer : MonoBehaviour {
 				}
 
 				if (catchCollidersEnabled && catchColliderIsTouchingPlayer) {
-					hasCaughtPlayer = true;
+					// Concealment objects become children of the concealment
+					// point, so check to see if one exists to verify the
+					// player's actually concealed.
+					if (inputHandler.isConcealed && player.ConcealmentPoint.transform.childCount > 0) {
+						heldObject = player.ConcealmentPoint.transform.GetChild(0).gameObject;
+						inputHandler.isGrabbing = false;
+						// Check the farmer isn'y holding anything before
+						// picking the player up.
+					} else if (!heldObject) {
+						hasCaughtPlayer = true;
+					}
+				}
+
+				if (heldObject) {
+					heldObject.transform.position = carryPosition.position;
 				}
 
 				if (hasCaughtPlayer) {
@@ -896,6 +912,7 @@ public class Farmer : MonoBehaviour {
 				break;
 			}
 			case AnimationStates.Ended: {
+				heldObject = null;
 				StopLookAtCoroutine();
 				catchAnimationState = AnimationStates.NotStarted;
 				return true;
