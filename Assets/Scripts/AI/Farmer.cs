@@ -382,10 +382,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	private void FixedUpdate() {
-		float awarenessPercentage = awareness / maximumAwareness;
-		const float oneQuarter = 0.2f;
-		float canHearPlayer = heardPlayerRecently ? oneQuarter : 0.0f;
-		flashlight.ChangeColour(Mathf.Clamp(awarenessPercentage + canHearPlayer, 0.0f, 1.0f));
+		UpdateFlashlightColour();
 	}
 
 	private void OnTriggerEnter(Collider other) {
@@ -703,6 +700,8 @@ public class Farmer : MonoBehaviour {
 
 	private void HandleObjectVisibility() {
 		if (canSeePlayer || heardPlayerRecently) {
+			noticedPlayerClue = false;
+			noticedBrokenObject = false;
 			// Stops the processing of gathered data that isn't related to the
 			// player.
 			return;
@@ -718,6 +717,11 @@ public class Farmer : MonoBehaviour {
 				// The script for breaking pots is two levels up from the
 				// detected object.
 				PotBreak potBreakScript = spottedObject.gameobject.transform.parent.parent.GetComponent<PotBreak>();
+
+				if (noticedBrokenObject) {
+					// Return if a broken object has already been detected.
+					return;
+				}
 
 				if (potBreakScript && potBreakScript.isBroken) {
 					noticedBrokenObject = true;
@@ -737,12 +741,31 @@ public class Farmer : MonoBehaviour {
 				}
 
 				if (noticedPlayerClue || noticedBrokenObject) {
+					const float half = 0.5f;
+					containPlayerInsitence = half * maximumContainChickenInsitence;
 					StopAction(false);
 				}
 			}
 		}
 	}
 	#endregion
+
+	/// <summary>
+	/// Updates the farmer's falshlight's colour based on the farmer's 
+	/// awareness and current state.
+	/// </summary>
+	private void UpdateFlashlightColour() {
+		// The intended colour intensity of the farmer's flashlight based on
+		// the farmer's awareness level.
+		float awarenessColourIntensity = awareness / maximumAwareness;
+		const float half = 0.5f;
+		float searchingColourIntensity = seenPlayerRecently ||
+			heardPlayerRecently ||
+			noticedPlayerClue ||
+			noticedBrokenObject ? half : 0.0f;
+		float colourIntensity = awarenessColourIntensity >= searchingColourIntensity ? awarenessColourIntensity : searchingColourIntensity;
+		flashlight.ChangeColour(Mathf.Clamp(colourIntensity, 0.0f, 1.0f));
+	}
 
 	#region Farmer's Actions
 	/// <summary>
@@ -847,7 +870,6 @@ public class Farmer : MonoBehaviour {
 	/// <returns> True when the action has completed. </returns>
 	private bool SearchForPlayer() {
 		if (canSeePlayer) {
-			StopAction(true);
 			animator.SetBool("Walking", false);
 			return true;
 		}
@@ -1108,6 +1130,8 @@ public class Farmer : MonoBehaviour {
 		seenPlayerRecently = false;
 		audioSensor.ForgetObject(player.gameObject);
 		heardPlayerRecently = false;
+		noticedPlayerClue = false;
+		noticedBrokenObject = false;
 	}
 
 	/// <summary>
