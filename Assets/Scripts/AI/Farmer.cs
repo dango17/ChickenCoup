@@ -57,7 +57,14 @@ public class Farmer : MonoBehaviour {
 	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
 	private AudioSensor audioSensor = null;
 
-	private bool spottedNewlyBrokenObject = false;
+	/// <summary>
+	/// True if the farmer has spotted an object that was potentially 
+	/// created/caused by the player.
+	/// </summary>
+	private bool noticedPlayerClue = false;
+	private Vector3 playersCluePosition = Vector3.zero;
+	private bool noticedBrokenObject = false;
+	private Vector3 brokenObjectPosition = Vector3.zero;
 
 	/// <summary>
 	/// True if the farmer's sensors are disabled.
@@ -205,7 +212,7 @@ public class Farmer : MonoBehaviour {
 	}
 
 	public bool ShouldSearchForPlayer() {
-		return seenPlayerRecently || heardPlayerRecently ? true : false;
+		return seenPlayerRecently || heardPlayerRecently || noticedPlayerClue ? true : false;
 	}
 	#endregion
 
@@ -703,13 +710,33 @@ public class Farmer : MonoBehaviour {
 			return;
 		}
 
-		// TODO: pass the class or interface of the object we want to handle.
-		if (visualSensor.Contains(visualSensor.Data, null)) {
-			spottedNewlyBrokenObject = true;
+		HandleInteractableObjects();
+
+		if (noticedPlayerClue || noticedBrokenObject) {
+			StopAction(false);
 		}
 
-		if (spottedNewlyBrokenObject) {
+		void HandleInteractableObjects() {
+			int interactableLayerMask = LayerMask.GetMask("Interactable");
+			Sensor.CollectedData spottedObject = visualSensor.GetData(visualSensor.Data, interactableLayerMask);
 
+			if (spottedObject.gameobject && !spottedObject.acknowledged) {
+				PotBreak potBreakScript = spottedObject.gameobject.GetComponent<PotBreak>();
+
+				if (potBreakScript && potBreakScript.isBroken) {
+					noticedBrokenObject = true;
+					brokenObjectPosition = potBreakScript.gameObject.transform.position;
+					spottedObject.acknowledged = true;
+					// Stop the sensor from forgetting about this broken object.
+					// So it's no surprise when the farmer sees it again.
+					spottedObject.forgettable = false;
+				}
+
+				if (noticedBrokenObject) {
+					noticedPlayerClue = true;
+					playersCluePosition = spottedObject.gameobject.transform.position;
+				}
+			}
 		}
 	}
 	#endregion
@@ -837,6 +864,10 @@ public class Farmer : MonoBehaviour {
 			moveDestination = playersLastKnownPosition;
 		} else if (heardPlayerRecently) {
 			moveDestination = playersLastKnownSoundCuePosition;
+		} else if (noticedPlayerClue) {
+			moveDestination = playersCluePosition;
+		} else if (noticedBrokenObject) {
+			moveDestination = brokenObjectPosition;
 		}
 		
 		// Move to the player's last known position.

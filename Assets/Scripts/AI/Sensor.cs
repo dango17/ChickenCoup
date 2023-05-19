@@ -2,6 +2,7 @@
 // Collaborator: N/A
 // Created On: 30/01/2023
 
+using DO;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,11 +16,17 @@ public abstract class Sensor : MonoBehaviour {
 		/// True if this object has been identified by the sensor.
 		/// </summary>
 		public bool acknowledged;
+		/// <summary>
+		/// True if an object should be forgotten once it leaves the sensor's 
+		/// detection zone.
+		/// </summary>
+		public bool forgettable;
 		public float lifespan;
 		public GameObject gameobject;
 
 		public CollectedData (GameObject gameobject, float lifespan) {
 			acknowledged = false;
+			forgettable = true;
 			this.gameobject = gameobject;
 			this.lifespan = lifespan;
         }
@@ -71,6 +78,18 @@ public abstract class Sensor : MonoBehaviour {
 	// TODO: override the method so a class or interface can be passed instead of object type.
     public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
 		return collection.Count == 0 ? false : collection.Select(element => element.gameobject == gameobjectToSelect).First();
+	}
+
+	public bool Contains(LinkedList<CollectedData> collection, LayerMask layer) {
+		return collection.Count == 0 ? false : collection.Select(element => (1 << element.gameobject.layer) == layer).First();
+	}
+
+	public CollectedData GetData(LinkedList<CollectedData> collection, LayerMask layer) {
+		if (!Contains(collection, layer)) {
+			return default;
+		}
+
+		return collection.Where(element => (1 << element.gameobject.layer) == layer).First();
 	}
 
 	public void AddObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {

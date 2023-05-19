@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8635830967077378162}
   - component: {fileID: 8635830967077378163}
   - component: {fileID: 8635830967077378160}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlowerPotBroke3_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -127,7 +127,7 @@ GameObject:
   - component: {fileID: 8635830967158738907}
   - component: {fileID: 8635830967158738904}
   - component: {fileID: 8635830967158738905}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: 'BreakableFlowerPot '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ Transform:
   - {fileID: 8635830967331725108}
   - {fileID: 8635830967973638326}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8635830967158738907
 MonoBehaviour:
@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 8635830967223810294}
   - component: {fileID: 8635830967223810295}
   - component: {fileID: 8635830967223810292}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlowerPotBroke4_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -409,7 +409,7 @@ GameObject:
   - component: {fileID: 8635830967343232139}
   - component: {fileID: 8635830967343232136}
   - component: {fileID: 8635830967343232137}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlowerPotBroke2_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -559,7 +559,7 @@ GameObject:
   - component: {fileID: 8635830968025918286}
   - component: {fileID: 8635830968025918287}
   - component: {fileID: 8635830968025918284}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlowerPotBroke1_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}

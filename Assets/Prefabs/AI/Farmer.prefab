@@ -2667,7 +2667,7 @@ MonoBehaviour:
     m_Bits: 1984
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 320
   sensorOrigin: {fileID: 282368683108314715}
   fieldOfView: 200
 --- !u!1 &6904098387853299226
