@@ -105,7 +105,7 @@ public class VisualSensor : Sensor {
 			GameObject targetObject,
 			GameObject gameObjectToIgnore) {
 			RaycastHit[] raycastHits = Physics.RaycastAll(raycastOrigin,
-			targetObject.transform.position - sensorOrigin.position,
+			(targetObject.transform.position - sensorOrigin.position).normalized,
 			detectionRange,
 			raycastLayer);
 			raycastHits = raycastHits.OrderBy(hit => hit.distance).ToArray();

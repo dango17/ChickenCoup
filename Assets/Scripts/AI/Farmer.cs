@@ -158,6 +158,9 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private const float maximumRangeToCatchPlayer = 1.5f;
 	private AnimationStates catchAnimationState = AnimationStates.NotStarted;
+	/// <summary>
+	/// The game-object the farmer is holding.
+	/// </summary>
 	private GameObject heldObject = null;
 	[SerializeField, Tooltip("The trigger colliders used for detecting a " +
 		"collision with the player when the farmer attempts to catch them.")]
@@ -959,27 +962,22 @@ public class Farmer : MonoBehaviour {
 					lookAtCoroutine = StartCoroutine(LookAtCoroutine(player.transform));
 				}
 
-				if (catchCollidersEnabled && catchColliderIsTouchingPlayer) {
+				if (catchCollidersEnabled && catchColliderIsTouchingPlayer && !heldObject) {
 					// Concealment objects become children of the concealment
 					// point, so check to see if one exists to verify the
 					// player's actually concealed.
 					if (inputHandler.isConcealed && player.ConcealmentPoint.transform.childCount > 0) {
 						heldObject = player.ConcealmentPoint.transform.GetChild(0).gameObject;
 						inputHandler.isGrabbing = false;
-						// Check the farmer isn'y holding anything before
-						// picking the player up.
-					} else if (!heldObject) {
+					} else {
 						hasCaughtPlayer = true;
+						heldObject = player.gameObject;
+						HoldOntoPlayer(true);
 					}
 				}
 
-				if (heldObject) {
-					heldObject.transform.position = carryPosition.position;
-				}
-
 				if (hasCaughtPlayer) {
-					HoldOntoPlayer(true);
-					player.transform.position = carryPosition.position;
+					heldObject.transform.position = carryPosition.position;
 				} else {
 					HoldOntoPlayer(false);
 				}
@@ -987,7 +985,6 @@ public class Farmer : MonoBehaviour {
 				break;
 			}
 			case AnimationStates.Ended: {
-				heldObject = null;
 				StopLookAtCoroutine();
 				catchAnimationState = AnimationStates.NotStarted;
 				return true;
@@ -1046,6 +1043,7 @@ public class Farmer : MonoBehaviour {
 			CageController cageController = GameObject.FindGameObjectWithTag("ChickenCage").GetComponent<CageController>();
 			cageController.LockPlayer(player.transform);
 			hasCaughtPlayer = false;
+			heldObject = null;
 			// Set to zero so the farmer doesn't instantly chase the chicken
 			// after letting them go.
 			containPlayerInsitence = 0.0f;
