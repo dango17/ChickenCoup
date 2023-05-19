@@ -11,10 +11,15 @@ using UnityEngine;
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
 	public struct CollectedData {
+		/// <summary>
+		/// True if this object has been identified by the sensor.
+		/// </summary>
+		public bool acknowledged;
 		public float lifespan;
 		public GameObject gameobject;
 
 		public CollectedData (GameObject gameobject, float lifespan) {
+			acknowledged = false;
 			this.gameobject = gameobject;
 			this.lifespan = lifespan;
         }
@@ -63,6 +68,7 @@ public abstract class Sensor : MonoBehaviour {
 	protected Transform sensorOrigin = null;
 
     #region Helper Methods
+	// TODO: override the method so a class or interface can be passed instead of object type.
     public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
 		return collection.Count == 0 ? false : collection.Select(element => element.gameobject == gameobjectToSelect).First();
 	}

@@ -57,6 +57,8 @@ public class Farmer : MonoBehaviour {
 	private Vector3 playersLastKnownSoundCuePosition = Vector3.zero;
 	private AudioSensor audioSensor = null;
 
+	private bool spottedNewlyBrokenObject = false;
+
 	/// <summary>
 	/// True if the farmer's sensors are disabled.
 	/// </summary>
@@ -355,6 +357,7 @@ public class Farmer : MonoBehaviour {
 		if (!isBlindAndDeaf) {
 			HandlePlayerVisibility();
 			HandlePlayerAudioCues();
+			HandleObjectVisibility();
 		}
 
 		if (awareness > 0 && !canSeePlayer && !seenPlayerRecently && !heardPlayerRecently) {
@@ -529,7 +532,7 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 
-	#region Handling Player Sight & Sound
+	#region Handles Responding to Sight & Sound for Detected Objects
 	private void HandlePlayerVisibility() {
 		// Check if detection points are enabled to avoid potentially dividing
 		// 0 by 0.
@@ -551,6 +554,18 @@ public class Farmer : MonoBehaviour {
 			timeToSpendSearchingForPlayer = maximumTimeToSpendSearchingForPlayer;
 		}
 
+		// Handles what happens if the player isn't visible to the farmer,
+		// but was seen recently.
+		if (!canSeePlayer && seenPlayerRecently) {
+			timeToSpendSearchingForPlayer -= Time.deltaTime;
+
+			if (timeToSpendSearchingForPlayer <= 0.0f) {
+				containPlayerInsitence = 0.0f;
+				seenPlayerRecently = false;
+			}
+		}
+
+		// Changes the farmers awareness based on how visible the player is.
 		if (canSeePlayer && awareness < maximumAwareness) {
 			float detectionBonusFromPlayerMovement = CalculateMovementBonus();
 			float detectionBonusFromPlayerDistance = CalculateDistanceBonus();
@@ -577,17 +592,6 @@ public class Farmer : MonoBehaviour {
 		// Handles what happens whilst the player is visible to the farmer.
 		if (canSeePlayer) {
 			playersLastKnownPosition = player.transform.position;
-		}
-
-		// Handles what happens if the player isn't visible to the farmer,
-		// but was seen recently.
-		if (!canSeePlayer && seenPlayerRecently) {
-			timeToSpendSearchingForPlayer -= Time.deltaTime;
-
-			if (timeToSpendSearchingForPlayer <= 0.0f) {
-				containPlayerInsitence = 0.0f;
-				seenPlayerRecently = false;
-			}
 		}
 
 		float CalculateMovementBonus() {
@@ -689,6 +693,23 @@ public class Farmer : MonoBehaviour {
 				timeToSpendSearchingForPlayer <= 0) {
 				heardPlayerRecently = false;
 			}
+		}
+	}
+
+	private void HandleObjectVisibility() {
+		if (canSeePlayer || heardPlayerRecently) {
+			// Stops the processing of gathered data that isn't related to the
+			// player.
+			return;
+		}
+
+		// TODO: pass the class or interface of the object we want to handle.
+		if (visualSensor.Contains(visualSensor.Data, null)) {
+			spottedNewlyBrokenObject = true;
+		}
+
+		if (spottedNewlyBrokenObject) {
+
 		}
 	}
 	#endregion
