@@ -707,16 +707,31 @@ public class Farmer : MonoBehaviour {
 			return;
 		}
 
-		HandleInteractableObjects();
+		if (visualSensor.Data.Count == 0) {
+			return;
+		}
 
-		void HandleInteractableObjects() {
+		for (LinkedListNode<Sensor.CollectedData> iterator = visualSensor.Data.First;
+			iterator != visualSensor.Data.Last;
+			iterator = iterator.Next) {
+			HandleInteractableObject(iterator.Value);
+		}
+
+		// Run one more time to evaluate the last element.
+		HandleInteractableObject(visualSensor.Data.Last.Value);
+
+		void HandleInteractableObject(Sensor.CollectedData sensorData) {
 			int interactableLayerMask = LayerMask.GetMask("Interactable");
-			Sensor.CollectedData spottedObject = visualSensor.GetData(visualSensor.Data, interactableLayerMask);
+			int collectedDatasLayer = 1 << sensorData.gameobject.layer;
 
-			if (spottedObject.gameobject && !spottedObject.acknowledged) {
+			if (collectedDatasLayer != interactableLayerMask) {
+				return;
+			}
+
+			if (sensorData.gameobject && !sensorData.acknowledged) {
 				// The script for breaking pots is two levels up from the
 				// detected object.
-				PotBreak potBreakScript = spottedObject.gameobject.transform.parent.parent.GetComponent<PotBreak>();
+				PotBreak potBreakScript = sensorData.gameobject.transform.parent.parent.GetComponent<PotBreak>();
 
 				if (noticedBrokenObject) {
 					// Return if a broken object has already been detected.
@@ -729,15 +744,15 @@ public class Farmer : MonoBehaviour {
 				}
 
 				if (noticedBrokenObject) {
-					spottedObject.acknowledged = true;
+					sensorData.acknowledged = true;
 					// Stop the sensor from forgetting about this broken object.
 					// So it's no surprise when the farmer sees it again.
-					spottedObject.forgettable = false;
+					sensorData.forgettable = false;
 				}
 
 				if (noticedBrokenObject) {
 					noticedPlayerClue = true;
-					playersCluePosition = spottedObject.gameobject.transform.position;
+					playersCluePosition = sensorData.gameobject.transform.position;
 				}
 
 				if (noticedPlayerClue || noticedBrokenObject) {
@@ -749,23 +764,6 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 	#endregion
-
-	/// <summary>
-	/// Updates the farmer's falshlight's colour based on the farmer's 
-	/// awareness and current state.
-	/// </summary>
-	private void UpdateFlashlightColour() {
-		// The intended colour intensity of the farmer's flashlight based on
-		// the farmer's awareness level.
-		float awarenessColourIntensity = awareness / maximumAwareness;
-		const float half = 0.5f;
-		float searchingColourIntensity = seenPlayerRecently ||
-			heardPlayerRecently ||
-			noticedPlayerClue ||
-			noticedBrokenObject ? half : 0.0f;
-		float colourIntensity = awarenessColourIntensity >= searchingColourIntensity ? awarenessColourIntensity : searchingColourIntensity;
-		flashlight.ChangeColour(Mathf.Clamp(colourIntensity, 0.0f, 1.0f));
-	}
 
 	#region Farmer's Actions
 	/// <summary>
@@ -1071,6 +1069,7 @@ public class Farmer : MonoBehaviour {
 	}
 	#endregion
 
+	#region Methods for Updating Timers
 	private void UpdateTimers() {
 		BlindAndDeaf();
 		Stunned();
@@ -1119,7 +1118,26 @@ public class Farmer : MonoBehaviour {
 			}
 		}
 	}
+	#endregion
 
+	#region Miscellaneous Methods
+	/// <summary>
+	/// Updates the farmer's falshlight's colour based on the farmer's 
+	/// awareness and current state.
+	/// </summary>
+	private void UpdateFlashlightColour() {
+		// The intended colour intensity of the farmer's flashlight based on
+		// the farmer's awareness level.
+		float awarenessColourIntensity = awareness / maximumAwareness;
+		const float half = 0.5f;
+		float searchingColourIntensity = seenPlayerRecently ||
+			heardPlayerRecently ||
+			noticedPlayerClue ||
+			noticedBrokenObject ? half : 0.0f;
+		float colourIntensity = awarenessColourIntensity >= searchingColourIntensity ? awarenessColourIntensity : searchingColourIntensity;
+		flashlight.ChangeColour(Mathf.Clamp(colourIntensity, 0.0f, 1.0f));
+	}
+	
 	/// <summary>
 	/// Causes the farmer's sensors to forget they detected the player, and 
 	/// makes the farmer completely forget about the player in every capacity.
@@ -1179,4 +1197,5 @@ public class Farmer : MonoBehaviour {
 		animator.SetBool("Inspecting", false);
 		animator.SetBool("GettingUp", false);
 	}
+	#endregion
 }

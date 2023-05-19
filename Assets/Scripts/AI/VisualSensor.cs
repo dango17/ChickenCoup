@@ -119,8 +119,7 @@ public class VisualSensor : Sensor {
 					if (targetObject && raycastHits[i].collider.gameObject == targetObject) {
 						return true;
 					} else if (gameObjectToIgnore &&
-						(raycastHits[i].collider.gameObject == gameObjectToIgnore ||
-						raycastHits[i].collider.transform.root.gameObject == gameObjectToIgnore)) {
+						(raycastHits[i].collider.gameObject == gameObjectToIgnore)) {
 						// Continue searching for the target game object
 						// because the current raycast hit's game object is
 						// set to be ignored.

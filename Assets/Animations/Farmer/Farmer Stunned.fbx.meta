@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 7ce91c3a0b9c2024391c32fbbb669a05
+guid: c77ae210a36cd584587fe53f3244723f
 ModelImporter:
   serializedVersion: 22103
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Farmer Getting Up
+    second: Farmer Stunned
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -36,11 +36,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Farmer Getting Up
+      name: Farmer Stunned
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 81
+      lastFrame: 64
       wrapMode: 0
       orientationOffsetY: 0
       level: 1
@@ -61,7 +61,7 @@ ModelImporter:
       curves: []
       events:
       - time: 1
-        functionName: FinishedGettingUp
+        functionName: StunAnimationStarted
         data: 
         objectReferenceParameter: {fileID: 3941516469279204361, guid: 8897445697ed5d7439fe670853b184da, type: 3}
         floatParameter: 0
