@@ -102,6 +102,10 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private bool isStunned = false;
 	/// <summary>
+	/// Is the farmer actively trying to stand up.
+	/// </summary>
+	private bool isGettingUp = false;
+	/// <summary>
 	/// How much time should pass by before the farmer can move again.
 	/// </summary>
 	private float stunTime = 0.0f;
@@ -209,6 +213,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	/// <param name="stunLength"> Amount of time (in seconds) the farmer is immobile for. </param>
 	public void StunFarmer(float stunLength) {
+		StopAction(false);
 		isStunned = true;
 		DropKeycard();
 		navMeshAgent.enabled = false;
@@ -248,16 +253,26 @@ public class Farmer : MonoBehaviour {
 	/// <summary>
 	/// Stops the current action from executing.
 	/// Resets various variables used throughout the farmer's actions, to 
-	/// prevent the data being misread.
+	/// prevent the data being misused.
 	/// </summary>
-	public void StopAction() {
+	/// <param name="shouldIdle"> True if the farmer should enter their idle 
+	/// animation after stopping their current action. </param>
+	public void StopAction(bool shouldIdle) {
 		ResetAnimatorParameters();
-		animator.SetTrigger("Idling");
+
+		if (shouldIdle) {
+			animator.SetTrigger("Idling");
+		}
+		
 		StopAllCoroutines();
 		lookAtCoroutine = null;
 		moveDestinationSet = false;
 		moveDestinationChanged = false;
 		isVisitingPointOfInterest = false;
+		isStunned = false;
+		stunTime = 0.0f;
+		isGettingUp = false;
+		navMeshAgent.enabled = true;
 		navMeshAgent.autoBraking = true;
 		navMeshAgent.ResetPath();
 		utilityScript.Reset();
@@ -279,7 +294,7 @@ public class Farmer : MonoBehaviour {
 		animator.ResetTrigger("CatchingTrigger");
 		catchAnimationState = AnimationStates.NotStarted;
 		StopLookAtCoroutine();
-		StopAction();
+		StopAction(true);
 	}
 	#endregion
 
@@ -302,6 +317,11 @@ public class Farmer : MonoBehaviour {
 
 	public void StunAnimationStarted() {
 		animator.SetBool("Stunned", true);
+	}
+
+	public void FinishedGettingUp() {
+		animator.SetBool("GettingUp", false);
+		isGettingUp = false;
 	}
 	#endregion
 
@@ -339,12 +359,12 @@ public class Farmer : MonoBehaviour {
 			awareness = 0;
 		}
 
-		if (isStunned) {
-			return;
-		}
-
 		if (holdingKeycard) {
 			keycard.transform.position = keycardHoldTransform.position;
+		}
+
+		if (isStunned || isGettingUp) {
+			return;
 		}
 
 		utilityScript.Update();
@@ -549,7 +569,7 @@ public class Farmer : MonoBehaviour {
 			containPlayerInsitence = awareness;
 			// Stops the current action so the AI can react to seeing the
 			// player for the first time in a while.
-			StopAction();
+			StopAction(true);
 		}
 
 		// Handles what happens whilst the player is visible to the farmer.
@@ -648,7 +668,7 @@ public class Farmer : MonoBehaviour {
 			if (!canSeePlayer && !seenPlayerRecently) {
 				// The farmer only needs to stop their current action and respond
 				// to an audio cue if they haven't already found the player.
-				StopAction();
+				StopAction(true);
 			}
 		}
 
@@ -774,7 +794,7 @@ public class Farmer : MonoBehaviour {
 	/// <returns> True when the action has completed. </returns>
 	private bool SearchForPlayer() {
 		if (canSeePlayer) {
-			StopAction();
+			StopAction(true);
 			animator.SetBool("Walking", false);
 			return true;
 		}
@@ -1000,6 +1020,8 @@ public class Farmer : MonoBehaviour {
 				isStunned = false;
 				animator.SetBool("Stunned", false);
 				animator.ResetTrigger("StunnedTrigger");
+				animator.SetBool("GettingUp", true);
+				isGettingUp = true;
 			}
 		}
 	}
@@ -1059,5 +1081,6 @@ public class Farmer : MonoBehaviour {
 		animator.SetBool("Stunned", false);
 		animator.ResetTrigger("StunnedTrigger");
 		animator.SetBool("Inspecting", false);
+		animator.SetBool("GettingUp", false);
 	}
 }

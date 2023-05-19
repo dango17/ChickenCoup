@@ -32,6 +32,10 @@ public class FarmerAnimator : MonoBehaviour {
 		farmerScript.StunAnimationStarted();
 	}
 
+	public void FinishedGettingUp() {
+		farmerScript.FinishedGettingUp();
+	}
+
 	private void Start() {
 		farmerScript = GameObject.FindGameObjectWithTag("Farmer").GetComponent<Farmer>();
 	}
