@@ -75,21 +75,25 @@ public abstract class Sensor : MonoBehaviour {
 	protected Transform sensorOrigin = null;
 
     #region Helper Methods
-	// TODO: override the method so a class or interface can be passed instead of object type.
-    public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
-		return collection.Count == 0 ? false : collection.Select(element => element.gameobject == gameobjectToSelect).First();
-	}
-
-	public bool Contains(LinkedList<CollectedData> collection, LayerMask layer) {
-		return collection.Count == 0 ? false : collection.Select(element => (1 << element.gameobject.layer) == layer).First();
-	}
-
-	public CollectedData GetData(LinkedList<CollectedData> collection, LayerMask layer) {
-		if (!Contains(collection, layer)) {
-			return default;
+    /// <summary>
+	/// Returns true if the parameter game-object exists within the parameter 
+	/// collection.
+	/// </summary>
+	/// <param name="collection"> The collection to search. </param>
+	/// <param name="gameobjectToSelect"> The game-object to search for. </param>
+	/// <returns> True if the game-object exists within the collection. </returns>
+	public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+		if (collection.Count == 0) {
+			return false;
 		}
 
-		return collection.Where(element => (1 << element.gameobject.layer) == layer).First();
+		IEnumerable<CollectedData> filteredCollection = collection.Where(element => element.gameobject == gameobjectToSelect);
+
+		if (filteredCollection.Count() == 0) {
+			return false;
+		}
+
+		return filteredCollection.First().gameobject;
 	}
 
 	public void AddObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
