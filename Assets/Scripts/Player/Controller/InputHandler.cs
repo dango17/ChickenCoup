@@ -22,6 +22,7 @@ namespace DO
         [SerializeField] public GameObject playerModel;
         [SerializeField] public GameObject playerLeftEye;
         [SerializeField] public GameObject playerRightEye;
+        [SerializeField] public GameObject ojectiveMenu;
         [SerializeField] public Animator UIAnims;
         PlayerControls inputActions; 
 
@@ -51,7 +52,8 @@ namespace DO
         public bool isThrowing;
         public bool isLayingEgg; 
         public bool FPSModeInit;
-        public bool isConcealed; 
+        public bool isConcealed;
+        public bool isToggledMenu; 
 
         public enum ExecutionOrder
         {
@@ -89,18 +91,21 @@ namespace DO
             inputActions.Player.Sprint.started += i => isSprinting = true;
             inputActions.Player.Sprint.canceled += i => isSprinting = false;
 
-
             //Grabbing Input 
             inputActions.Player.Grab.started += i => isGrabbing = true;
             inputActions.Player.Grab.canceled += i => isGrabbing = false;
 
-            //Clucking Input (Need to set up properly)
+            //Clucking Input
             inputActions.Player.Cluck.started += i => isClucking = true;
             inputActions.Player.Cluck.canceled += i => isClucking = false; 
 
             //LayEgg Input
             inputActions.Player.LayEgg.started += i => isLayingEgg = true;
-            inputActions.Player.LayEgg.canceled += i => isLayingEgg = false; 
+            inputActions.Player.LayEgg.canceled += i => isLayingEgg = false;
+
+            //Open Objective Menu 
+            inputActions.Player.ToggleMenu.started += i => isToggledMenu = true;
+            inputActions.Player.ToggleMenu.canceled += i => isToggledMenu = false;
 
             inputActions.Enable(); 
 
@@ -274,6 +279,18 @@ namespace DO
             {
                 //Play UI cluck element 
                 UIAnims.SetBool("isClucking", false);
+            }
+
+            #endregion
+
+            #region Toggle Objective Menu
+            if(isToggledMenu)
+            {
+                ojectiveMenu.SetActive(true); 
+            }
+            if(!isToggledMenu)
+            {
+                ojectiveMenu.SetActive(false);
             }
 
             #endregion

@@ -821,7 +821,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1193122787260543867}
-  m_LocalRotation: {x: 0.55130094, y: -1e-45, z: 1e-45, w: 0.8343065}
+  m_LocalRotation: {x: 0.55130094, y: 1e-45, z: -1e-45, w: 0.8343065}
   m_LocalPosition: {x: 0, y: 10.33, z: -4.5099983}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -925,7 +925,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1193122788001792636}
-  m_LocalRotation: {x: 0.55130094, y: -0, z: -0, w: 0.8343065}
+  m_LocalRotation: {x: 0.55130094, y: -1e-45, z: 1e-45, w: 0.8343065}
   m_LocalPosition: {x: 0, y: 10.33, z: -4.5099983}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1385,6 +1385,8 @@ MonoBehaviour:
   isInFreeLook: 0
   isFPMode: 0
   objectInHand: 0
+  isArrested: 0
+  playersDetectionCol: {fileID: 64916243361406464}
   mTransform: {fileID: 0}
   animator: {fileID: 0}
   meshRenderer: {fileID: 0}
@@ -1404,10 +1406,13 @@ MonoBehaviour:
   camHolder: {fileID: 1193122788933192225}
   movementOrder: 0
   controller: {fileID: 1625199134304804731}
+  cageController: {fileID: 0}
   cameraManager: {fileID: 1193122788933192224}
+  farmer: {fileID: 0}
   playerModel: {fileID: 37203383349192547}
   playerLeftEye: {fileID: 3771811475866607435}
   playerRightEye: {fileID: 4934464130409695166}
+  ojectiveMenu: {fileID: 0}
   UIAnims: {fileID: 64916243542990666}
   moveDirection: {x: 0, y: 0, z: 0}
   lookInputDirection: {x: 0, y: 0, z: 0}
@@ -1428,6 +1433,7 @@ MonoBehaviour:
   isLayingEgg: 0
   FPSModeInit: 0
   isConcealed: 0
+  isToggledMenu: 0
 --- !u!54 &1625199134304804733
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2738,9 +2744,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1780577084151133951}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Player
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3465,7 +3471,7 @@ GameObject:
   - component: {fileID: 5418541415496093535}
   m_Layer: 8
   m_Name: concealmentPoint
-  m_TagString: Untagged
+  m_TagString: Concealment Point
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

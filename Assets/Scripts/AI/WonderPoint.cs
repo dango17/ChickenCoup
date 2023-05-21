@@ -13,6 +13,10 @@ public class WonderPoint : MonoBehaviour {
         get { return isTouching; }
         private set { isTouching = value; }
     }
+    public float AlignmentWithFarmer {
+        get;
+        private set;
+    }
 
     private bool isTouching = false;
     [SerializeField, Tooltip("How quickly the object moves away from or towards " +
@@ -45,6 +49,11 @@ public class WonderPoint : MonoBehaviour {
     private void Update() {
         UpdatePosition();
     }
+
+    private void FixedUpdate() {
+        Vector3 directionFromFarmer = (transform.position - farmer.transform.position).normalized;
+		AlignmentWithFarmer = Vector3.Dot(directionFromFarmer, farmer.transform.forward);
+	}
 
     private void OnTriggerEnter(Collider other) {
         TriggeredCollision(other, true);
