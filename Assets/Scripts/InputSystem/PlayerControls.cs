@@ -98,6 +98,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""638d16eb-996e-4498-b060-3ceb6a305bae"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -364,6 +373,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""LayEgg"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb3d3848-bd6b-4f57-85fe-3f6accf21a35"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -380,6 +400,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Player_FirstPerson = m_Player.FindAction("FirstPerson", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_LayEgg = m_Player.FindAction("LayEgg", throwIfNotFound: true);
+        m_Player_ToggleMenu = m_Player.FindAction("ToggleMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -447,6 +468,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_FirstPerson;
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_LayEgg;
+    private readonly InputAction m_Player_ToggleMenu;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -459,6 +481,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @FirstPerson => m_Wrapper.m_Player_FirstPerson;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @LayEgg => m_Wrapper.m_Player_LayEgg;
+        public InputAction @ToggleMenu => m_Wrapper.m_Player_ToggleMenu;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -492,6 +515,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @LayEgg.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLayEgg;
                 @LayEgg.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLayEgg;
                 @LayEgg.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLayEgg;
+                @ToggleMenu.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleMenu;
+                @ToggleMenu.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleMenu;
+                @ToggleMenu.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleMenu;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -520,6 +546,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @LayEgg.started += instance.OnLayEgg;
                 @LayEgg.performed += instance.OnLayEgg;
                 @LayEgg.canceled += instance.OnLayEgg;
+                @ToggleMenu.started += instance.OnToggleMenu;
+                @ToggleMenu.performed += instance.OnToggleMenu;
+                @ToggleMenu.canceled += instance.OnToggleMenu;
             }
         }
     }
@@ -534,5 +563,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnFirstPerson(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnLayEgg(InputAction.CallbackContext context);
+        void OnToggleMenu(InputAction.CallbackContext context);
     }
 }

@@ -526,10 +526,10 @@ BoxCollider:
   m_GameObject: {fileID: 1147804363926399880}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 1.26, y: 0.75, z: 0.4}
-  m_Center: {x: 0.26, y: 0.4, z: 0.2}
+  m_Size: {x: 1.5, y: 0.75, z: 0.4}
+  m_Center: {x: 0.4, y: 0.4, z: 0.2}
 --- !u!1 &1193350643414008864
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,10 +672,10 @@ BoxCollider:
   m_GameObject: {fileID: 1451057968374435653}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 1.26, y: 0.75, z: 0.4}
-  m_Center: {x: -0.26, y: 0.4, z: 0.2}
+  m_Size: {x: 1.5, y: 0.75, z: 0.4}
+  m_Center: {x: -0.4, y: 0.4, z: 0.2}
 --- !u!1 &1541288367658637652
 GameObject:
   m_ObjectHideFlags: 0
@@ -1757,7 +1757,6 @@ MonoBehaviour:
   playerDetectionRate: 80
   walkSpeed: 2.25
   chaseSpeed: 4.25
-  maximumTimeToSpendSearchingForPlayer: 15
   catchColliders:
   - {fileID: 2301528840529253768}
   - {fileID: 9185047452334716080}
@@ -2668,7 +2667,7 @@ MonoBehaviour:
     m_Bits: 1984
   detectionLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 320
   sensorOrigin: {fileID: 282368683108314715}
   fieldOfView: 200
 --- !u!1 &6904098387853299226

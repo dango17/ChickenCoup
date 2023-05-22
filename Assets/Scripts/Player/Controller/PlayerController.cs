@@ -1,5 +1,5 @@
 // Author: Daniel Oldham/s1903729
-// Collaborator: N/A
+// Collaborator: Liam Bansal
 // Created On: 27/01/2023
 
 using UnityEngine;
@@ -34,6 +34,10 @@ namespace DO
             // speed from eating foods.
             get { return maximumSprintSpeed + moveSpeed; }
             private set { }
+        }
+        public GameObject ConcealmentPoint {
+            get;
+            private set;
         }
 
 		[Header("Speeds")]
@@ -94,6 +98,10 @@ namespace DO
 			inputHandler.controller.isFPMode = enableFirstPerson;
             inputHandler.playerLeftEye.SetActive(false); 
             inputHandler.playerRightEye.SetActive(false); 
+		}
+
+        private void Awake() {
+			ConcealmentPoint = GameObject.FindGameObjectWithTag("Concealment Point");
 		}
 
         private void Start()
@@ -290,10 +298,13 @@ namespace DO
         public void Jump()
         {
             StartCoroutine(HandleJump());
+            
         }
 
         public IEnumerator HandleJump()
         {
+            //yield return new WaitForSeconds(1f);
+
             inputHandler.isJumping = false;
 
             float jumpVelocity = Mathf.Sqrt(-2 * gravity * jumpHeight);

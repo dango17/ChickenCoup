@@ -16,6 +16,9 @@ TagManager:
   - Keycard Hold Position
   - Keycard
   - Fuse
+  - Wonder Point Manager
+  - Wonder Point
+  - Concealment Point
   layers:
   - Default
   - TransparentFX
@@ -34,7 +37,7 @@ TagManager:
   - Pushable
   - Pullable
   - Wonder Point
-  - 
+  - Food
   - 
   - 
   - 

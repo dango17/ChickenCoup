@@ -2,6 +2,7 @@
 // Collaborator: N/A
 // Created On: 30/01/2023
 
+using DO;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,10 +12,21 @@ using UnityEngine;
 /// </summary>
 public abstract class Sensor : MonoBehaviour {
 	public struct CollectedData {
+		/// <summary>
+		/// True if this object has been identified by the sensor.
+		/// </summary>
+		public bool acknowledged;
+		/// <summary>
+		/// True if an object should be forgotten once it leaves the sensor's 
+		/// detection zone.
+		/// </summary>
+		public bool forgettable;
 		public float lifespan;
 		public GameObject gameobject;
 
 		public CollectedData (GameObject gameobject, float lifespan) {
+			acknowledged = false;
+			forgettable = true;
 			this.gameobject = gameobject;
 			this.lifespan = lifespan;
         }
@@ -62,19 +74,37 @@ public abstract class Sensor : MonoBehaviour {
 	[SerializeField, Tooltip("The central point of the sensor bounds.")]
 	protected Transform sensorOrigin = null;
 
-    #region Helper Methods
-    public bool Contains(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
-		return collection.Count == 0 ? false : collection.Select(element => element.gameobject == gameobjectToSelect).First();
+	#region Helper Methods
+	/// <summary>
+	/// Returns data about the parameter game-object if it exists within the 
+	/// parameter collection.
+	/// </summary>
+	/// <param name="collection"> The collection to search. </param>
+	/// <param name="gameobjectToSelect"> The game-object to search for. </param>
+	/// <returns> A struct of data which a sensor has gathered about the 
+	/// parameter game-object. </returns>
+	public CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
+		if (collection.Count == 0) {
+			return default;
+		}
+
+		IEnumerable<CollectedData> filteredCollection = collection.Where(element => element.gameobject == gameobjectToSelect);
+
+		if (filteredCollection.Count() == 0) {
+			return default;
+		}
+
+		return filteredCollection.First();
 	}
 
 	public void AddObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
-		if (!Contains(collection, objectToAdd)) {
+		if (!GetCollectedData(collection, objectToAdd).gameobject) {
 			collection.AddLast(new CollectedData(objectToAdd, defaultDataLifespan));
 		}
 	}
 
 	public void RemoveObject(ref LinkedList<CollectedData> collection, GameObject objectToAdd) {
-		if (Contains(collection, objectToAdd)) {
+		if (GetCollectedData(collection, objectToAdd).gameobject) {
 			collection.Remove(GetCollectedData(collection, objectToAdd));
 		}
 	}
@@ -97,8 +127,8 @@ public abstract class Sensor : MonoBehaviour {
 			return;
 		}
 
-		bool discovered = Contains(data, detectedGameObject.transform.root.gameObject);
-		bool partiallyDiscovered = Contains(partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
+		bool discovered = GetCollectedData(data, detectedGameObject).gameobject;
+		bool partiallyDiscovered = GetCollectedData(partiallyDiscoveredData, detectedGameObject).gameobject;
 
 		// Don't verify detection if the data is already discovered or
 		// partially discovered. Include "discovered &&" because the data
@@ -111,28 +141,28 @@ public abstract class Sensor : MonoBehaviour {
 		switch (VerifyDetection(detectedGameObject)) {
 			case Visibility.Visible: {
 				if (!discovered) {
-					AddObject(ref data, detectedGameObject.transform.root.gameObject);
+					AddObject(ref data, detectedGameObject);
 				}
 
 				if (partiallyDiscovered) {
-					RemoveObject(ref partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
+					RemoveObject(ref partiallyDiscoveredData, detectedGameObject);
 				}
 
 				break;
 			}
 			case Visibility.PartiallyVisible: {
 				if (!partiallyDiscovered) {
-					AddObject(ref partiallyDiscoveredData, detectedGameObject.transform.root.gameObject);
+					AddObject(ref partiallyDiscoveredData, detectedGameObject);
 				}
 
 				break;
 			}
 			case Visibility.NotVisible: {
-				ForgetObject(detectedGameObject.transform.root.gameObject);
+				ForgetObject(detectedGameObject);
 				return;
 			}
 			default: {
-				ForgetObject(detectedGameObject.transform.root.gameObject);
+				ForgetObject(detectedGameObject);
 				return;
 			}
 		}
@@ -141,7 +171,7 @@ public abstract class Sensor : MonoBehaviour {
 	/// <summary>
 	/// Makes the sensor forget about a specific bit of data.
 	/// </summary>
-	/// <param name="gameObjectToForget"> The game-object to forget. Must be the root game-object. </param>
+	/// <param name="gameObjectToForget"> The game-object to forget. </param>
 	public void ForgetObject(GameObject gameObjectToForget) {
 		RemoveObject(ref data, gameObjectToForget);
 		RemoveObject(ref partiallyDiscoveredData, gameObjectToForget);
@@ -161,10 +191,6 @@ public abstract class Sensor : MonoBehaviour {
 
 	protected virtual void FixedUpdate() { }
 
-	protected CollectedData GetCollectedData(LinkedList<CollectedData> collection, GameObject gameobjectToSelect) {
-		return collection.Where(element => element.gameobject == gameobjectToSelect).First();
-	}
-
 	/// <summary>
 	/// Checks if the gathered data is valid and should be saved.
 	/// </summary>
@@ -181,18 +207,16 @@ public abstract class Sensor : MonoBehaviour {
 	}
 
 	private void OnTriggerExit(Collider other) {
-		GameObject othersRootGameObject = other.transform.root.gameObject;
+		GameObject othersGameObject = other.gameObject;
 
-		// Check the root game-object because that's what the sensor saves a
-		// reference to.
-		if (Contains(data, othersRootGameObject)) {
-			DisableObjectsDetectionPoints(othersRootGameObject);
-			RemoveObject(ref data, othersRootGameObject);
+		if (GetCollectedData(data, othersGameObject).gameobject) {
+			DisableObjectsDetectionPoints(othersGameObject);
+			RemoveObject(ref data, othersGameObject);
 		}
 
-		if (Contains(partiallyDiscoveredData, othersRootGameObject)) {
-			DisableObjectsDetectionPoints(othersRootGameObject);
-			RemoveObject(ref partiallyDiscoveredData, othersRootGameObject);
+		if (GetCollectedData(partiallyDiscoveredData, othersGameObject).gameobject) {
+			DisableObjectsDetectionPoints(othersGameObject);
+			RemoveObject(ref partiallyDiscoveredData, othersGameObject);
 		}
 	}
 
@@ -234,10 +258,6 @@ public abstract class Sensor : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="gameobject"> ...Must be the root game-object. </param>
 	private void DisableObjectsDetectionPoints(GameObject gameobject) {
 		DetectionPoint[] detectionPoints = gameobject.GetComponentsInChildren<DetectionPoint>();
 

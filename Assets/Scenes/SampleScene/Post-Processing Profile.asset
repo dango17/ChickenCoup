@@ -37,10 +37,29 @@ MonoBehaviour:
     m_Value: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 0.054
   clamp:
     m_OverrideState: 1
     m_Value: 0.05
+--- !u!114 &-8160025230489381321
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 221518ef91623a7438a71fef23660601, type: 3}
+  m_Name: WhiteBalance
+  m_EditorClassIdentifier: 
+  active: 0
+  temperature:
+    m_OverrideState: 0
+    m_Value: -63.5
+  tint:
+    m_OverrideState: 0
+    m_Value: 42.8
 --- !u!114 &-8159117064824014260
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -74,16 +93,16 @@ MonoBehaviour:
     m_Value: 10
   aperture:
     m_OverrideState: 1
-    m_Value: 5.6
+    m_Value: 2.1
   focalLength:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 45
   bladeCount:
     m_OverrideState: 1
-    m_Value: 5
+    m_Value: 4
   bladeCurvature:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.812
   bladeRotation:
     m_OverrideState: 1
     m_Value: 0
@@ -127,6 +146,28 @@ MonoBehaviour:
   dirtIntensity:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &-5904154078745786470
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
+  m_Name: LiftGammaGain
+  m_EditorClassIdentifier: 
+  active: 0
+  lift:
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1, z: 1, w: -0.049968768}
+  gamma:
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1, z: 1, w: -0.012492193}
+  gain:
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1, z: 1, w: 0.13116804}
 --- !u!114 &-4917931450110653310
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -187,6 +228,29 @@ MonoBehaviour:
   - {fileID: -8629068310996216146}
   - {fileID: 2610066262071562609}
   - {fileID: 4209382937957215797}
+  - {fileID: 2382556016341208941}
+  - {fileID: -8160025230489381321}
+  - {fileID: 1045906067097048300}
+  - {fileID: -5904154078745786470}
+--- !u!114 &1045906067097048300
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb60a22f311433c4c962b888d1393f88, type: 3}
+  m_Name: PaniniProjection
+  m_EditorClassIdentifier: 
+  active: 0
+  distance:
+    m_OverrideState: 0
+    m_Value: 0
+  cropToFit:
+    m_OverrideState: 0
+    m_Value: 1
 --- !u!114 &1982314202310457770
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -221,6 +285,34 @@ MonoBehaviour:
   highlightsEnd:
     m_OverrideState: 1
     m_Value: 1
+--- !u!114 &2382556016341208941
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
+  m_Name: Vignette
+  m_EditorClassIdentifier: 
+  active: 1
+  color:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  center:
+    m_OverrideState: 1
+    m_Value: {x: 0.5, y: 0.5}
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.457
+  smoothness:
+    m_OverrideState: 1
+    m_Value: 0.187
+  rounded:
+    m_OverrideState: 0
+    m_Value: 0
 --- !u!114 &2610066262071562609
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -276,7 +368,7 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.1
+    m_Value: -0.15
   xMultiplier:
     m_OverrideState: 0
     m_Value: 1

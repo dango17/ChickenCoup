@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8674012030333146873}
   - component: {fileID: 8674012030333146872}
   - component: {fileID: 8674012030333146871}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PotBroke2_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -185,7 +185,7 @@ Transform:
   - {fileID: 2810503723702602416}
   - {fileID: 2083587954414259995}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3701886073288073667
 MonoBehaviour:
@@ -247,7 +247,7 @@ GameObject:
   - component: {fileID: 5623200780827207853}
   - component: {fileID: 5623200780827207852}
   - component: {fileID: 5623200780827207851}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PoBroke5_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +445,7 @@ GameObject:
   - component: {fileID: 7689497362706581229}
   - component: {fileID: 5561690550700840082}
   - component: {fileID: 5561690550700840081}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PoBroke4_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -560,7 +560,7 @@ GameObject:
   - component: {fileID: 2433417129137138658}
   - component: {fileID: 6604984288955000212}
   - component: {fileID: 6604984288955000211}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PotBroke3_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -675,7 +675,7 @@ GameObject:
   - component: {fileID: 6969215671647542059}
   - component: {fileID: 4924792609476651350}
   - component: {fileID: 4924792609476651349}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PotBroke1_low
   m_TagString: Untagged
   m_Icon: {fileID: 0}
