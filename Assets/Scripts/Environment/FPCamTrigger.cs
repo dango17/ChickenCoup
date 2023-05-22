@@ -31,6 +31,14 @@ namespace DO
             }
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                StartCoroutine(EnableFirstPersonWithDelay(true));
+            }
+        }
+
         private void OnTriggerExit(Collider other)
         {
             if (other.CompareTag("Player"))

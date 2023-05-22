@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace DO
 {
-    public class FuseDoor : MonoBehaviour
+    public class FusePuzzle : MonoBehaviour
     {
         public GameObject fuseObjects;
         public GameObject generator; 
