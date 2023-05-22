@@ -10,7 +10,7 @@ Developed By 6 Headed Moose:
 
 (Jordan Brayne - Game Designer/UI Designer)
 (Alexander Stanley - Prop Designer/2D Artist) 
-(Dawid Wlordarski = Level Designer/Modelling & Texturing) 
+(Dawid Wlordarski - Level Designer/Modelling & Texturing) 
 
 Special Thanks To Our Level 5 Contractors: 
 
