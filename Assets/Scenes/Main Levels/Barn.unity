@@ -21448,7 +21448,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 667529118}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 622249091db8f5642a28ccb3e5605f0a, type: 3}
   m_Name: 
@@ -21463,6 +21463,7 @@ MonoBehaviour:
     m_Bits: 128
   visibleTargets: []
   meshResolution: 5.95
+  viewMeshFilter: {fileID: 0}
 --- !u!1 &672240760
 GameObject:
   m_ObjectHideFlags: 0
@@ -66064,6 +66065,34 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1806666936}
   m_Mesh: {fileID: -6973138121759854266, guid: 77541de2b58f1e9419ed9188a8f1376d, type: 3}
+--- !u!1 &1807380056 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1193122788001792636, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
+  m_PrefabInstance: {fileID: 64916244442388558}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &1807380061 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 1193122788001792638, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
+  m_PrefabInstance: {fileID: 64916244442388558}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1807380062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807380056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad568cc60a05a7a41818c40b41d8447a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RoofMaterials: []
+  RoofMaterial: {fileID: 2100000, guid: 3469796d7597bf94b969a4693bb24102, type: 2}
+  Camera: {fileID: 1807380061}
+  Mask:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1001 &1809930891
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -77355,11 +77384,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000035888483
+      value: -0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000023714733
+      value: 0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalPosition.x
@@ -77383,11 +77412,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000035888483
+      value: -0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000023714733
+      value: 0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1625199134304804730, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: ojectiveMenu
@@ -77780,7 +77809,7 @@ GameObject:
   - component: {fileID: 2618047981583628827}
   - component: {fileID: 8328065656843274402}
   - component: {fileID: 8328065656843274403}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78882,7 +78911,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 75407068147f57149ba9df9ff53d2618, type: 2}
+  - {fileID: 2100000, guid: 3469796d7597bf94b969a4693bb24102, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -79857,7 +79886,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 75407068147f57149ba9df9ff53d2618, type: 2}
+  - {fileID: 2100000, guid: 3469796d7597bf94b969a4693bb24102, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -81481,7 +81510,7 @@ GameObject:
   - component: {fileID: 5622670267409824727}
   - component: {fileID: 995605864886894729}
   - component: {fileID: 5622670267409824728}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Box345
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90668,7 +90697,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 75407068147f57149ba9df9ff53d2618, type: 2}
+  - {fileID: 2100000, guid: b17e6b6e2f295e149bf9079a8905665a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
