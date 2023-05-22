@@ -4,19 +4,19 @@ University of Gloucestershire.
 
 Developed By 6 Headed Moose: 
 
-Daniel Oldham - Gameplay Programmer & General Programmer 
-Liam Bansal - AI Programmer 
-Harry Oldham - Shader/UI Programmer 
+(Daniel Oldham - Gameplay Programmer & General Programmer) 
+(Liam Bansal - AI Programmer) 
+(Harry Oldham - Shader/UI Programmer) 
 
-Jordan Brayne - Game Designer/UI Designer
-Alexander Stanley - Prop Designer/2D Artist 
-Dawid Wlordarski = Level Designer/Modelling & Texturing 
+(Jordan Brayne - Game Designer/UI Designer)
+(Alexander Stanley - Prop Designer/2D Artist) 
+(Dawid Wlordarski = Level Designer/Modelling & Texturing) 
 
 Special Thanks To Our Level 5 Contractors: 
 
-Jack Finch - Animator/Prop Designer
-Harvey Foster - Character/Props Modler & Texturing 
-Finn Pizzley - Prop Designer/Modler & Texturing  
+(Jack Finch - Animator/Prop Designer)
+(Harvey Foster - Character/Props Modler & Texturing) 
+(Finn Pizzley - Prop Designer/Modler & Texturing)  
 
 
 3rd Party Assets used are the following:
