@@ -23,6 +23,7 @@ namespace DO
         [SerializeField] public GameObject playerLeftEye;
         [SerializeField] public GameObject playerRightEye;
         [SerializeField] public GameObject ojectiveMenu;
+        [SerializeField] public GameObject tutorialMenu;
         [SerializeField] public Animator UIAnims;
         PlayerControls inputActions; 
 
@@ -53,7 +54,9 @@ namespace DO
         public bool isLayingEgg; 
         public bool FPSModeInit;
         public bool isConcealed;
-        public bool isToggledMenu; 
+        public bool isToggledMenu;
+        public bool isSkipping;
+        public bool disableTutorial; 
 
         public enum ExecutionOrder
         {
@@ -106,6 +109,15 @@ namespace DO
             //Open Objective Menu 
             inputActions.Player.ToggleMenu.started += i => isToggledMenu = true;
             inputActions.Player.ToggleMenu.canceled += i => isToggledMenu = false;
+
+            //Next Dialouge/Prompt  
+            inputActions.Player.SkipDialouge.started += i => isSkipping = true;
+            inputActions.Player.SkipDialouge.canceled += i => isSkipping = false;
+
+            inputActions.Player.CloseDialouge.performed += i => { disableTutorial = !disableTutorial; };
+
+            //Hide Dialouge/Prompts
+            //inputActions.Player.CloseDialouge.performed += i => disableTutorial = true;
 
             inputActions.Enable(); 
 
@@ -271,7 +283,6 @@ namespace DO
             if(isClucking == true)
             {
                 controller.HandleClucking();
-
                 //Play UI cluck element 
                 UIAnims.SetBool("isClucking", true);
             }
@@ -293,6 +304,20 @@ namespace DO
                 ojectiveMenu.SetActive(false);
             }
 
+            #endregion
+
+            #region Toggle TutorialMenu
+            {
+                if(disableTutorial)
+                {
+                    tutorialMenu.SetActive(false);
+                }
+
+                else if (!disableTutorial)
+                {
+                    tutorialMenu.SetActive(true);
+                }
+            }
             #endregion
 
             //Execution Order
@@ -352,4 +377,3 @@ namespace DO
         }
     }
 }
-
