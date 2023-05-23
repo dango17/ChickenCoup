@@ -30057,6 +30057,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hasEscapedCoop: 0
   EscapeCoopTick: {fileID: 1549916395}
+  hasFoundFuse: 0
+  HasFoundFuseTick: {fileID: 284222796}
+  HasInsertedFuse: 0
+  hasInsertedFuseTick: {fileID: 1671184482}
+  HasStoleKeycard: 0
+  HasStoleKeycardTick: {fileID: 178278936}
 --- !u!1 &901250358
 GameObject:
   m_ObjectHideFlags: 0
@@ -77384,11 +77390,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalPosition.x
@@ -77412,11 +77418,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1625199134304804730, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: ojectiveMenu
