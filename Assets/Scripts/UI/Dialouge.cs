@@ -12,10 +12,13 @@ namespace DO
 
         private int index;
 
-        public InputHandler inputHandler;
+        public GameObject tutorialPrompts; 
+        InputHandler inputHandler;
 
         private void Start()
         {
+            inputHandler = FindObjectOfType<InputHandler>();
+
             dialougeText.text = string.Empty;
             StartDialouge(); 
         }
@@ -23,18 +26,18 @@ namespace DO
         public void Update()
         { 
             //Keycode.Return == Enter Key
-            if(inputHandler.isClucking == true)
+            if(inputHandler.isSkipping == true)
             {
                if(dialougeText.text == lines[index])
                {
                     NextLine();
-                    inputHandler.isClucking = false; 
+                    inputHandler.isSkipping = false; 
                }
                else
                {
                    StopAllCoroutines();
                    dialougeText.text = lines[index];
-               }
+                }
             }
         }
 
@@ -64,7 +67,7 @@ namespace DO
             }
             else
             {
-                gameObject.SetActive(false); 
+                tutorialPrompts.SetActive(false); 
             }
         }
     }
