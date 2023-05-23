@@ -34,20 +34,20 @@ public class CutOutFollowplayer : MonoBehaviour
         //Layering
         if(Physics.Raycast(ray, 3000, Mask))
         {
-            RoofMaterial.SetFloat(SizeID, 1);
+            //RoofMaterial.SetFloat(SizeID, 1);
         }
         else
         {
-            RoofMaterial.SetFloat(SizeID, 0);
+            //RoofMaterial.SetFloat(SizeID, 0);
         }
 
         var view = Camera.WorldToViewportPoint(transform.position);
         RoofMaterial.SetVector(PosID, view);
 
         //Disable cutout in FP
-        if(playerController.isInFreeLook)
+        if (playerController.isInFreeLook)
         {
-            RoofMaterial.SetFloat("_Size", 0.0f); 
+            RoofMaterial.SetFloat("_Size", 0.0f);
         }
         else
         {
