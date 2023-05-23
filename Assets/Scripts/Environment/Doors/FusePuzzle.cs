@@ -9,15 +9,18 @@ namespace DO
     public class FusePuzzle : MonoBehaviour
     {
         public GameObject fuseObjects;
-        public GameObject generator; 
 
         public Light generatorIndicator; 
-        public Light lightIndicator; 
+        public Light lightIndicator;
+
+        ObjectiveManager objectiveManager; 
 
         void Start()
         {
             lightIndicator.color = Color.red;
             GetComponent<Collider>().isTrigger = true;
+
+            objectiveManager = FindObjectOfType<ObjectiveManager>(); 
         }
 
         void Update()
@@ -31,8 +34,9 @@ namespace DO
             {
                 Destroy(GameObject.Find("FuseObject"));
                 lightIndicator.color = Color.green; 
-
                 generatorIndicator.color = Color.green;
+
+                objectiveManager.HasInsertedFuse = true; 
             }
         }
     }
