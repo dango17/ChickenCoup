@@ -13,7 +13,7 @@ public class CutOutFollowplayer : MonoBehaviour
 
     //I would recommend adding more meterials if theyre needed, or store the cutout shader as a serializedFeild
     //so we can access "_Size" from several different materials rather than the 1 "roofMaterial". 
-    public Material[] RoofMaterials;
+    //public Material[] RoofMaterials;
     public Material RoofMaterial;
 
     public Camera Camera;
@@ -34,11 +34,11 @@ public class CutOutFollowplayer : MonoBehaviour
         //Layering
         if(Physics.Raycast(ray, 3000, Mask))
         {
-            //RoofMaterial.SetFloat(SizeID, 1);
+            RoofMaterial.SetFloat(SizeID, 1);
         }
         else
         {
-            //RoofMaterial.SetFloat(SizeID, 0);
+            RoofMaterial.SetFloat(SizeID, 0);
         }
 
         var view = Camera.WorldToViewportPoint(transform.position);
