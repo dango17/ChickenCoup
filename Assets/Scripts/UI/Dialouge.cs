@@ -9,8 +9,10 @@ namespace DO
         public TextMeshProUGUI dialougeText;
         public string[] lines;
         public float textSpeed;
+        public Color highlightColor;
 
         private int index;
+        private bool isSkipping;
 
         public GameObject tutorialPrompts; 
         InputHandler inputHandler;
@@ -25,7 +27,6 @@ namespace DO
 
         public void Update()
         { 
-            //Keycode.Return == Enter Key
             if(inputHandler.isSkipping == true)
             {
                if(dialougeText.text == lines[index])
@@ -49,12 +50,52 @@ namespace DO
 
         IEnumerator TypeLine()
         {
-            //Type each character one at a time 
-            foreach (char c in lines[index].ToCharArray())
+            string line = lines[index];
+            dialougeText.text = string.Empty;
+
+            int currentIndex = 0;
+            bool isTagOpen = false;
+            bool isColorTagOpen = false;
+
+            while (currentIndex < line.Length)
             {
-                dialougeText.text += c;
-                yield return new WaitForSeconds(textSpeed); 
+                char currentChar = line[currentIndex];
+                dialougeText.text += currentChar;
+
+                if (currentChar == '<')
+                {
+                    isTagOpen = true;
+                    if (currentIndex + 1 < line.Length && line[currentIndex + 1] == '#')
+                    {
+                        isColorTagOpen = true;
+                        dialougeText.text += "<color=red>";
+                        currentIndex++;
+                    }
+                }
+                else if (currentChar == '>')
+                {
+                    isTagOpen = false;
+                    if (isColorTagOpen)
+                    {
+                        dialougeText.text += "</color>";
+                        isColorTagOpen = false;
+                    }
+                }
+
+                if (!isTagOpen && !isColorTagOpen)
+                {
+                    yield return new WaitForSeconds(textSpeed);
+                }
+
+                currentIndex++;
             }
+
+            while (!isSkipping)
+            {
+                yield return null;
+            }
+
+            NextLine();
         }
 
         void NextLine()
