@@ -12,6 +12,8 @@ namespace DO
         private PlayerController playerController = null;
         public float delay = 0.5f;
 
+        public GameObject ventLight;
+
         private void Start()
         {
             playerController = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<PlayerController>();
@@ -28,6 +30,7 @@ namespace DO
             if (other.CompareTag("Player"))
             {
                 StartCoroutine(EnableFirstPersonWithDelay(true));
+                ventLight.SetActive(true);
             }
         }
 
@@ -36,6 +39,7 @@ namespace DO
             if (other.CompareTag("Player"))
             {
                 StartCoroutine(EnableFirstPersonWithDelay(true));
+                ventLight.SetActive(true);
             }
         }
 
@@ -44,6 +48,7 @@ namespace DO
             if (other.CompareTag("Player"))
             {
                 StartCoroutine(EnableFirstPersonWithDelay(false));
+                ventLight.SetActive(false);
             }
         }
     }

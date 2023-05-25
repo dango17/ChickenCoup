@@ -71,6 +71,8 @@ namespace DO
         [Header("Clucking")]
         [SerializeField] public AudioClip[] cluckSounds;
         [SerializeField] private AudioSource audioSource;
+        [Header("FP-Light")]
+        [SerializeField] public GameObject ventLight;
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
@@ -94,11 +96,12 @@ namespace DO
 		private readonly float maximumSprintSpeed = 5.0f;
 		private DetectionPoint[] detectionPoints = null;
 
-		public void EnableFirstPerson(bool enableFirstPerson) {
-			inputHandler.controller.isFPMode = enableFirstPerson;
-            inputHandler.playerLeftEye.SetActive(false); 
+		public void EnableFirstPerson(bool enableFirstPerson) 
+        {
+            inputHandler.controller.isFPMode = enableFirstPerson;
+            inputHandler.playerLeftEye.SetActive(false);
             inputHandler.playerRightEye.SetActive(false); 
-		}
+        }
 
         private void Awake() {
 			ConcealmentPoint = GameObject.FindGameObjectWithTag("Concealment Point");
@@ -297,8 +300,7 @@ namespace DO
 
         public void Jump()
         {
-            StartCoroutine(HandleJump());
-            
+            StartCoroutine(HandleJump());       
         }
 
         public IEnumerator HandleJump()
