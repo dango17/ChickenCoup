@@ -8,7 +8,12 @@ namespace DO
 {
     public class hasEscapedCheck : MonoBehaviour
     {
-        public ObjectiveManager objectiveManager; 
+        ObjectiveManager objectiveManager;
+
+        public void Start()
+        {
+            objectiveManager = FindObjectOfType<ObjectiveManager>(); 
+        }
 
         public void OnTriggerEnter(Collider other)
         {
