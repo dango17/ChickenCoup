@@ -23,8 +23,13 @@ namespace DO
         [SerializeField] public GameObject playerLeftEye;
         [SerializeField] public GameObject playerRightEye;
         [SerializeField] public GameObject ojectiveMenu;
+        [SerializeField] public GameObject tutorialMenu;
+        [SerializeField] public GameObject pauseMenuObj;
+        [SerializeField] public GameObject controlsMenu;
         [SerializeField] public Animator UIAnims;
-        PlayerControls inputActions; 
+        PlayerControls inputActions;
+        pauseMenu pauseMenu; 
+         
 
         [Header("Components")]
         [SerializeField] public Vector3 moveDirection;
@@ -41,7 +46,7 @@ namespace DO
         [SerializeField] public float staminaTimer = 4f;
         [SerializeField] public float sprintIncrease = 1f;
 
-       [Header("Flags")]
+       [Header("Player-Flags")]
         public bool isFP;
         public bool isJumping;
         public bool isSprinting;
@@ -53,7 +58,14 @@ namespace DO
         public bool isLayingEgg; 
         public bool FPSModeInit;
         public bool isConcealed;
-        public bool isToggledMenu; 
+
+        [Header("UI-Flags")]
+        public bool isToggledObjectiveMenu;
+        public bool isToggledPauseMenu; 
+        public bool isSkipping;
+        public bool disableTutorial;
+        public bool flipLeft;
+        public bool flipRight; 
 
         public enum ExecutionOrder
         {
@@ -104,8 +116,22 @@ namespace DO
             inputActions.Player.LayEgg.canceled += i => isLayingEgg = false;
 
             //Open Objective Menu 
-            inputActions.Player.ToggleMenu.started += i => isToggledMenu = true;
-            inputActions.Player.ToggleMenu.canceled += i => isToggledMenu = false;
+            inputActions.Player.ToggleMenu.started += i => isToggledObjectiveMenu = true;
+            inputActions.Player.ToggleMenu.canceled += i => isToggledObjectiveMenu = false;
+
+            //Next Dialouge/Prompt  
+            inputActions.Player.SkipDialouge.started += i => isSkipping = true;
+            inputActions.Player.SkipDialouge.canceled += i => isSkipping = false;
+
+            //Hide Dialouge / Prompts
+            inputActions.Player.CloseDialouge.performed += i => { disableTutorial = !disableTutorial; };
+
+            //Flip pages peft & right
+            inputActions.Player.FlipLeft.performed += i => { flipLeft = !flipLeft; };
+            inputActions.Player.FlipRight.performed += i => { flipRight = !flipRight; };
+
+            //Pause Menu 
+            inputActions.Player.PauseMenu.performed += i => { isToggledPauseMenu = !isToggledPauseMenu; };
 
             inputActions.Enable(); 
 
@@ -114,7 +140,10 @@ namespace DO
             cameraManager.fpCameraObject.SetActive(false); 
 
             cageController = FindObjectOfType<CageController>();
-            farmer = FindObjectOfType<Farmer>(); 
+            farmer = FindObjectOfType<Farmer>();
+            pauseMenu = FindObjectOfType<pauseMenu>(); 
+
+
         }
 
         private void OnEnable() {
@@ -271,7 +300,6 @@ namespace DO
             if(isClucking == true)
             {
                 controller.HandleClucking();
-
                 //Play UI cluck element 
                 UIAnims.SetBool("isClucking", true);
             }
@@ -284,15 +312,75 @@ namespace DO
             #endregion
 
             #region Toggle Objective Menu
-            if(isToggledMenu)
+            if(isToggledObjectiveMenu)
             {
                 ojectiveMenu.SetActive(true); 
             }
-            if(!isToggledMenu)
+            if(!isToggledObjectiveMenu)
             {
+                ojectiveMenu.SetActive(false);
                 ojectiveMenu.SetActive(false);
             }
 
+            #endregion
+
+            #region Toggle PauseMenu
+            if(isToggledPauseMenu)
+            {
+                pauseMenuObj.SetActive(true);
+                pauseMenu.Pause(); 
+            }
+            else if (!isToggledPauseMenu)
+            {
+                pauseMenuObj.SetActive(false);
+                pauseMenu.Resume(); 
+            }
+
+            #endregion
+
+            #region Toggle TutorialMenu
+            {
+                if (disableTutorial)
+                {
+                    tutorialMenu.SetActive(false);
+                }
+
+                else if (!disableTutorial)
+                {
+                    tutorialMenu.SetActive(true);
+                }
+            }
+            #endregion
+
+            #region Flip Notepad Pages
+            //Flip Left
+            if (isToggledObjectiveMenu && flipLeft)
+            {
+                ojectiveMenu.SetActive(false);
+                controlsMenu.SetActive(true); 
+            }
+            else if(isToggledObjectiveMenu && !flipLeft)
+            {
+                ojectiveMenu.SetActive(true);
+                controlsMenu.SetActive(false);
+            }
+
+            //Flip Right
+            if(isToggledObjectiveMenu && flipRight)
+            {
+                ojectiveMenu.SetActive(false);
+                controlsMenu.SetActive(true); 
+            }
+            else if (isToggledObjectiveMenu && !flipLeft)
+            {
+                ojectiveMenu.SetActive(true);
+                controlsMenu.SetActive(false);
+            }
+
+            if (!isToggledObjectiveMenu)
+            {
+                controlsMenu.SetActive(false);
+            }
             #endregion
 
             //Execution Order
@@ -352,4 +440,3 @@ namespace DO
         }
     }
 }
-

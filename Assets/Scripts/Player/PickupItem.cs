@@ -24,12 +24,13 @@ namespace DO
         [SerializeField] public bool canConceal;
         [SerializeField] public bool isFood;
         [SerializeField] public bool isSugary;
-        [SerializeField] public bool isAlcohol;
+        [SerializeField] public bool isFuse;
         [Header("Eaten ParticleEffect")]
         public GameObject EatEffectPrefab;
 
         InputHandler inputHandler;
         PlayerController controller;
+        ObjectiveManager objectiveManager; 
         private Material[] originalMaterials;
 
         //0.05f is equal to 0.15 in the inspector on moveSpeed?!
@@ -39,6 +40,7 @@ namespace DO
         {
             controller = FindObjectOfType<PlayerController>();
             inputHandler = FindObjectOfType<InputHandler>();
+            objectiveManager = FindObjectOfType<ObjectiveManager>();
 
             //Save the original materials array
             originalMaterials = meshRenderer.materials;
@@ -91,6 +93,12 @@ namespace DO
                 if (inputHandler.isGrabbing == true && canMove == true)
                 {
                     PickUpItem(); 
+                }
+
+                if (inputHandler.isGrabbing == true && canMove == true && isFuse)
+                {
+                    PickUpItem();
+                    objectiveManager.hasFoundFuse = true; 
                 }
                 #endregion
 
