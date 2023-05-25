@@ -61343,7 +61343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialougeText: {fileID: 503230545}
   lines:
-  - Use the <color=red>Left Analouge Stick</color> stick to <color=red>mover</color>
+  - Use the <color=red>Left Analouge Stick</color> stick to <color=red>move</color>
     around the place!
   - <color=red>Hold</color> the <color=red>Left-Bumper</color> to open your notepad
     and see your <color=red>Objectives</color>
@@ -61351,7 +61351,8 @@ MonoBehaviour:
     <color=red>controls</color>
   - Objects that highlight <color=green>Green</color> when within range can be picked
     up by holding <color=red>X</color>
-  - Maybe not?
+  - Hold <color=red>LT</color> to enter <color=red>First Person</color> mode. Look
+    out for things out of your view!
   textSpeed: 0
   highlightColor: {r: 1, g: 0, b: 0, a: 0}
   tutorialPrompts: {fileID: 1091835952}
@@ -79731,11 +79732,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalPosition.x
@@ -79759,11 +79760,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1625199134304804730, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: pauseMenu

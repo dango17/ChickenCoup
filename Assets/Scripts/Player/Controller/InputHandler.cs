@@ -377,8 +377,15 @@ namespace DO
                 controlsMenu.SetActive(false);
             }
 
+            //Ensure the objective menu is also disabled
             if (!isToggledObjectiveMenu)
             {
+                controlsMenu.SetActive(false);
+            }
+
+            if(isToggledObjectiveMenu && flipLeft && flipRight)
+            {
+                ojectiveMenu.SetActive(true);
                 controlsMenu.SetActive(false);
             }
             #endregion
