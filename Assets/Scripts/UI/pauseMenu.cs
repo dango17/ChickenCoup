@@ -1,6 +1,7 @@
 //Author: Harry Oldham
-//Collaborator: N/A
-//Date Created: 08/03
+//Collaborator: Daniel Oldham
+//Date Created: 08/03/23
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,17 +19,20 @@ public class pauseMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            if(isPaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
-        }
+        //I've commented this out and set up the methods within the 
+        //Input.system rather than use the Input.Event
+
+        //if(Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    if(isPaused)
+        //    {
+        //        Resume();
+        //    }
+        //    else
+        //    {
+        //        Pause();
+        //    }
+        //}
     }
 
     public void Resume()
@@ -38,7 +42,7 @@ public class pauseMenu : MonoBehaviour
         isPaused = false;
     }
 
-   void Pause()
+   public void Pause()
    {
         //enables the pause menu and freezes the game's timescale
         pauseUI.SetActive(true);

@@ -143,6 +143,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PauseMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""66f4e9f3-133f-40d7-aa7f-79a73c0f245d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -475,6 +484,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""FlipRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dc14e851-d51a-43b4-b1d0-59ae03aeb2ee"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PauseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4e892f49-007f-4c90-ab45-25775b39a3af"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PauseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -496,6 +527,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Player_CloseDialouge = m_Player.FindAction("CloseDialouge", throwIfNotFound: true);
         m_Player_FlipLeft = m_Player.FindAction("FlipLeft", throwIfNotFound: true);
         m_Player_FlipRight = m_Player.FindAction("FlipRight", throwIfNotFound: true);
+        m_Player_PauseMenu = m_Player.FindAction("PauseMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -568,6 +600,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_CloseDialouge;
     private readonly InputAction m_Player_FlipLeft;
     private readonly InputAction m_Player_FlipRight;
+    private readonly InputAction m_Player_PauseMenu;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -585,6 +618,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @CloseDialouge => m_Wrapper.m_Player_CloseDialouge;
         public InputAction @FlipLeft => m_Wrapper.m_Player_FlipLeft;
         public InputAction @FlipRight => m_Wrapper.m_Player_FlipRight;
+        public InputAction @PauseMenu => m_Wrapper.m_Player_PauseMenu;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -633,6 +667,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @FlipRight.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipRight;
                 @FlipRight.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipRight;
                 @FlipRight.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipRight;
+                @PauseMenu.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPauseMenu;
+                @PauseMenu.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPauseMenu;
+                @PauseMenu.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPauseMenu;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -676,6 +713,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @FlipRight.started += instance.OnFlipRight;
                 @FlipRight.performed += instance.OnFlipRight;
                 @FlipRight.canceled += instance.OnFlipRight;
+                @PauseMenu.started += instance.OnPauseMenu;
+                @PauseMenu.performed += instance.OnPauseMenu;
+                @PauseMenu.canceled += instance.OnPauseMenu;
             }
         }
     }
@@ -695,5 +735,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnCloseDialouge(InputAction.CallbackContext context);
         void OnFlipLeft(InputAction.CallbackContext context);
         void OnFlipRight(InputAction.CallbackContext context);
+        void OnPauseMenu(InputAction.CallbackContext context);
     }
 }
