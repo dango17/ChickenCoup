@@ -24,6 +24,7 @@ namespace DO
         [SerializeField] public GameObject playerRightEye;
         [SerializeField] public GameObject ojectiveMenu;
         [SerializeField] public GameObject tutorialMenu;
+        [SerializeField] public GameObject controlsMenu;
         [SerializeField] public Animator UIAnims;
         PlayerControls inputActions; 
 
@@ -56,7 +57,9 @@ namespace DO
         public bool isConcealed;
         public bool isToggledMenu;
         public bool isSkipping;
-        public bool disableTutorial; 
+        public bool disableTutorial;
+        public bool flipLeft;
+        public bool flipRight; 
 
         public enum ExecutionOrder
         {
@@ -114,10 +117,13 @@ namespace DO
             inputActions.Player.SkipDialouge.started += i => isSkipping = true;
             inputActions.Player.SkipDialouge.canceled += i => isSkipping = false;
 
+            //Hide Dialouge / Prompts
             inputActions.Player.CloseDialouge.performed += i => { disableTutorial = !disableTutorial; };
 
-            //Hide Dialouge/Prompts
-            //inputActions.Player.CloseDialouge.performed += i => disableTutorial = true;
+            inputActions.Player.FlipLeft.performed += i => { flipLeft = !flipLeft; };
+            inputActions.Player.FlipRight.performed += i => { flipRight = !flipRight; };
+
+
 
             inputActions.Enable(); 
 
@@ -302,6 +308,7 @@ namespace DO
             if(!isToggledMenu)
             {
                 ojectiveMenu.SetActive(false);
+                ojectiveMenu.SetActive(false);
             }
 
             #endregion
@@ -317,6 +324,37 @@ namespace DO
                 {
                     tutorialMenu.SetActive(true);
                 }
+            }
+            #endregion
+
+            #region Flip Notepad Pages
+            //Flip Left
+            if (isToggledMenu && flipLeft)
+            {
+                ojectiveMenu.SetActive(false);
+                controlsMenu.SetActive(true); 
+            }
+            else if(isToggledMenu && !flipLeft)
+            {
+                ojectiveMenu.SetActive(true);
+                controlsMenu.SetActive(false);
+            }
+
+            //Flip Right
+            if(isToggledMenu && flipRight)
+            {
+                ojectiveMenu.SetActive(false);
+                controlsMenu.SetActive(true); 
+            }
+            else if (isToggledMenu && !flipLeft)
+            {
+                ojectiveMenu.SetActive(true);
+                controlsMenu.SetActive(false);
+            }
+
+            if (!isToggledMenu)
+            {
+                controlsMenu.SetActive(false);
             }
             #endregion
 

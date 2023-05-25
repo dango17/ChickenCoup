@@ -125,6 +125,24 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FlipLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""fcd4eb9e-2224-4cb0-a5a6-8fcdbdf2cd10"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FlipRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""4f897be6-ad9d-4628-baa2-05831d075bb4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -435,6 +453,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""CloseDialouge"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""48395bb4-8fff-4143-be12-1552767506a3"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FlipLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e07dedcc-ab33-40cc-a236-d28e1d639de1"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FlipRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -454,6 +494,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Player_ToggleMenu = m_Player.FindAction("ToggleMenu", throwIfNotFound: true);
         m_Player_SkipDialouge = m_Player.FindAction("SkipDialouge", throwIfNotFound: true);
         m_Player_CloseDialouge = m_Player.FindAction("CloseDialouge", throwIfNotFound: true);
+        m_Player_FlipLeft = m_Player.FindAction("FlipLeft", throwIfNotFound: true);
+        m_Player_FlipRight = m_Player.FindAction("FlipRight", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -524,6 +566,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ToggleMenu;
     private readonly InputAction m_Player_SkipDialouge;
     private readonly InputAction m_Player_CloseDialouge;
+    private readonly InputAction m_Player_FlipLeft;
+    private readonly InputAction m_Player_FlipRight;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -539,6 +583,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @ToggleMenu => m_Wrapper.m_Player_ToggleMenu;
         public InputAction @SkipDialouge => m_Wrapper.m_Player_SkipDialouge;
         public InputAction @CloseDialouge => m_Wrapper.m_Player_CloseDialouge;
+        public InputAction @FlipLeft => m_Wrapper.m_Player_FlipLeft;
+        public InputAction @FlipRight => m_Wrapper.m_Player_FlipRight;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -581,6 +627,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @CloseDialouge.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCloseDialouge;
                 @CloseDialouge.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCloseDialouge;
                 @CloseDialouge.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCloseDialouge;
+                @FlipLeft.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipLeft;
+                @FlipLeft.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipLeft;
+                @FlipLeft.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipLeft;
+                @FlipRight.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipRight;
+                @FlipRight.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipRight;
+                @FlipRight.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFlipRight;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -618,6 +670,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @CloseDialouge.started += instance.OnCloseDialouge;
                 @CloseDialouge.performed += instance.OnCloseDialouge;
                 @CloseDialouge.canceled += instance.OnCloseDialouge;
+                @FlipLeft.started += instance.OnFlipLeft;
+                @FlipLeft.performed += instance.OnFlipLeft;
+                @FlipLeft.canceled += instance.OnFlipLeft;
+                @FlipRight.started += instance.OnFlipRight;
+                @FlipRight.performed += instance.OnFlipRight;
+                @FlipRight.canceled += instance.OnFlipRight;
             }
         }
     }
@@ -635,5 +693,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnToggleMenu(InputAction.CallbackContext context);
         void OnSkipDialouge(InputAction.CallbackContext context);
         void OnCloseDialouge(InputAction.CallbackContext context);
+        void OnFlipLeft(InputAction.CallbackContext context);
+        void OnFlipRight(InputAction.CallbackContext context);
     }
 }
