@@ -215,7 +215,7 @@ namespace DO
                 && cageController.isLocked == false && farmer.HasCaughtPlayer == false)
             {
                 controller.animator.Play("Jump");
-                controller.Jump();
+                controller.Jump(controller.jumpForce, controller.jumpSpeed);
             }
             else if (controller.isGrounded == false)
             {
