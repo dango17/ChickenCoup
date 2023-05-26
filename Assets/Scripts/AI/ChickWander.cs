@@ -7,14 +7,9 @@ using UnityEngine.AI;
 
 namespace DO
 {
-    /// <summary>
-    /// NPC Chicken script. Basic AI that randomly patrols a small area, detects obsticles and animates. 
-    /// Occasionally pauses like a real chicken does.
-    /// </summary>
-
     public class ChickWander : MonoBehaviour
     {
-        public float moveSpeed = 1.0f;
+        public float moveSpeed = 2.0f;
         public float turnSpeed = 120.0f;
         public float idleTime = 3.0f;
         public AudioClip[] cluckingSounds;
@@ -30,13 +25,12 @@ namespace DO
             anim = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
             navAgent = GetComponent<NavMeshAgent>();
-            targetPosition = transform.position;
+            targetPosition = GetRandomTargetPosition();
             idleTimer = Random.Range(0.0f, idleTime);
         }
 
         void Update()
         {
-
             if (idleTimer > 0.0f)
             {
                 idleTimer -= Time.deltaTime;
@@ -44,8 +38,8 @@ namespace DO
                 return;
             }
 
-            //If the chicken has reached its target position, choose a new target position
-            if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+            //If the chicken has reached its target position or is stuck, choose a new target position
+            if (!navAgent.pathPending && navAgent.remainingDistance <= navAgent.stoppingDistance)
             {
                 targetPosition = GetRandomTargetPosition();
                 idleTimer = Random.Range(0.0f, idleTime);
@@ -56,9 +50,11 @@ namespace DO
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, turnSpeed * Time.deltaTime);
 
+            //Move towards target position
             navAgent.SetDestination(targetPosition);
+            navAgent.speed = moveSpeed;
 
-            //scale the aniamtion speed in accordance to movement speed
+            //Scale the animation speed in accordance with movement speed
             anim.SetFloat("Speed", navAgent.velocity.magnitude / moveSpeed);
 
             anim.SetBool("isWalking", true);
@@ -86,4 +82,4 @@ namespace DO
             }
         }
     }
-}
+} 
