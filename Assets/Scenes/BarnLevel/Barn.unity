@@ -86185,6 +86185,7 @@ MonoBehaviour:
   fuseObjects: {fileID: 1019691832}
   generatorIndicator: {fileID: 92909396}
   lightIndicator: {fileID: 1489529322}
+  keypadIndicator: {fileID: 1410825108}
 --- !u!65 &3469287837128393570
 BoxCollider:
   m_ObjectHideFlags: 0
