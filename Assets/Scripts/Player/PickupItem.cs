@@ -30,7 +30,8 @@ namespace DO
 
         InputHandler inputHandler;
         PlayerController controller;
-        ObjectiveManager objectiveManager; 
+        ObjectiveManager objectiveManager;
+        StatsMenu statsMenu; 
         private Material[] originalMaterials;
 
         //0.05f is equal to 0.15 in the inspector on moveSpeed?!
@@ -41,6 +42,7 @@ namespace DO
             controller = FindObjectOfType<PlayerController>();
             inputHandler = FindObjectOfType<InputHandler>();
             objectiveManager = FindObjectOfType<ObjectiveManager>();
+            statsMenu = FindObjectOfType<StatsMenu>(); 
 
             //Save the original materials array
             originalMaterials = meshRenderer.materials;
@@ -191,6 +193,8 @@ namespace DO
             //Temp spawn more eggs here
 
             Invoke("DestroyCurrentObject", 0.75f);
+            statsMenu.timesEatenCounter++; 
+
         }
 
         public void EatSugaryFood()

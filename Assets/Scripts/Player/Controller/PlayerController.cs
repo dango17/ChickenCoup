@@ -46,11 +46,9 @@ namespace DO
         [SerializeField] public float rotateSpeed = 0.2f;
         [SerializeField] public float FPRotationSpeed = 0.2f; 
         [Header("Jumping")]
-        [SerializeField] public float jumpHeight = 2f;
-        [SerializeField] public float timeToJumpApex = 0.5f;
+        [SerializeField] public float jumpForce = 2f;
         [SerializeField] public float fallForce = 2f;
-        [SerializeField] private float gravity;
-        [SerializeField] public AnimationCurve jumpCurve;
+        [SerializeField] public float jumpSpeed = 1f;
         [SerializeField] public float fallMultiplier = 2.5f;
         [SerializeField] public float lowJumpMultiplier = 2f;
         [Header("Ground-Check")]
@@ -71,6 +69,8 @@ namespace DO
         [Header("Clucking")]
         [SerializeField] public AudioClip[] cluckSounds;
         [SerializeField] private AudioSource audioSource;
+        [Header("FP-Light")]
+        [SerializeField] public GameObject ventLight;
         [Header("Flags")]
         [SerializeField] public bool isOnCover;
         [SerializeField] public bool isGrounded;
@@ -85,7 +85,8 @@ namespace DO
         [HideInInspector] new Rigidbody rigidbody = null;
         [HideInInspector] public SkinnedMeshRenderer meshRenderer;
         [HideInInspector] public InputHandler inputHandler;
-        [HideInInspector] CageController cageController; 
+        [HideInInspector] CageController cageController;
+        StatsMenu statsMenu; 
 
         /// <summary>
         /// Use the property for this variable when getting it's value,
@@ -94,11 +95,12 @@ namespace DO
 		private readonly float maximumSprintSpeed = 5.0f;
 		private DetectionPoint[] detectionPoints = null;
 
-		public void EnableFirstPerson(bool enableFirstPerson) {
-			inputHandler.controller.isFPMode = enableFirstPerson;
-            inputHandler.playerLeftEye.SetActive(false); 
+		public void EnableFirstPerson(bool enableFirstPerson) 
+        {
+            inputHandler.controller.isFPMode = enableFirstPerson;
+            inputHandler.playerLeftEye.SetActive(false);
             inputHandler.playerRightEye.SetActive(false); 
-		}
+        }
 
         private void Awake() {
 			ConcealmentPoint = GameObject.FindGameObjectWithTag("Concealment Point");
@@ -111,8 +113,8 @@ namespace DO
             animator = GetComponentInChildren<Animator>();
             inputHandler = GetComponent<InputHandler>();
 			detectionPoints = GetComponentsInChildren<DetectionPoint>();
+            statsMenu = FindObjectOfType<StatsMenu>(); 
 
-            gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 
             foreach (DetectionPoint detectionPoint in detectionPoints) {
                 detectionPoint.SetDataSource(this);
@@ -135,7 +137,7 @@ namespace DO
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
             {
-                isGrounded = true;
+                isGrounded = true; 
             }
             else
             {
@@ -284,6 +286,7 @@ namespace DO
 
         public void HandleEggSpawning()
         {
+            statsMenu.timesLayedEggsCounter++; 
             inputHandler.isLayingEgg = true;
             timeSinceLastSpawn = 0f;
 
@@ -295,37 +298,44 @@ namespace DO
             inputHandler.isLayingEgg = false;
         }
 
-        public void Jump()
+        //Less overengineered method for jumping
+        public void Jump(float jumpForce, float jumpSpeed)
         {
-            StartCoroutine(HandleJump());
-            
+            statsMenu.timesJumpedCounter++; 
+            rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+            rigidbody.velocity += Vector3.up * jumpSpeed;
+            inputHandler.isJumping = false; 
         }
 
-        public IEnumerator HandleJump()
-        {
-            //yield return new WaitForSeconds(1f);
 
-            inputHandler.isJumping = false;
 
-            float jumpVelocity = Mathf.Sqrt(-2 * gravity * jumpHeight);
-            float timeToReachApex = Mathf.Sqrt(-2 * jumpHeight / gravity);
+        #region Old Jumping method, stops working on build for some reason? 
+        //public IEnumerator HandleJump()
+        //{
+        //    yield return new WaitForSeconds(1f);
 
-            Vector3 jumpDirection = new Vector3(rigidbody.velocity.x, jumpVelocity, rigidbody.velocity.z);
-            float timeElapsed = 0f;
+        //    inputHandler.isJumping = false;
 
-            while (timeElapsed < timeToReachApex)
-            {
-                float t = timeElapsed / timeToReachApex;
-                float curveValue = jumpCurve.Evaluate(t);
+        //    float jumpVelocity = Mathf.Sqrt(-2 * gravity * jumpHeight);
+        //    float timeToReachApex = Mathf.Sqrt(-2 * jumpHeight / gravity);
 
-                Vector3 displacement = jumpDirection * curveValue * Time.deltaTime;
-                transform.position += displacement;
+        //    Vector3 jumpDirection = new Vector3(rigidbody.velocity.x, jumpVelocity, rigidbody.velocity.z);
+        //    float timeElapsed = 0f;
 
-                timeElapsed += Time.deltaTime;
-                yield return null;
-            } 
+        //    while (timeElapsed < timeToReachApex)
+        //    {
+        //        float t = timeElapsed / timeToReachApex;
+        //        float curveValue = jumpCurve.Evaluate(t);
 
-        }
+        //        Vector3 displacement = jumpDirection * curveValue * Time.deltaTime;
+        //        transform.position += displacement;
+
+        //        timeElapsed += Time.deltaTime;
+        //        yield return null;
+        //    }
+        //}
+        #endregion
 
         public void handleFalling()
         {

@@ -34,7 +34,7 @@ public class CutOutFollowplayer : MonoBehaviour
         //Layering
         if(Physics.Raycast(ray, 3000, Mask))
         {
-            RoofMaterial.SetFloat(SizeID, 1);
+            RoofMaterial.SetFloat(SizeID, 2);
         }
         else
         {

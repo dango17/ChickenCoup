@@ -173,16 +173,26 @@ public class Farmer : MonoBehaviour {
 	private Transform releasePosition = null;
 	#endregion
 
+	#region Audio Variables
+	private bool playingFootstepAudio = false;
+	[SerializeField, Tooltip("Audio to play when the farmer walks, runs etc.")]
+	private AudioClip footstep = null;
+	private AudioSource audioSource = null;
+	#endregion
+
 	private float containPlayerInsitence = 0.0f;
 	private const float maximumContainChickenInsitence = 100.0f;
 	private UtilityScript utilityScript = null;
-	
-	private bool holdingKeycard = true;
 
-	private Flashlight flashlight = null;
+	private bool holdingKeycard = true;
 	private GameObject keycard = null;
 	private Transform keycardHoldTransform = null;
+	private Flashlight flashlight = null;
+
 	private Animator animator = null;
+	[SerializeField, Tooltip("The avatar used for the farmer's animation " +
+		"when they're stunned.")]
+	private Avatar stunnedAvatar = null;
 
 	private PlayerController player = null;
 	private InputHandler inputHandler = null;
@@ -231,6 +241,7 @@ public class Farmer : MonoBehaviour {
 		navMeshAgent.enabled = false;
 		BlindAndDeafenFarmer(stunLength);
 		stunTime = stunLength;
+		animator.avatar = stunnedAvatar;
 		animator.SetTrigger("StunnedTrigger");
 	}
 
@@ -332,9 +343,10 @@ public class Farmer : MonoBehaviour {
 		animator.SetBool("Stunned", true);
 	}
 
-	public void FinishedGettingUp() {
+	public void GettingUpAnimationEnded() {
 		animator.SetBool("GettingUp", false);
 		isGettingUp = false;
+		animator.avatar = null;
 	}
 	#endregion
 
@@ -382,6 +394,7 @@ public class Farmer : MonoBehaviour {
 		}
 
 		utilityScript.Update();
+		PlayFootstepAudio();
 	}
 
 	private void FixedUpdate() {
@@ -412,6 +425,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private void GetComponents() {
 		navMeshAgent = GetComponent<NavMeshAgent>();
+		audioSource = GetComponent<AudioSource>();
 		visualSensor = GetComponentInChildren<VisualSensor>();
 		audioSensor = GetComponentInChildren<AudioSensor>();
 		flashlight = GetComponentInChildren<Flashlight>();
@@ -985,6 +999,10 @@ public class Farmer : MonoBehaviour {
 				break;
 			}
 			case AnimationStates.Ended: {
+				if (!hasCaughtPlayer) {
+					animator.SetTrigger("Idling");
+				}
+
 				StopLookAtCoroutine();
 				catchAnimationState = AnimationStates.NotStarted;
 				return true;
@@ -1118,6 +1136,37 @@ public class Farmer : MonoBehaviour {
 	}
 	#endregion
 
+	/// <summary>
+	/// Handles playing footstep audio for the AI whenever they move.
+	/// </summary>
+	private void PlayFootstepAudio() {
+		bool isWalking = animator.GetBool("Walking");
+
+		if (isWalking) {
+			if (!playingFootstepAudio) {
+				playingFootstepAudio = PlaySound(footstep, true);
+			}
+		} else {
+			if (playingFootstepAudio) {
+				audioSource.Stop();
+				playingFootstepAudio = false;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Plays an audio clip.
+	/// </summary>
+	/// <param name="audioClip"> The audio to play. </param>
+	/// <param name="loopSound"> True if the audio clip should play on a loop. </param>
+	private bool PlaySound(AudioClip audioClip, bool loopSound) {
+		audioSource.clip = audioClip;
+		audioSource.loop = loopSound;
+		audioSource.Play();
+
+		return audioSource.isPlaying;
+	}
+
 	#region Miscellaneous Methods
 	/// <summary>
 	/// Updates the farmer's falshlight's colour based on the farmer's 
@@ -1194,6 +1243,7 @@ public class Farmer : MonoBehaviour {
 		animator.ResetTrigger("StunnedTrigger");
 		animator.SetBool("Inspecting", false);
 		animator.SetBool("GettingUp", false);
+		animator.avatar = null;
 	}
 	#endregion
 }

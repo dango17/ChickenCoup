@@ -413,7 +413,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 5511c2eadc464b54796b40f483cd1e21, type: 2}
+  m_Motion: {fileID: -203655887218126122, guid: c4225f368675c4a4882fa170def85692, type: 3}
   m_Tag: Getting Up
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -669,7 +669,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 0
@@ -748,7 +748,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 07164a6d4475b1848af6e0744bc8b323, type: 2}
+  m_Motion: {fileID: -203655887218126122, guid: c77ae210a36cd584587fe53f3244723f, type: 3}
   m_Tag: Stunned
   m_SpeedParameter: 
   m_MirrorParameter: 

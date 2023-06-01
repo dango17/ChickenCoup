@@ -32,8 +32,8 @@ public class FarmerAnimator : MonoBehaviour {
 		farmerScript.StunAnimationStarted();
 	}
 
-	public void FinishedGettingUp() {
-		farmerScript.FinishedGettingUp();
+	public void GettingUpAnimationEnded() {
+		farmerScript.GettingUpAnimationEnded();
 	}
 
 	private void Start() {

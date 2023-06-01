@@ -12,6 +12,7 @@ namespace DO
 
         public Light generatorIndicator; 
         public Light lightIndicator;
+        public Light keypadIndicator; 
 
         ObjectiveManager objectiveManager; 
 
@@ -35,6 +36,7 @@ namespace DO
                 Destroy(GameObject.Find("FuseObject"));
                 lightIndicator.color = Color.green; 
                 generatorIndicator.color = Color.green;
+                keypadIndicator.color = Color.green; 
 
                 objectiveManager.HasInsertedFuse = true; 
             }

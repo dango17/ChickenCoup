@@ -23,10 +23,17 @@ namespace DO
 
         private Transform playerOriginalTransform;
 
-        PlayerController controller; 
+        PlayerController controller;
+        StatsMenu statsMenu;
+
+        public void Start()
+        {
+            statsMenu = FindObjectOfType<StatsMenu>(); 
+        }
 
         private void Update()
         {
+
             if (isLocked && Time.time - lockStartTime >= lockTime)
             {
                 UnlockPlayer();
@@ -34,13 +41,13 @@ namespace DO
         }
 
         public void LockPlayer(Transform playerTransform)
-        {
-            
+        {        
             playerOriginalTransform = playerTransform;
             playerTransform.position = playerTransformPoint.position;
 
             isLocked = true;
             animator.Play("cagedoorClose");
+            statsMenu.timesCaughtCounter++; 
 
             //Record the time player was locked
             lockStartTime = Time.time;

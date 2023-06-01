@@ -27,8 +27,9 @@ namespace DO
         [SerializeField] public GameObject pauseMenuObj;
         [SerializeField] public GameObject controlsMenu;
         [SerializeField] public Animator UIAnims;
-        PlayerControls inputActions;
-        pauseMenu pauseMenu; 
+        [SerializeField] StatsMenu statsMenu;
+        [SerializeField] PlayerControls inputActions;
+        [SerializeField] pauseMenu pauseMenu; 
          
 
         [Header("Components")]
@@ -141,7 +142,8 @@ namespace DO
 
             cageController = FindObjectOfType<CageController>();
             farmer = FindObjectOfType<Farmer>();
-            pauseMenu = FindObjectOfType<pauseMenu>(); 
+            pauseMenu = FindObjectOfType<pauseMenu>();
+            statsMenu = FindObjectOfType<StatsMenu>(); 
 
 
         }
@@ -215,7 +217,7 @@ namespace DO
                 && cageController.isLocked == false && farmer.HasCaughtPlayer == false)
             {
                 controller.animator.Play("Jump");
-                controller.Jump();
+                controller.Jump(controller.jumpForce, controller.jumpSpeed);
             }
             else if (controller.isGrounded == false)
             {
@@ -377,8 +379,15 @@ namespace DO
                 controlsMenu.SetActive(false);
             }
 
+            //Ensure the objective menu is also disabled
             if (!isToggledObjectiveMenu)
             {
+                controlsMenu.SetActive(false);
+            }
+
+            if(isToggledObjectiveMenu && flipLeft && flipRight)
+            {
+                ojectiveMenu.SetActive(true);
                 controlsMenu.SetActive(false);
             }
             #endregion
