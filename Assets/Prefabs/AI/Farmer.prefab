@@ -1760,6 +1760,8 @@ MonoBehaviour:
   catchColliders:
   - {fileID: 2301528840529253768}
   - {fileID: 9185047452334716080}
+  stunnedAvatar: {fileID: 9000000, guid: c77ae210a36cd584587fe53f3244723f, type: 3}
+  gettingUpAvatar: {fileID: 9000000, guid: c4225f368675c4a4882fa170def85692, type: 3}
 --- !u!1 &3992463765813465296
 GameObject:
   m_ObjectHideFlags: 0
@@ -3228,7 +3230,7 @@ MonoBehaviour:
   canConceal: 0
   isFood: 0
   isSugary: 0
-  isAlcohol: 0
+  isFuse: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!1 &8495047505226632907
 GameObject:

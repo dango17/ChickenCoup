@@ -183,6 +183,9 @@ public class Farmer : MonoBehaviour {
 	private GameObject keycard = null;
 	private Transform keycardHoldTransform = null;
 	private Animator animator = null;
+	[SerializeField, Tooltip("The avatar used for the farmer's animation " +
+		"when they're stunned.")]
+	private Avatar stunnedAvatar = null;
 
 	private PlayerController player = null;
 	private InputHandler inputHandler = null;
@@ -231,6 +234,7 @@ public class Farmer : MonoBehaviour {
 		navMeshAgent.enabled = false;
 		BlindAndDeafenFarmer(stunLength);
 		stunTime = stunLength;
+		animator.avatar = stunnedAvatar;
 		animator.SetTrigger("StunnedTrigger");
 	}
 
@@ -332,9 +336,10 @@ public class Farmer : MonoBehaviour {
 		animator.SetBool("Stunned", true);
 	}
 
-	public void FinishedGettingUp() {
+	public void GettingUpAnimationEnded() {
 		animator.SetBool("GettingUp", false);
 		isGettingUp = false;
+		animator.avatar = null;
 	}
 	#endregion
 
@@ -1194,6 +1199,7 @@ public class Farmer : MonoBehaviour {
 		animator.ResetTrigger("StunnedTrigger");
 		animator.SetBool("Inspecting", false);
 		animator.SetBool("GettingUp", false);
+		animator.avatar = null;
 	}
 	#endregion
 }
