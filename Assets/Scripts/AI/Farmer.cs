@@ -990,6 +990,10 @@ public class Farmer : MonoBehaviour {
 				break;
 			}
 			case AnimationStates.Ended: {
+				if (!hasCaughtPlayer) {
+					animator.SetTrigger("Idling");
+				}
+
 				StopLookAtCoroutine();
 				catchAnimationState = AnimationStates.NotStarted;
 				return true;
