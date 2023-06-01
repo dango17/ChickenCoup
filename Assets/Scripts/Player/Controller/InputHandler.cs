@@ -27,8 +27,9 @@ namespace DO
         [SerializeField] public GameObject pauseMenuObj;
         [SerializeField] public GameObject controlsMenu;
         [SerializeField] public Animator UIAnims;
-        PlayerControls inputActions;
-        pauseMenu pauseMenu; 
+        [SerializeField] StatsMenu statsMenu;
+        [SerializeField] PlayerControls inputActions;
+        [SerializeField] pauseMenu pauseMenu; 
          
 
         [Header("Components")]
@@ -141,7 +142,8 @@ namespace DO
 
             cageController = FindObjectOfType<CageController>();
             farmer = FindObjectOfType<Farmer>();
-            pauseMenu = FindObjectOfType<pauseMenu>(); 
+            pauseMenu = FindObjectOfType<pauseMenu>();
+            statsMenu = FindObjectOfType<StatsMenu>(); 
 
 
         }
