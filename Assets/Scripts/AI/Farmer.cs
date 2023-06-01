@@ -337,6 +337,10 @@ public class Farmer : MonoBehaviour {
 		animator.ResetTrigger("CatchingTrigger");
 		animator.SetBool("Catching", false);
 		catchAnimationState = AnimationStates.Ended;
+
+		if (heldObject && heldObject.GetComponent<PickupItem>()) {
+			heldObject = null;
+		}
 	}
 
 	public void StunAnimationStarted() {
