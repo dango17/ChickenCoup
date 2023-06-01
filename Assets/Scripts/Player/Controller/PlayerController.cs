@@ -85,7 +85,8 @@ namespace DO
         [HideInInspector] new Rigidbody rigidbody = null;
         [HideInInspector] public SkinnedMeshRenderer meshRenderer;
         [HideInInspector] public InputHandler inputHandler;
-        [HideInInspector] CageController cageController; 
+        [HideInInspector] CageController cageController;
+        StatsMenu statsMenu; 
 
         /// <summary>
         /// Use the property for this variable when getting it's value,
@@ -112,6 +113,7 @@ namespace DO
             animator = GetComponentInChildren<Animator>();
             inputHandler = GetComponent<InputHandler>();
 			detectionPoints = GetComponentsInChildren<DetectionPoint>();
+            statsMenu = FindObjectOfType<StatsMenu>(); 
 
 
             foreach (DetectionPoint detectionPoint in detectionPoints) {
@@ -284,6 +286,7 @@ namespace DO
 
         public void HandleEggSpawning()
         {
+            statsMenu.timesLayedEggsCounter++; 
             inputHandler.isLayingEgg = true;
             timeSinceLastSpawn = 0f;
 
@@ -298,6 +301,7 @@ namespace DO
         //Less overengineered method for jumping
         public void Jump(float jumpForce, float jumpSpeed)
         {
+            statsMenu.timesJumpedCounter++; 
             rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
             rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
             rigidbody.velocity += Vector3.up * jumpSpeed;

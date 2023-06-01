@@ -41,8 +41,7 @@ namespace DO
         }
 
         public void LockPlayer(Transform playerTransform)
-        {
-            
+        {        
             playerOriginalTransform = playerTransform;
             playerTransform.position = playerTransformPoint.position;
 
