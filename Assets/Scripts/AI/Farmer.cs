@@ -173,15 +173,22 @@ public class Farmer : MonoBehaviour {
 	private Transform releasePosition = null;
 	#endregion
 
+	#region Audio Variables
+	private bool playingFootstepAudio = false;
+	[SerializeField, Tooltip("Audio to play when the farmer walks, runs etc.")]
+	private AudioClip footstep = null;
+	private AudioSource audioSource = null;
+	#endregion
+
 	private float containPlayerInsitence = 0.0f;
 	private const float maximumContainChickenInsitence = 100.0f;
 	private UtilityScript utilityScript = null;
-	
-	private bool holdingKeycard = true;
 
-	private Flashlight flashlight = null;
+	private bool holdingKeycard = true;
 	private GameObject keycard = null;
 	private Transform keycardHoldTransform = null;
+	private Flashlight flashlight = null;
+
 	private Animator animator = null;
 	[SerializeField, Tooltip("The avatar used for the farmer's animation " +
 		"when they're stunned.")]
@@ -387,6 +394,7 @@ public class Farmer : MonoBehaviour {
 		}
 
 		utilityScript.Update();
+		PlayFootstepAudio();
 	}
 
 	private void FixedUpdate() {
@@ -417,6 +425,7 @@ public class Farmer : MonoBehaviour {
 	/// </summary>
 	private void GetComponents() {
 		navMeshAgent = GetComponent<NavMeshAgent>();
+		audioSource = GetComponent<AudioSource>();
 		visualSensor = GetComponentInChildren<VisualSensor>();
 		audioSensor = GetComponentInChildren<AudioSensor>();
 		flashlight = GetComponentInChildren<Flashlight>();
@@ -1126,6 +1135,37 @@ public class Farmer : MonoBehaviour {
 		}
 	}
 	#endregion
+
+	/// <summary>
+	/// Handles playing footstep audio for the AI whenever they move.
+	/// </summary>
+	private void PlayFootstepAudio() {
+		bool isWalking = animator.GetBool("Walking");
+
+		if (isWalking) {
+			if (!playingFootstepAudio) {
+				playingFootstepAudio = PlaySound(footstep, true);
+			}
+		} else {
+			if (playingFootstepAudio) {
+				audioSource.Stop();
+				playingFootstepAudio = false;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Plays an audio clip.
+	/// </summary>
+	/// <param name="audioClip"> The audio to play. </param>
+	/// <param name="loopSound"> True if the audio clip should play on a loop. </param>
+	private bool PlaySound(AudioClip audioClip, bool loopSound) {
+		audioSource.clip = audioClip;
+		audioSource.loop = loopSound;
+		audioSource.Play();
+
+		return audioSource.isPlaying;
+	}
 
 	#region Miscellaneous Methods
 	/// <summary>
