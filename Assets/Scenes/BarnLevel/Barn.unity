@@ -541,6 +541,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &13361415
 SphereCollider:
@@ -2905,6 +2906,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &86088086
 SphereCollider:
@@ -28638,6 +28640,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 820407779}
   m_Mesh: {fileID: 6812407974675531374, guid: 5a17029a6e2f1cf499015e941519f78b, type: 3}
+--- !u!1 &821006806 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7077561229466382137, guid: 8897445697ed5d7439fe670853b184da, type: 3}
+  m_PrefabInstance: {fileID: 1081987500}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &821006808
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821006806}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.18, y: 0.16, z: 0.13}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &821570966
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34660,6 +34680,7 @@ Transform:
   - {fileID: 1912022090}
   - {fileID: 1019650642202371967}
   - {fileID: 5760337340007292515}
+  - {fileID: 8229114437126916353}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -35717,6 +35738,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 1
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &993847072
 SphereCollider:
@@ -36945,6 +36967,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 1
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &1019691835
 SphereCollider:
@@ -39720,6 +39743,10 @@ PrefabInstance:
       value: -7.9254923
       objectReference: {fileID: 0}
     - target: {fileID: 2612801724645785757, guid: 8897445697ed5d7439fe670853b184da, type: 3}
+      propertyPath: isKeyCard
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2612801724645785757, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: pickupPoint
       value: 
       objectReference: {fileID: 978821680222278380}
@@ -40218,6 +40245,26 @@ PrefabInstance:
     - target: {fileID: 7854013401090346443, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.0025169246
+      objectReference: {fileID: 0}
+    - target: {fileID: 7916064104992627188, guid: 8897445697ed5d7439fe670853b184da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.2779005
+      objectReference: {fileID: 0}
+    - target: {fileID: 7916064104992627188, guid: 8897445697ed5d7439fe670853b184da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.1994308
+      objectReference: {fileID: 0}
+    - target: {fileID: 7916064104992627188, guid: 8897445697ed5d7439fe670853b184da, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.023
+      objectReference: {fileID: 0}
+    - target: {fileID: 7916064104992627188, guid: 8897445697ed5d7439fe670853b184da, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 7916064104992627188, guid: 8897445697ed5d7439fe670853b184da, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8083403925954697883, guid: 8897445697ed5d7439fe670853b184da, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -56673,6 +56720,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &1502757102
 SphereCollider:
@@ -61028,6 +61076,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &1590851030
 SphereCollider:
@@ -64817,6 +64866,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &1672129910
 SphereCollider:
@@ -67885,6 +67935,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &1749095941
 SphereCollider:
@@ -69569,6 +69620,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 1
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &1798668428
 SphereCollider:
@@ -73709,6 +73761,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &1912022093
 SphereCollider:
@@ -74018,6 +74071,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &1920744525
 SphereCollider:
@@ -78018,6 +78072,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!135 &2044701747
 SphereCollider:
@@ -80181,7 +80236,6 @@ Transform:
   - {fileID: 1289211925}
   - {fileID: 1358693270}
   - {fileID: 1523035464}
-  - {fileID: 8229114437126916353}
   - {fileID: 1661613402}
   - {fileID: 200701094}
   - {fileID: 161496021}
@@ -81666,11 +81720,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122787260543861, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalPosition.x
@@ -81694,11 +81748,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000035888483
+      value: 0.000000035888483
       objectReference: {fileID: 0}
     - target: {fileID: 1193122788001792633, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000023714733
+      value: -0.000000023714733
       objectReference: {fileID: 0}
     - target: {fileID: 1625199134304804730, guid: 71c0ba4b9c008a747862d7b30051f604, type: 3}
       propertyPath: pauseMenu
@@ -82224,6 +82278,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1019650642202371967}
+  - component: {fileID: 1019650642202371969}
+  - component: {fileID: 1019650642202371968}
   m_Layer: 0
   m_Name: Keypad
   m_TagString: Untagged
@@ -83404,6 +83460,34 @@ Transform:
   m_Father: {fileID: 965098829}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!135 &1019650642202371968
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391063815137590725}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.047423404
+  m_Center: {x: -0.0009794681, y: 0.020785313, z: 0.03}
+--- !u!114 &1019650642202371969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391063815137590725}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd4fadcd0ac7564c8e8dd0f56300d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isKeypadLocked: 0
+  moveAmount: 0.01
+  doorToMove: {fileID: 5888346049299327304}
 --- !u!23 &1029679257911158502
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -85497,6 +85581,7 @@ GameObject:
   - component: {fileID: 6372819607643786078}
   - component: {fileID: 3353223046964919941}
   - component: {fileID: 1867903907080809477}
+  - component: {fileID: 6372819607643786079}
   m_Layer: 0
   m_Name: pCube3
   m_TagString: Untagged
@@ -85617,6 +85702,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 5211720938116222224, guid: 74a44174ed71ba84ea364d48d526f455, type: 3}
 --- !u!135 &2297189114455896021
 SphereCollider:
@@ -87479,6 +87565,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!54 &3469287837128393568
 Rigidbody:
@@ -87512,6 +87599,7 @@ MonoBehaviour:
   generatorIndicator: {fileID: 92909396}
   lightIndicator: {fileID: 1489529322}
   keypadIndicator: {fileID: 1410825108}
+  keypadPuzzle: {fileID: 1019650642202371969}
 --- !u!65 &3469287837128393570
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -91487,7 +91575,7 @@ GameObject:
   - component: {fileID: 8049054426387167449}
   - component: {fileID: 8229114437126916354}
   m_Layer: 7
-  m_Name: Box140
+  m_Name: EscapeDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92456,6 +92544,21 @@ Transform:
   m_Father: {fileID: 1019650642202371967}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6372819607643786079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2290887394723408612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd4fadcd0ac7564c8e8dd0f56300d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isKeypadLocked: 0
+  moveAmount: 1
+  doorToMove: {fileID: 0}
 --- !u!1 &6389680189150701094
 GameObject:
   m_ObjectHideFlags: 0
@@ -95674,11 +95777,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5888346049299327304}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 1.3739966, y: -12.300229, z: 17.039997}
-  m_LocalScale: {x: 13.096415, y: 0.9091742, z: 2.2110786}
+  m_LocalPosition: {x: 45.723995, y: -3.6098235, z: 40.675095}
+  m_LocalScale: {x: 13.096414, y: 0.90917414, z: 2.2110786}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2091801397}
+  m_Father: {fileID: 965098829}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &8229114437126916354
@@ -96527,6 +96630,7 @@ MonoBehaviour:
   isFood: 0
   isSugary: 0
   isFuse: 0
+  isKeyCard: 0
   EatEffectPrefab: {fileID: 0}
 --- !u!33 &8484468256709875314
 MeshFilter:
