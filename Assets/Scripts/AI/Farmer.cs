@@ -268,7 +268,9 @@ public class Farmer : MonoBehaviour {
 		if (keycard.transform.parent != null &&
 			keycard.transform.parent.gameObject == gameObject) {
 			keycard.transform.parent = null;
-        }
+			keycard.transform.position = keycardHoldTransform.position;
+
+		}
 		
 		holdingKeycard = false;
 	}
