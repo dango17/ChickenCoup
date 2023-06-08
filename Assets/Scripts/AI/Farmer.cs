@@ -245,6 +245,7 @@ public class Farmer : MonoBehaviour {
 	public void StunFarmer(float stunLength) {
 		StopAction(false);
 		isStunned = true;
+		HoldOntoPlayer(false);
 		DropKeycard();
 		navMeshAgent.enabled = false;
 		BlindAndDeafenFarmer(stunLength);
