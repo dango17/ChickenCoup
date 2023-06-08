@@ -216,7 +216,15 @@ public class Farmer : MonoBehaviour {
 	}
 
 	public bool CanCatchPlayer() {
-		return !hasCaughtPlayer && Vector3.Distance(transform.position, player.transform.position) < maximumRangeToCatchPlayer ? true : false;
+		float farmerPlayerHeightDifference = player.transform.position.y - transform.position.y;
+		// Simulates the farmer's position whilst accounting for any height
+		// difference between them and the player. Only the player's x/z
+		// positions are relevant, when measuring the distance to catch 
+		// them, because they're the main values for knowing if the farmer is
+		// standing in the right place.
+		Vector3 elevatedFarmerPosition = transform.position + Vector3.up * farmerPlayerHeightDifference;
+		return !hasCaughtPlayer &&
+			Vector3.Distance(elevatedFarmerPosition, player.transform.position) < maximumRangeToCatchPlayer ? true : false;
 	}
 
 	public bool IsHoldingPlayer() {
@@ -269,7 +277,6 @@ public class Farmer : MonoBehaviour {
 			keycard.transform.parent.gameObject == gameObject) {
 			keycard.transform.parent = null;
 			keycard.transform.position = keycardHoldTransform.position;
-
 		}
 		
 		holdingKeycard = false;
@@ -935,7 +942,13 @@ public class Farmer : MonoBehaviour {
 			return true;
 		}
 
-		if (navMeshAgent.destination != playersLastKnownPosition) {
+		// The AI's current move destination, with an addition of the player's
+		// height to roughly estimate the player's position.
+		Vector3 currentDestination = navMeshAgent.destination + Vector3.up * player.transform.position.y;
+		float playerOffsetFromDestination = Vector3.Distance(currentDestination, playersLastKnownPosition);
+		float setDestinationThreshold = 1.0f;
+
+		if (playerOffsetFromDestination >= setDestinationThreshold) {
 			moveDestinationChanged = true;
 		}
 
@@ -979,7 +992,10 @@ public class Farmer : MonoBehaviour {
 				if (lookAtCoroutine == null) {
 					originalRotation = transform.rotation;
 					rotationAmount = 0;
-					lookAtCoroutine = StartCoroutine(LookAtCoroutine(player.transform));
+					float farmerPlayerHeightDifference = player.transform.position.y - transform.position.y;
+					// Gets a position that's level with the farmer but always pointing towards the player.
+					Vector3 positionToLookAt = player.transform.position - Vector3.up * farmerPlayerHeightDifference;
+					lookAtCoroutine = StartCoroutine(LookAtCoroutine(positionToLookAt));
 				}
 
 				if (catchCollidersEnabled && catchColliderIsTouchingPlayer && !heldObject) {
@@ -1026,10 +1042,10 @@ public class Farmer : MonoBehaviour {
 	/// Makes the farmer look at a transform by rotating them over time until 
 	/// they're looking the correct direction.
 	/// </summary>
-	/// <param name="transformToLookAt"> The transform to look at. </param>
+	/// <param name="positionToLookAt"> The position to look at. </param>
 	/// <returns> IEnumerator for the coroutine. </returns>
-	private IEnumerator LookAtCoroutine(Transform transformToLookAt) {
-		Vector3 targetDirection = transformToLookAt.position - transform.position;
+	private IEnumerator LookAtCoroutine(Vector3 positionToLookAt) {
+		Vector3 targetDirection = positionToLookAt - transform.position;
 		Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
 
 		while (transform.rotation != targetRotation ||
