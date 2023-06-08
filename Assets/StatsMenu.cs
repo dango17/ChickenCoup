@@ -38,7 +38,7 @@ namespace DO
 
         public IEnumerator UpdatePlayTime()
         {
-            while (true)
+            while (isTimerRunning)
             {
                 playTime += Time.deltaTime;
                 UpdatePlayTimeText();

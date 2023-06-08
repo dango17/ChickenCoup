@@ -25,6 +25,7 @@ namespace DO
         [SerializeField] public bool isFood;
         [SerializeField] public bool isSugary;
         [SerializeField] public bool isFuse;
+        [SerializeField] public bool isKeyCard;
         [Header("Eaten ParticleEffect")]
         public GameObject EatEffectPrefab;
 
@@ -101,6 +102,12 @@ namespace DO
                 {
                     PickUpItem();
                     objectiveManager.hasFoundFuse = true; 
+                }
+
+                if (inputHandler.isGrabbing == true && canMove == true && isKeyCard)
+                {
+                    PickUpItem();
+                    objectiveManager.HasStoleKeycard = true;
                 }
                 #endregion
 

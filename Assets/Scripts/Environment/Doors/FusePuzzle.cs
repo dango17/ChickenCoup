@@ -12,7 +12,9 @@ namespace DO
 
         public Light generatorIndicator; 
         public Light lightIndicator;
-        public Light keypadIndicator; 
+        public Light keypadIndicator;
+
+        public KeypadPuzzle keypadPuzzle; 
 
         ObjectiveManager objectiveManager; 
 
@@ -38,7 +40,8 @@ namespace DO
                 generatorIndicator.color = Color.green;
                 keypadIndicator.color = Color.green; 
 
-                objectiveManager.HasInsertedFuse = true; 
+                objectiveManager.HasInsertedFuse = true;
+                keypadPuzzle.enabled = true; 
             }
         }
     }

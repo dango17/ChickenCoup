@@ -1,3 +1,6 @@
+// Author: Harry Oldham
+// Collaborator: N/A
+// Created On: 30/03/23
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +13,7 @@ public class BloomSettings : MonoBehaviour
     private PostProcessVolume _postProcessVolume;
     private Bloom _bloom;
 
+    //UI values
     [Header("UI Values")]
     [SerializeField] private TextMeshProUGUI bloom_intensityValueText;
     [SerializeField] private TextMeshProUGUI bloom_thresholdValueText;
@@ -23,6 +27,7 @@ public class BloomSettings : MonoBehaviour
         _postProcessVolume.profile.TryGetSettings(out _bloom);
     }
 
+    //toggle
     public void BloomOnOff(bool on)
     {
         if(on)
@@ -35,6 +40,7 @@ public class BloomSettings : MonoBehaviour
         }
     }
 
+    // value sliders modifiable at runtime 
     public void BLIntensityValue(float sliderValue)
     {
         _bloom.intensity.value = sliderValue;
@@ -65,6 +71,7 @@ public class BloomSettings : MonoBehaviour
         bloom_diffusionValueText.text = sliderValue.ToString("0");
     }
 
+    //dropdown menu colour picker
     public void SetBloomColour(int index)
     {
         switch (index)
@@ -76,6 +83,7 @@ public class BloomSettings : MonoBehaviour
         }
     }
 
+    //toggle 
     public void FastMode(bool on)
     {
         if (on)

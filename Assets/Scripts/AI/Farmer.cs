@@ -268,7 +268,9 @@ public class Farmer : MonoBehaviour {
 		if (keycard.transform.parent != null &&
 			keycard.transform.parent.gameObject == gameObject) {
 			keycard.transform.parent = null;
-        }
+			keycard.transform.position = keycardHoldTransform.position;
+
+		}
 		
 		holdingKeycard = false;
 	}
@@ -337,6 +339,10 @@ public class Farmer : MonoBehaviour {
 		animator.ResetTrigger("CatchingTrigger");
 		animator.SetBool("Catching", false);
 		catchAnimationState = AnimationStates.Ended;
+
+		if (heldObject && heldObject.GetComponent<PickupItem>()) {
+			heldObject = null;
+		}
 	}
 
 	public void StunAnimationStarted() {
